@@ -163,6 +163,7 @@ AptList='
     balena-etcher-electron
 
     imwheel
+    dconf-editor
     gnome-tweak-tool
 
     psensor
@@ -420,6 +421,7 @@ function ConfigureEnvironment {
         PrintTitle "Configure Environment"
 
         Exec "gsettings set com.ubuntu.update-notifier show-apport-crashes false"
+        Exec "gsettings set org.gnome.desktop.privacy report-technical-problems false"
 
         Exec "gsettings set org.gnome.desktop.interface clock-show-seconds true"
         Exec "gsettings set org.gnome.desktop.interface clock-show-weekday true"
@@ -443,6 +445,10 @@ function ConfigureEnvironment {
         WallpaperPath=$Home/$Wallpaper
         Exec "cp ${SrcDir}/${Wallpaper} ${WallpaperPath}"
         Exec "gsettings set org.gnome.desktop.background picture-uri file://$WallpaperPath"
+
+        Exec "gsettings set org.gnome.desktop.background show-desktop-icons false"
+        Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-home false"
+        Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-trash false"
     fi
     NextStep
 }
