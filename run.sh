@@ -438,7 +438,7 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down '<Alt>Page_Down'"
 
         FavoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
-        Exec 'gsettings set org.gnome.shell favorite-apps "'$FavoriteApps'"'
+        Exec "gsettings set org.gnome.shell favorite-apps \"${FavoriteApps}\""
 
         WallpaperPath=$Home/$Wallpaper
         Exec "cp ${SrcDir}/${Wallpaper} ${WallpaperPath}"
