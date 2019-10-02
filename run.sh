@@ -486,7 +486,7 @@ function ConfigureStardict {
         #https://www.sites.google.com/site/gtonguedict/home/stardict-dictionaries
         Exec "wget http://downloads.sourceforge.net/xdxf/stardict-comn_sdict05_eng_rus_full-2.4.2.tar.bz2"
         Exec "wget http://downloads.sourceforge.net/xdxf/stardict-comn_sdict05_rus_eng_full-2.4.2.tar.bz2"
-        for f in "stardict*tar.bz2"
+        for f in stardict*tar.bz2
         do
             Exec "tar -xjvf $f -C /usr/share/stardict/dic"
         done
