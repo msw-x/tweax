@@ -1,0 +1,6 @@
+[general]
+indicator-expressions=['CPU $(percent(cpu.inuse)) | RAM $(size(mem.user))', 'Mem $(size(mem.user))', 'Net $(speed(net.down))/$(speed(net.up))', 'Swap $(size(swap.used))', 'Load $(decimals(load.avg,2))', 'Disk $(speed(disk.read))/$(speed(disk.write))']
+settings-version=uint32 3
+
+[graphs/cpu]
+enabled=false

@@ -1,0 +1,3 @@
+[
+	{ "caption": "Build System: gobs", "command": "set_build_system", "args": {"file": "Packages/gobs/gobs.sublime-build"}   },
+]

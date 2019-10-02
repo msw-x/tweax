@@ -1,0 +1,15 @@
+{
+	"color_scheme": "Packages/Color Scheme - Default/Sunburst.tmTheme",
+	"theme": "Adaptive.sublime-theme",
+	"draw_white_space": "all",
+	"fallback_encoding": "Cyrillic (Windows 1251)",
+	"font_size": 9,
+	"hot_exit": false,
+	"remember_open_files": false,
+	"show_encoding": true,
+	"show_errors_inline": false,
+	"tab_completion": false,
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true,
+	"show_line_endings": true,
+}

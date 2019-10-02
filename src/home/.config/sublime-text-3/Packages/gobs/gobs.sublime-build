@@ -1,0 +1,19 @@
+{
+	"cmd": [""],
+	"file_regex":"^(.*):(\\d+):(\\d+):\\s*(.*)$",
+	"working_dir": "$project_path",
+	"selector": "source.go",
+	"encoding": "utf8",
+
+	"variants":
+	[
+        {
+            "name": "make",
+            "cmd": ["make.bat"]
+        },
+		{
+			"name": "run",
+			"cmd": ["run.bat"]
+		}
+	]
+}

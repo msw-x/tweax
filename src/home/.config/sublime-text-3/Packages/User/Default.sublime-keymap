@@ -1,0 +1,26 @@
+[
+    { "keys": ["f1"]            , "command": "close"                                                                                                              },
+    { "keys": ["f2"]            , "command": "show_panel"  , "args": {"panel"  : "output.exec" }                                                                  },
+    { "keys": ["f5"]            , "command": "show_overlay", "args": {"overlay": "command_palette", "text": "Build System: "}                                     },
+    { "keys": ["ctrl+alt+up"]   , "command": "select_lines", "args": {"forward": false}                                                                           },
+    { "keys": ["ctrl+alt+down"] , "command": "select_lines", "args": {"forward": true }                                                                           },
+    { "keys": ["shift+tab"]     , "command": "msw_insert_tab", "context": [{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": false}] },
+
+    { "keys": ["ctrl+f1"]   , "command": "build", "args": {"variant": "hotkeys"}                      },
+    { "keys": ["f7"]        , "command": "build", "args": {"variant": "format"}                       },
+    { "keys": ["ctrl+f7"]   , "command": "build", "args": {"variant": "get-dependency"}               },
+    { "keys": ["shift+f7"]  , "command": "build", "args": {"variant": "show-dependency"}              },
+    { "keys": ["f8"]        , "command": "build", "args": {"variant": "format & make"}                },
+    { "keys": ["ctrl+f8"]   , "command": "build", "args": {"variant": "clean & format & make"}        },
+    { "keys": ["shift+f8"]  , "command": "build", "args": {"variant": "make"}                         },
+    { "keys": ["f9"]        , "command": "build", "args": {"variant": "run"}                          },
+    { "keys": ["ctrl+f9"]   , "command": "build", "args": {"variant": "run & detach"}                 },
+    { "keys": ["shift+f9"]  , "command": "build", "args": {"variant": "console-out"}                  },
+    { "keys": ["f10"]       , "command": "build", "args": {"variant": "format & make & run"}          },
+    { "keys": ["ctrl+f10"]  , "command": "build", "args": {"variant": "format & make & run & detach"} },
+    { "keys": ["f11"]       , "command": "build", "args": {"variant": "smartgit"}                     },
+    { "keys": ["ctrl+f11"]  , "command": "build", "args": {"variant": "gitstatus"}                    },
+    { "keys": ["shift+f11"] , "command": "build", "args": {"variant": "console-project"}              },
+    { "keys": ["f12"]       , "command": "build", "args": {"variant": "production"}                   },
+    { "keys": ["pause"]     , "command": "build", "args": {"variant": "cancel"}                       }
+]
