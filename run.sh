@@ -233,6 +233,12 @@ function Clean {
         Exec 'sudo apt purge -y update-notifier' "Update Notifier"
         Exec 'sudo apt autoremove -y'
         Exec 'sudo snap remove gnome-calculator' "Remove gnome-calculator"
+
+        if sudo grep timestamp_timeout /etc/sudoers; then
+            echo "[Warning] can't disable sudo timeout"
+        else
+            Exec 'sudo sed -i "10i Defaults        timestamp_timeout=-1" /etc/sudoers'
+        fi
     fi
     NextStep
 }
