@@ -354,7 +354,7 @@ function InstallGolang {
         ref=$(wget -qO - https://golang.org/dl/ | egrep -o 'https://dl.google.com/go/go.*?linux-amd64.tar.gz' -m 1)
         filename=$(echo $ref | sed -n 's|http.*go/||p')
         Exec "wget ${ref}" "download Golang"
-        Exec "tar -C $OptDir -xzf $filename" "install Golang"
+        Exec "sudo tar -C $OptDir -xzf $filename" "install Golang"
     fi
     NextStep
 }
@@ -364,9 +364,9 @@ function InstallTruecrypt {
         PrintTitle "Install Truecrypt"
 
         Exec "tar xvf $SrcDebDir/truecrypt-7.1a-linux-console-x64.tar.gz" "unpack Truecrypt"
-        Exec './truecrypt-7.1a-setup-console-x64' "install Truecrypt"        
+        Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"        
 
-        Exec "cp -rv ${SrcDir}/tco ${OptDir}/" "install tc"
+        Exec "sudo cp -rv ${SrcDir}/tco ${OptDir}/" "install tc"
     fi
     NextStep
 }
