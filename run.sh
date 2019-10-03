@@ -132,7 +132,7 @@ for i in "$@"; do
         verbose)
             PrintCommands=1
         ;;
-        test)
+        list)
             PerformCommands=0
         ;;
         step=*)
