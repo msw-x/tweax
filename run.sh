@@ -485,6 +485,16 @@ function ConfigureIndicatorMultiload {
     NextStep
 }
 
+function ConfigurePsensor {
+    if CheckStep; then
+        PrintTitle "Configure Psensor"
+
+        Exec "dconf write /apps/psensor/interface-hide-on-startup true"
+        Exec "dconf write /apps/psensor/interface-hide-on-startup true"
+    fi
+    NextStep
+}
+
 function ConfigureStardict {
     if CheckStep; then
         PrintTitle "Configure Stardict"
@@ -547,6 +557,7 @@ function Configure {
     ConfigureGit
     ConfigureImwheel
     ConfigureIndicatorMultiload
+    ConfigurePsensor
     ConfigureStardict
 }
 
