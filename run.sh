@@ -31,10 +31,14 @@ InitStep=0
 
 function Fatal {
     msg=$*
+    step=""
+    if [[ $Step != -1 ]]; then
+        step="[$Step]"
+    fi
     if [[ $msg == "" ]]; then
-        echo "[ERROR]"
+        echo "[ERROR]${step}"
     else
-        echo "[ERROR]: ${msg}"
+        echo "[ERROR]${step}: ${msg}"
     fi
     exit 1
 }
