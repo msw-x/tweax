@@ -102,7 +102,7 @@ function AddToProfile {
 
 function AddAliase {
     alias=$*
-    if grep $alias ${Home}/.bashrc; then
+    if grep "$alias" ${Home}/.bashrc; then
         echo "[Warning] alias ${alias} already exist"
     else
         AddToBashRC "alias "$alias
