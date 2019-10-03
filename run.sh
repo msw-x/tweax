@@ -185,7 +185,6 @@ AptList='
     libboost-all-dev
 
     wine
-    virtualbox
     virtualbox-ext-pack
     virtualbox-guest-additions-iso
 
@@ -194,7 +193,6 @@ AptList='
 
     nmap
     traceroute
-    wireshark
 
     picocom
     minicom
@@ -211,6 +209,10 @@ AptList='
     gtk-recordmydesktop
 
     torbrowser-launcher
+'
+AptListDialog='
+    wireshark
+    virtualbox
 '
 
 
@@ -269,6 +271,17 @@ function InstallOverApt {
     NextStep
 }
 
+function InstallOverAptDialog {
+    if CheckStep; then
+        PrintTitle "Install from Apt with Dialogs"
+
+        for i in $AptListDialog; do
+            AptInstall $i
+        done
+    fi
+    NextStep
+}
+
 function InstallChrome {
     if CheckStep; then
         PrintTitle "Install Chrome"
@@ -314,6 +327,7 @@ function InstallArduino {
         Exec 'tar xf download.php\?f\=%2Farduino-nightly-linux64.tar.xz' "unpack Arduino"
         Exec 'cd arduino-nightly'
         Exec 'sudo ./install.sh' "install Arduino"
+        Exec 'rm -rf ~/Desktop/*'
     fi
     NextStep
 }
@@ -530,6 +544,11 @@ function Launch {
     Step=0
 }
 
+function InstallDialog {
+    InstallOverAptDialog
+    InstallTruecrypt
+}
+
 function Install {
     Clean
     AddAptRepositories
@@ -543,7 +562,6 @@ function Install {
     InstallTeamviewer
     InstallPostman
     InstallGolang
-    InstallTruecrypt
 }
 
 function Configure {
@@ -568,6 +586,7 @@ function Сompletion {
 function Run {
     Launch
     Startup
+    InstallDialog
     Install
     Configure
     Сompletion
