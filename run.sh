@@ -79,7 +79,7 @@ function AptInstall {
     if [[ $title == "" ]]; then
         title=$cmd
     fi
-    Exec 'apt install -y '$cmd "install ${title}"
+    Exec 'sudo apt install -y '$cmd "install ${title}"
 }
 
 function NextStep {
@@ -223,9 +223,9 @@ function Clean {
 
         Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos'
 
-        Exec 'apt purge -y firefox' "Remove firefox"
-        Exec 'snap remove gnome-calculator' "Remove gnome-calculator"
-        Exec 'apt autoremove -y'
+        Exec 'sudo apt purge -y firefox' "Remove firefox"
+        Exec 'sudo snap remove gnome-calculator' "Remove gnome-calculator"
+        Exec 'sudo apt autoremove -y'
     fi
     NextStep
 }
@@ -234,11 +234,11 @@ function AddAptRepositories {
     if CheckStep; then
         PrintTitle "Add repositories"
 
-        Exec 'echo "deb https://deb.etcher.io stable etcher" | tee /etc/apt/sources.list.d/balena-etcher.list'
-        Exec 'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61' "add Etcher repository"
+        Exec 'echo "deb https://deb.etcher.io stable etcher" | sudo tee /etc/apt/sources.list.d/balena-etcher.list'
+        Exec 'sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61' "add Etcher repository"
 
-        Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add -' "add Sublime-text repository"
-        Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list'
+        Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
+        Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
     fi
     NextStep
 }
@@ -247,8 +247,8 @@ function Upgrading {
     if CheckStep; then
         PrintTitle "Upgrading"
 
-        Exec 'apt update' "updating"
-        Exec 'apt upgrade -y' "upgrading"
+        Exec 'sudo apt update' "updating"
+        Exec 'sudo apt upgrade -y' "upgrading"
     fi
     NextStep
 }
@@ -269,7 +269,7 @@ function InstallChrome {
         PrintTitle "Install Chrome"
 
         Exec 'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' "download Chrome"
-        Exec 'dpkg -i google-chrome-stable_current_amd64.deb' "install Chrome"
+        Exec 'sudo dpkg -i google-chrome-stable_current_amd64.deb' "install Chrome"
     fi
     NextStep
 }
@@ -283,7 +283,7 @@ function InstallSmartgit {
         Echo "version: "$version
         version=$(echo "${version}" | sed 's/\./_/g')
         Exec "wget https://www.syntevo.com/downloads/smartgit/smartgit-${version}.deb" "download Smartgit"
-        Exec "dpkg -i smartgit-${version}.deb" "install Smartgit"
+        Exec "sudo dpkg -i smartgit-${version}.deb" "install Smartgit"
     fi
     NextStep
 }
@@ -296,7 +296,7 @@ function InstallSmartsynchronize {
         Echo "version: "$version
         version=$(echo "${version}" | sed 's/\./_/g')
         Exec "wget https://www.syntevo.com/downloads/smartsynchronize/smartsynchronize-${version}.deb" "download Smartsynchronize"
-        Exec "dpkg -i smartsynchronize-${version}.deb" "install Smartsynchronize"
+        Exec "sudo dpkg -i smartsynchronize-${version}.deb" "install Smartsynchronize"
     fi
     NextStep
 }
@@ -332,7 +332,7 @@ function InstallTeamviewer {
         PrintTitle "Install Teamviewer"
 
         Exec 'wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb' "download Teamviewer"
-        Exec "dpkg -i teamviewer_amd64.deb ; apt install -y -f" "install Teamviewer"
+        Exec "sudo dpkg -i teamviewer_amd64.deb ; apt install -y -f" "install Teamviewer"
     fi
     NextStep
 }
@@ -341,7 +341,7 @@ function InstallPostman {
     if CheckStep; then
         PrintTitle "Install Postman"
 
-        Exec 'snap install postman'
+        Exec 'sudo snap install postman'
     fi
     NextStep
 }
@@ -489,7 +489,7 @@ function ConfigureStardict {
         Exec "wget http://downloads.sourceforge.net/xdxf/stardict-comn_sdict05_rus_eng_full-2.4.2.tar.bz2"
         for f in stardict*tar.bz2
         do
-            Exec "tar -xjvf $f -C /usr/share/stardict/dic"
+            Exec "sudo tar -xjvf $f -C /usr/share/stardict/dic"
         done
     fi
     NextStep
@@ -507,11 +507,8 @@ function СonfirmationDialog {
 
 function Launch {
     PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName})"
-    echo ""
     if [[ $EUID == 0 ]]; then
-        echo "[Install]: launched under root"
-    else
-        echo "[Configure]: launched under not root"
+        Fatal "the script should not be run from root"
     fi
     if [[ $PerformCommands == 1 ]]; then
         СonfirmationDialog
@@ -556,11 +553,8 @@ function Сompletion {
 function Run {
     Launch
     Startup
-    if [[ $EUID == 0 ]]; then
-        Install
-    else
-        Configure
-    fi
+    Install
+    Configure
     Сompletion
 }
 
