@@ -97,7 +97,7 @@ function AddToBashRC {
 
 function AddToProfile {
     s=$*
-    Exec "echo \"${s}\" | tee -a ${Home}/.profile"
+    Exec "echo '${s}' | tee -a ${Home}/.profile"
 }
 
 function AddAliase {
