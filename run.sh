@@ -308,7 +308,7 @@ function InstallArduino {
         Exec 'wget https://www.arduino.cc/download.php?f=/arduino-nightly-linux64.tar.xz' "download Arduino"
         Exec 'tar xf download.php\?f\=%2Farduino-nightly-linux64.tar.xz' "unpack Arduino"
         Exec 'cd arduino-nightly'
-        Exec './install.sh' "install Arduino"
+        Exec 'sudo ./install.sh' "install Arduino"
     fi
     NextStep
 }
@@ -321,8 +321,8 @@ function InstallWinBox {
         exename='winbox.exe'
         ref=$(wget -qO - http://www.mikrotik.com/download/ | egrep -o 'download.mikrotik.com/routeros/winbox/.*?/'$exename)
         Exec 'wget '$ref "download Winbox"
-        Exec 'mkdir '${WinBoxDir}
-        Exec "mv $exename ${WinBoxDir}"
+        Exec 'sudo mkdir '${WinBoxDir}
+        Exec "sudo mv $exename ${WinBoxDir}"
     fi
     NextStep
 }
