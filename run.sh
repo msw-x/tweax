@@ -497,7 +497,7 @@ function ConfigureStardict {
 
 
 function СonfirmationDialog {
-    echo
+    sudo echo
     read -n 1 -p "Attention! Are you sure you want to start configuring your system for user '${User}' (${Home})? y/n: " key && echo
     if [[ $key != 'y' ]]; then
         Echo "cancel the installation"
