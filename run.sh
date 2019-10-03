@@ -490,7 +490,6 @@ function ConfigurePsensor {
         PrintTitle "Configure Psensor"
 
         Exec "dconf write /apps/psensor/interface-hide-on-startup true"
-        Exec "dconf write /apps/psensor/interface-hide-on-startup true"
     fi
     NextStep
 }
