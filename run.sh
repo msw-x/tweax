@@ -207,8 +207,6 @@ AptList='
     gtk-recordmydesktop
 
     torbrowser-launcher
-
-    signal-desktop
 '
 
 
@@ -241,9 +239,6 @@ function AddAptRepositories {
 
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add -' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list'
-
-        Exec 'wget -qO - https://updates.signal.org/desktop/apt/keys.asc | apt-key add -' "add Signal repository"
-        Exec 'echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" | tee /etc/apt/sources.list.d/signal-xenial.list'
     fi
     NextStep
 }
@@ -442,7 +437,7 @@ function ConfigureEnvironment {
         FavoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
         Exec "gsettings set org.gnome.shell favorite-apps \"${FavoriteApps}\""
 
-        WallpaperPath=$Home/$Wallpaper
+        WallpaperPath=$Home/.$Wallpaper
         Exec "cp ${SrcDir}/${Wallpaper} ${WallpaperPath}"
         Exec "gsettings set org.gnome.desktop.background picture-uri file://$WallpaperPath"
 
