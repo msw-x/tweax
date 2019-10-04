@@ -514,6 +514,28 @@ function ConfigureEnvironment {
     NextStep
 }
 
+function ConfigureNetwork {
+    if CheckStep; then
+        PrintTitle "Configure Network"
+
+        eth=$(nmcli device | awk '/ethernet/{print $1; exit}')
+        Exec "nmcli connection add con-name inet type ethernet ifname $eth conn.autoconnect-p -999"
+        Exec "nmcli connection add con-name print type ethernet ifname $eth ipv4.method manual ipv4.addr 195.200.200.57/24 ipv4.gateway 195.200.200.1"
+    fi
+    NextStep
+}
+
+function ConfigureLocale {
+    if CheckStep; then
+        PrintTitle "Configure Locale"
+
+        Exec "sudo locale-gen ru_RU.UTF-8"
+        layouts="[('xkb', 'us'), ('xkb', 'ru')]"
+        Exec "gsettings set org.gnome.desktop.input-sources sources \"$layouts\""
+    fi
+    NextStep
+}
+
 function ConfigureGit {
     if CheckStep; then
         PrintTitle "Configure Git"
@@ -566,17 +588,6 @@ function ConfigureStardict {
         do
             Exec "sudo tar -xjvf $f -C /usr/share/stardict/dic"
         done
-    fi
-    NextStep
-}
-
-function ConfigureNetwork {
-    if CheckStep; then
-        PrintTitle "Configure Network"
-
-        eth=$(nmcli device | awk '/ethernet/{print $1; exit}')
-        Exec "nmcli connection add con-name inet type ethernet ifname $eth conn.autoconnect-p -999"
-        Exec "nmcli connection add con-name print type ethernet ifname $eth ipv4.method manual ipv4.addr 195.200.200.57/24 ipv4.gateway 195.200.200.1"
     fi
     NextStep
 }
@@ -640,12 +651,14 @@ function Configure {
     ConfigureHomeConfig
     ConfigureTerminal
     ConfigureEnvironment
+    ConfigureNetwork
+    ConfigureLocale
+
     ConfigureGit
     ConfigureImwheel
     ConfigureIndicatorMultiload
     ConfigurePsensor
     ConfigureStardict
-    ConfigureNetwork
     ConfigureTelegram
 }
 
