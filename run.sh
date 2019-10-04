@@ -388,7 +388,7 @@ function InstallTelegram {
         PrintTitle "Install Telegram"
 
         Exec "torsocks wget https://telegram.org/dl/desktop/linux -O tsetup.tar.xz" "download Telegram"
-        Exec "sudo tar -C $OptDir xvf tsetup.tar.xz" "install Telegram"
+        Exec "sudo tar -C $OptDir -xvf tsetup.tar.xz" "install Telegram"
     fi
     NextStep
 }
@@ -427,6 +427,15 @@ function ConfigureAliase {
     NextStep
 }
 
+
+function ConfigureDirs {
+    if CheckStep; then
+        PrintTitle "Configure Home config"
+
+        Exec "cp -rv ${SrcHomeDir}/.config ${Home}/"
+    fi
+    NextStep
+}
 
 function ConfigureHomeConfig {
     if CheckStep; then
@@ -585,6 +594,7 @@ function Configure {
     ConfigurePath
     ConfigureAliase
 
+    ConfigureDirs
     ConfigureHomeConfig
     ConfigureTerminal
     ConfigureEnvironment
