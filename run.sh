@@ -186,7 +186,7 @@ AptList='
     libboost-all-dev
 
     wine
-    virtualbox-ext-pack
+    virtualbox
     virtualbox-guest-additions-iso
 
     p7zip-full
@@ -213,7 +213,7 @@ AptList='
 '
 AptListDialog='
     wireshark
-    virtualbox
+    virtualbox-ext-pack
 '
 
 
@@ -358,7 +358,8 @@ function InstallTeamviewer {
         PrintTitle "Install Teamviewer"
 
         Exec 'wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb' "download Teamviewer"
-        Exec "sudo dpkg -i teamviewer_amd64.deb ; apt install -y -f" "install Teamviewer"
+        Exec "sudo dpkg -i teamviewer_amd64.deb" "install Teamviewer"
+        Exec "sudo apt install -y -f"
     fi
     NextStep
 }
