@@ -641,8 +641,8 @@ function Launch {
 }
 
 function InstallDialog {
-    InstallOverAptDialog
     InstallTruecrypt
+    InstallOverAptDialog
 }
 
 function Install {
