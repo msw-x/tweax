@@ -134,11 +134,20 @@ function CheckStep {
 
 for i in "$@"; do
     case $i in
-        verbose)
-            PrintCommands=1
+        help)
+            echo "help       - print this help"
+            echo "list       - print list of operations"
+            echo "list-short - print short list of operations"
+            echo "step       - initial step"
+            echo "step-one   - perform only one step"
+            exit 0
         ;;
         list)
             PerformCommands=0
+        ;;
+        list-short)
+            PerformCommands=0
+            PrintCommands=0
         ;;
         step=*)
             # init step
@@ -146,7 +155,7 @@ for i in "$@"; do
             s=${s#*step=} 
             InitStep=$s
         ;;
-        one-step=*)
+        step-one=*)
             # only one step
             s=$i
             s=${s#*one-step=} 
