@@ -482,7 +482,6 @@ function ConfigureEnvironment {
     if CheckStep; then
         PrintTitle "Configure Environment"
 
-        Exec "gsettings set com.ubuntu.update-notifier show-apport-crashes false"
         Exec "gsettings set org.gnome.desktop.privacy report-technical-problems false"
 
         Exec "gsettings set org.gnome.desktop.interface clock-show-seconds true"
