@@ -52,19 +52,27 @@ function Echo {
 
 function PrintTitle {
     title=$*
+    nl=""
+    if [[ $PrintCommands == 1 ]]; then
+        nl="\n"
+    fi
     if [[ $title != "" ]]; then
         if [[ $Step == -1 ]]; then
-            printf "\n${title}\n"
+            printf "${nl}${title}\n"
         else
-            printf "\n[$Step]: ${title}\n"
+            printf "${nl}[$Step]: ${title}\n"
         fi
     fi
 }
 
 function PrintSubTitle {
     title=$*
+    nl=""
+    if [[ $PrintCommands == 1 ]]; then
+        nl="\n"
+    fi
     if [[ $title != "" ]]; then
-        printf "\n{$Step}: ${title}\n"
+        printf "${nl}{$Step}: ${title}\n"
     fi
 }
 
