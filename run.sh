@@ -9,6 +9,7 @@ DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 
 User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
+Media='/media/'$User
 OptDir='/opt'
 
 SrcDir=$PwdDir'/src'
@@ -430,9 +431,30 @@ function ConfigureAliase {
 
 function ConfigureDirs {
     if CheckStep; then
-        PrintTitle "Configure Home config"
+        PrintTitle "Configure Dirs"
 
-        Exec "cp -rv ${SrcHomeDir}/.config ${Home}/"
+        Exec "ln -s $Media $Home/usb" "usb"
+
+        Exec "mkdir $Home/msw" "containers"
+        Exec "ln -s /mnt/tc/u $Home/msw/src"
+        Exec "ln -s /mnt/tc/l $Home/msw/lib"
+        Exec "ln -s /mnt/tc/n $Home/msw/bin"
+        Exec "ln -s /mnt/tc/s $Home/msw/signal"
+        function maketcln {
+            disk=$1
+            name=$2
+            Exec "ln -s /mnt/tc/$disk/$name $Home/msw/$name"
+        }
+        maketcln "r" "archive"
+        maketcln "j" "job"
+        maketcln "o" "msw"
+        maketcln "m" "music"
+        maketcln "p" "projects"
+        maketcln "q" "repo"
+        maketcln "w" "soft"
+        maketcln "x" "x"
+
+        Exec "ln -s /mnt/nvme0n1p3" "ext"
     fi
     NextStep
 }
