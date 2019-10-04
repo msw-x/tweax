@@ -578,6 +578,7 @@ function Install {
     InstallTeamviewer
     InstallPostman
     InstallGolang
+    InstallTelegram
 }
 
 function Configure {
