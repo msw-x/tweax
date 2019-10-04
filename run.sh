@@ -570,6 +570,26 @@ function ConfigureStardict {
     NextStep
 }
 
+function ConfigureNetwork {
+    if CheckStep; then
+        PrintTitle "Configure Network"
+
+        eth=$(nmcli device | awk '/ethernet/{print $1; exit}')
+        Exec "nmcli connection add con-name inet type ethernet ifname $eth conn.autoconnect-p -999"
+        Exec "nmcli connection add con-name print type ethernet ifname $eth ipv4.method manual ipv4.addr 195.200.200.57/24 ipv4.gateway 195.200.200.1"
+    fi
+    NextStep
+}
+
+function ConfigureTelegram {
+    if CheckStep; then
+        PrintTitle "Configure Telegram"
+
+        Exec "nohup $OptDir/Telegram/Telegram </dev/null >/dev/null 2>&1 &"
+    fi
+    NextStep
+}
+
 
 function СonfirmationDialog {
     sudo echo
@@ -625,6 +645,8 @@ function Configure {
     ConfigureIndicatorMultiload
     ConfigurePsensor
     ConfigureStardict
+    ConfigureNetwork
+    ConfigureTelegram
 }
 
 function Сompletion {
