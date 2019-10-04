@@ -549,6 +549,7 @@ function ConfigureLocale {
         Exec "sudo locale-gen ru_RU.UTF-8"
         layouts="[('xkb', 'us'), ('xkb', 'ru')]"
         Exec "gsettings set org.gnome.desktop.input-sources sources \"$layouts\""
+        Exec "sudo sed -i 's/ru_RU/en_US/' /etc/default/local"
     fi
     NextStep
 }
