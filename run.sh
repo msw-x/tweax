@@ -375,8 +375,7 @@ function InstallTeamviewer {
         PrintTitle "Install Teamviewer"
 
         Exec 'wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb' "download Teamviewer"
-        Exec "sudo dpkg -i teamviewer_amd64.deb" "install Teamviewer"
-        Exec "sudo apt install -y -f"
+        Exec "sudo dpkg -i teamviewer_amd64.deb ; sudo apt install -y -f" "install Teamviewer"
     fi
     NextStep
 }
