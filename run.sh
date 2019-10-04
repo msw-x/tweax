@@ -383,6 +383,16 @@ function InstallGolang {
     NextStep
 }
 
+function InstallTelegram {
+    if CheckStep; then
+        PrintTitle "Install Telegram"
+
+        Exec "torsocks wget https://telegram.org/dl/desktop/linux -O tsetup.tar.xz" "download Telegram"
+        Exec "sudo tar -C $OptDir xvf tsetup.tar.xz" "install Telegram"
+    fi
+    NextStep
+}
+
 function InstallTruecrypt {
     if CheckStep; then
         PrintTitle "Install Truecrypt"
