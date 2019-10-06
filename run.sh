@@ -256,7 +256,7 @@ function Clean {
     if CheckStep; then
         PrintTitle "Clean"
 
-        Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos'
+        Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos examples.desktop'
 
         Exec 'sudo apt purge -y firefox' "Remove firefox"
         Exec 'sudo apt purge -y update-notifier' "Update Notifier"
