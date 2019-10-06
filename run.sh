@@ -476,7 +476,7 @@ function ConfigureDirs {
         maketcln "w" "soft"
         maketcln "x" "x"
 
-        Exec "ln -s /mnt/nvme0n1p3 $Home/ext" "ext"
+        Exec "ln -s /mnt/ext $Home/ext" "ext"
     fi
     NextStep
 }
