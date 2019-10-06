@@ -99,6 +99,11 @@ function NextStep {
     Step=$(($Step+1))
 }
 
+function AddToFstab {
+    s=$*
+    Exec "echo \"${s}\" | sudo tee -a /etc/fstab"
+}
+
 function AddToBashRC {
     s=$*
     Exec "echo \"${s}\" | tee -a ${Home}/.bashrc"
@@ -166,7 +171,7 @@ for i in "$@"; do
         step-one=*)
             # only one step
             s=$i
-            s=${s#*one-step=} 
+            s=${s#*step-one=} 
             OneStep=$s
         ;;
         *)
@@ -530,6 +535,28 @@ function ConfigureEnvironment {
     NextStep
 }
 
+function ConfigureExtPartition {
+    if CheckStep; then
+        PrintTitle "Configure Ext Partition"
+
+        partition="/dev/nvme0n1p3"
+        mountpoint="/mnt/ext"
+        fstab="/etc/fstab"
+        rule="$partition $mountpoint ext4 defaults 0 2"
+
+        if [ -e "$partition" ]; then
+            if grep "$partition" ${fstab}; then
+                echo "[Warning] partition ${partition} already exist in fstab"
+            else
+                AddToFstab $rule
+            fi
+        else
+            echo "[Warning] partition ${partition} not found"
+        fi
+    fi
+    NextStep
+}
+
 function ConfigureNetwork {
     if CheckStep; then
         PrintTitle "Configure Network"
@@ -668,6 +695,7 @@ function Configure {
     ConfigureHomeConfig
     ConfigureTerminal
     ConfigureEnvironment
+    ConfigureExtPartition
     ConfigureNetwork
     ConfigureLocale
 
