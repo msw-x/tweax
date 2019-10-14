@@ -368,7 +368,7 @@ function InstallWinBox {
         WinBoxDir=$OptDir'/winbox'
         exename='winbox.exe'
         ref='https://mt.lv/winbox'
-        Exec 'wget '$ref "download Winbox"
+        Exec "wget $ref -O $exename" "download Winbox"
         Exec 'sudo mkdir '${WinBoxDir}
         Exec "sudo mv $exename ${WinBoxDir}"
     fi
