@@ -367,7 +367,7 @@ function InstallWinBox {
 
         WinBoxDir=$OptDir'/winbox'
         exename='winbox.exe'
-        ref=$(wget -qO - http://www.mikrotik.com/download/ | egrep -o 'download.mikrotik.com/routeros/winbox/.*?/'$exename)
+        ref='https://mt.lv/winbox'
         Exec 'wget '$ref "download Winbox"
         Exec 'sudo mkdir '${WinBoxDir}
         Exec "sudo mv $exename ${WinBoxDir}"
