@@ -515,11 +515,20 @@ function ConfigureEnvironment {
         LangToggle="['grp:alt_shift_toggle']"
         Exec 'gsettings set org.gnome.desktop.input-sources xkb-options "'$LangToggle'"'
 
-        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal '<Alt>t'"
+        if [[ $DistrVersion == "19.04" ]]; then
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal '<Alt>t'"
 
-        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up '<Alt>Page_Up'"
-        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute '<Alt>Pause'"
-        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down '<Alt>Page_Down'"
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up '<Alt>Page_Up'"
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute '<Alt>Pause'"
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down '<Alt>Page_Down'"
+        fi
+        if [[ $DistrVersion == "19.10" ]]; then
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
+
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
+        fi
 
         FavoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
         Exec "gsettings set org.gnome.shell favorite-apps \"${FavoriteApps}\""
