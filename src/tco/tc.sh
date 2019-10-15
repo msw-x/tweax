@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mount_path="/mnt/tc/"
-containers_path="/media/msw/msw-ssd/o/"
+containers_path="/media/$USER/msw-ssd/o/"
 
 if [ "$#" -eq 0 ]
 then
