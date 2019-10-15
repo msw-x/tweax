@@ -258,10 +258,10 @@ function Clean {
 
         Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos examples.desktop'
 
-        Exec 'sudo apt purge -y firefox' "Remove firefox"
-        Exec 'sudo apt purge -y update-notifier' "Update Notifier"
+        Exec 'sudo apt purge -y firefox' "remove firefox"
+        Exec 'sudo apt purge -y update-notifier' "remove Update Notifier"
         Exec 'sudo apt autoremove -y'
-        Exec 'sudo snap remove gnome-calculator' "Remove gnome-calculator"
+        Exec 'sudo snap remove gnome-calculator' "remove gnome-calculator"
     fi
     NextStep
 }
