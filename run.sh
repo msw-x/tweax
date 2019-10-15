@@ -477,6 +477,7 @@ function ConfigureDirs {
         maketcln "x" "x"
 
         Exec "ln -s /mnt/ext $Home/ext" "ext"
+        Exec "ln -s /mnt/ext/tmp $Home/tmp" "tmp"
     fi
     NextStep
 }
