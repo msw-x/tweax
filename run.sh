@@ -662,6 +662,7 @@ function ConfigureTelegram {
         PrintTitle "Configure Telegram"
 
         Exec "nohup $OptDir/Telegram/Telegram </dev/null >/dev/null 2>&1 &"
+        Exec "sleep 30s" "wait Telegram..."
     fi
     NextStep
 }
@@ -753,6 +754,11 @@ function Configure {
 function Сompletion {
     Step=-1
     PrintTitle "Configuration successfully completed!"
+    read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
+    if [[ $key == 'y' ]]; then
+        echo "rebooting..."
+        reboot
+    fi
 }
 
 function Run {
