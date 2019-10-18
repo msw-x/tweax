@@ -17,6 +17,8 @@ SrcHomeDir=$SrcDir'/home'
 SrcDconfDir=$SrcDir'/dconf'
 SrcDebDir=$SrcDir'/deb'
 
+StepFile=$PwdDir'/step'
+
 Wallpaper="wallpaper.jpg"
 
 GitUser=$User
@@ -140,6 +142,9 @@ function CheckStep {
         return 1
     fi
     if (( Step >= InitStep )); then
+        if [[ $PerformCommands == 1 ]]; then
+            echo "$Step" > "$StepFile"
+        fi
         return 0
     fi
     return 1
@@ -669,6 +674,28 @@ function Launch {
     PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName})"
     if [[ $EUID == 0 ]]; then
         Fatal "the script should not be run from root"
+    fi
+    if (( OneStep == -1 )); then
+        if [ -f $StepFile ]; then
+            LastStep=$(cat $StepFile)
+            NextStep=$(($LastStep+1))
+            echo
+            echo "Last step: "$LastStep
+            echo "    0. Continue from the last step [step: $LastStep]"
+            echo "    1. Continue from the next step [step: $NextStep]"
+            echo "    2. Start from the beginning [step: 1]"
+            read -n 1 -p "Please select action: " key && echo
+            if [[ $key == '0' ]]; then
+                InitStep=$LastStep
+            elif [[ $key == '1' ]]; then
+                InitStep=$NextStep
+            elif [[ $key == '2' ]]; then
+                Step=0
+            else
+                echo "unknown command: "$key
+                exit 1
+            fi
+        fi
     fi
     if [[ $PerformCommands == 1 ]]; then
         СonfirmationDialog
