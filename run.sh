@@ -263,7 +263,10 @@ function Clean {
 
         Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos examples.desktop'
 
+        Exec 'sudo apt purge -y gnome-mahjongg' "remove game mahjongg"
+        Exec 'sudo apt purge -y aisleriot' "remove game solitaire"
         Exec 'sudo apt purge -y firefox' "remove firefox"
+        Exec 'sudo apt purge -y ubuntu-web-launchers' "remove Amazon"
         Exec 'sudo apt purge -y update-notifier' "remove Update Notifier"
         Exec 'sudo apt autoremove -y'
         Exec 'sudo snap remove gnome-calculator' "remove gnome-calculator"
