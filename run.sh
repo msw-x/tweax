@@ -760,10 +760,12 @@ function Configure {
 function Сompletion {
     Step=-1
     PrintTitle "Configuration successfully completed!"
-    read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
-    if [[ $key == 'y' ]]; then
-        echo "rebooting..."
-        reboot
+    if [[ $PerformCommands == 1 ]]; then
+        read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
+        if [[ $key == 'y' ]]; then
+            echo "rebooting..."
+            reboot
+        fi
     fi
 }
 
