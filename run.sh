@@ -11,6 +11,7 @@ User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
 Media='/media/'$User
 OptDir='/opt'
+MntExt='/mnt/ext'
 
 SrcDir=$PwdDir'/src'
 SrcHomeDir=$SrcDir'/home'
@@ -484,8 +485,8 @@ function ConfigureDirs {
         maketcln "w" "soft"
         maketcln "x" "x"
 
-        Exec "ln -s /mnt/ext $Home/ext" "ext"
-        Exec "ln -s /mnt/ext/tmp $Home/tmp" "tmp"
+        Exec "ln -s $MntExt $Home/ext" "ext"
+        Exec "ln -s $MntExt/tmp $Home/tmp" "tmp"
     fi
     NextStep
 }
@@ -561,7 +562,7 @@ function ConfigureExtPartition {
         PrintTitle "Configure Ext Partition"
 
         partition="/dev/nvme0n1p3"
-        mountpoint="/mnt/ext"
+        mountpoint="$MntExt"
         fstab="/etc/fstab"
         rule="$partition $mountpoint ext4 defaults 0 2"
 
@@ -574,6 +575,11 @@ function ConfigureExtPartition {
         else
             echo "[Warning] partition ${partition} not found"
         fi
+
+        if [ ! -d "$mountpoint" ]; then
+            Exec "sudo mkdir $mountpoint"
+        fi
+        Exec "sudo chmod $User:$User $mountpoint"
     fi
     NextStep
 }
