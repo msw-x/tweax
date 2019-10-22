@@ -688,7 +688,7 @@ function Launch {
     if [[ $EUID == 0 ]]; then
         Fatal "the script should not be run from root"
     fi
-    if (( OneStep == -1 )); then
+    if (( OneStep == -1 )) && (( InitStep == 0 )) ; then
         if [ -f $StepFile ]; then
             LastStep=$(cat $StepFile)
             NextStep=$(($LastStep+1))
