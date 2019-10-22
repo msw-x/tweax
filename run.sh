@@ -678,7 +678,7 @@ function ConfigureSmartgit {
 
         Exec "nohup /usr/share/smartgit/bin/smartgit.sh </dev/null >/dev/null 2>&1 &"
         if [[ $PerformCommands == 1 ]]; then
-            key=''
+            key='n'
             until [ $key == 'y' ]; do
                 read -n 1 -p "Smartgit ready for configure? y/n: " key && echo
             done
