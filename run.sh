@@ -579,7 +579,7 @@ function ConfigureExtPartition {
         if [ ! -d "$mountpoint" ]; then
             Exec "sudo mkdir $mountpoint"
         fi
-        Exec "sudo chmod $User:$User $mountpoint"
+        Exec "sudo chown $User:$User $mountpoint"
     fi
     NextStep
 }
