@@ -675,7 +675,6 @@ function ConfigureTelegram {
 
 
 function СonfirmationDialog {
-    sudo echo
     read -n 1 -p "Attention! Are you sure you want to start configuring your system for user '${User}' (${Home})? y/n: " key && echo
     if [[ $key != 'y' ]]; then
         Echo "cancel the installation"
@@ -709,6 +708,9 @@ function Launch {
                 exit 1
             fi
         fi
+    fi
+    if ! eval sudo echo; then
+        Fatal
     fi
     if [[ $PerformCommands == 1 ]]; then
         СonfirmationDialog
