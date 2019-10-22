@@ -611,7 +611,7 @@ function ConfigureMC {
     if CheckStep; then
         PrintTitle "Configure mc"
 
-        Config="$Homw/.config/ini"
+        Config="$Homw/.config/mc/ini"
         Exec "sed -i 's/old_esc_mode=/old_esc_mode=true/' $Config"
         Exec "sed -i 's/old_esc_mode_timeout=/old_esc_mode_timeout=1000/' $Config"
     fi
