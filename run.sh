@@ -676,7 +676,8 @@ function ConfigureSmartgit {
     if CheckStep; then
         PrintTitle "Configure Smartgit"
 
-        Exec "nohup /usr/share/smartgit/bin/smartgit.sh </dev/null >/dev/null 2>&1 &"
+        Exec "nohup /usr/share/smartgit/bin/smartgit.sh </dev/null >/dev/null 2>&1 &" "run Smartgit"
+        Echo "select 'Non-commercial use only'"
         if [[ $PerformCommands == 1 ]]; then
             key='n'
             until [ $key == 'y' ]; do
