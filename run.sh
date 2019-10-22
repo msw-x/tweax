@@ -119,8 +119,8 @@ function AddToProfile {
 
 function AddAliase {
     alias=$*
-    if grep "$alias" ${Home}/.bashrc; then
-        echo "[Warning] alias ${alias} already exist"
+    if grep "$alias" ${Home}/.bashrc >/dev/null; then
+        Echo "[Warning] alias ${alias} already exist"
     else
         AddToBashRC "alias "$alias
     fi
@@ -128,8 +128,8 @@ function AddAliase {
 
 function AddPath {
     path=$*
-    if grep $path ${Home}/.profile; then
-        echo "[Warning] path ${path} already exist"
+    if grep $path ${Home}/.profile >/dev/null; then
+        Echo "[Warning] path ${path} already exist"
     else
         AddToProfile 'export PATH=$PATH:'$path
     fi
@@ -250,8 +250,8 @@ function Startup {
     Exec 'mkdir '${TmpDir}
     Exec 'cd '${TmpDir}
 
-    if sudo grep timestamp_timeout /etc/sudoers; then
-        echo "[Warning] can't disable sudo timeout"
+    if sudo grep timestamp_timeout /etc/sudoers >/dev/null; then
+        Echo "[Warning] can't disable sudo timeout"
     else
         Exec 'sudo sed -i "10i Defaults        timestamp_timeout=-1" /etc/sudoers'
     fi
@@ -567,13 +567,13 @@ function ConfigureExtPartition {
         rule="$partition $mountpoint ext4 defaults 0 2"
 
         if [ -e "$partition" ]; then
-            if grep "$partition" ${fstab}; then
-                echo "[Warning] partition ${partition} already exist in fstab"
+            if grep "$partition" ${fstab} >/dev/null; then
+                Echo "[Warning] partition ${partition} already exist in fstab"
             else
                 AddToFstab $rule
             fi
         else
-            echo "[Warning] partition ${partition} not found"
+            Echo "[Warning] partition ${partition} not found"
         fi
 
         if [ ! -d "$mountpoint" ]; then
@@ -668,7 +668,28 @@ function ConfigureTelegram {
         PrintTitle "Configure Telegram"
 
         Exec "nohup $OptDir/Telegram/Telegram </dev/null >/dev/null 2>&1 &"
-        Exec "sleep 30s" "wait Telegram..."
+    fi
+    NextStep
+}
+
+function ConfigureSmartgit {
+    if CheckStep; then
+        PrintTitle "Configure Smartgit"
+
+        Exec "/usr/share/smartgit/bin/smartgit.sh"
+        if [[ $PerformCommands == 1 ]]; then
+            until [ $key == 'y' ]; do
+                read -n 1 -p "Smartgit ready for configure? y/n: " key && echo
+            done
+        fi
+        ConfFile="preferences.yml"
+        ConfDir="$Home/.config/smartgit"
+        Version=$(ls -1 $ConfDir | awk '/[0-9]/{print $1; exit}')
+        ConfPath="$ConfDir/$Version/$ConfFile"
+        Echo "version: $Version"
+        Echo "config: $ConfPath"
+        DateFormat="dateFormat: {datePattern: dd.MM.yyyy, timePattern: 'HH:mm', showTimeForLastDays: false}"
+        Exec "sed -i 's/^dateFormat:.*/$DateFormat/' $ConfPath"
     fi
     NextStep
 }
@@ -757,6 +778,7 @@ function Configure {
     ConfigurePsensor
     ConfigureStardict
     ConfigureTelegram
+    ConfigureSmartgit
 }
 
 function Сompletion {
