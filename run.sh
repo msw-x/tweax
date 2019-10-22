@@ -607,17 +607,6 @@ function ConfigureLocale {
     NextStep
 }
 
-function ConfigureMC {
-    if CheckStep; then
-        PrintTitle "Configure mc"
-
-        Config="$Home/.config/mc/ini"
-        Exec "sed -i 's/^old_esc_mode=.*/old_esc_mode=true/' $Config"
-        Exec "sed -i 's/^old_esc_mode_timeout=.*/old_esc_mode_timeout=1000/' $Config"
-    fi
-    NextStep
-}
-
 function ConfigureGit {
     if CheckStep; then
         PrintTitle "Configure Git"
@@ -707,6 +696,18 @@ function ConfigureSmartgit {
     NextStep
 }
 
+function ConfigureMC {
+    if CheckStep; then
+        PrintTitle "Configure mc"
+
+        Exec "mc"
+        Config="$Home/.config/mc/ini"
+        Exec "sed -i 's/^old_esc_mode=.*/old_esc_mode=true/' $Config"
+        Exec "sed -i 's/^old_esc_mode_timeout=.*/old_esc_mode_timeout=1000/' $Config"
+    fi
+    NextStep
+}
+
 
 function СonfirmationDialog {
     read -n 1 -p "Attention! Are you sure you want to start configuring your system for user '${User}' (${Home})? y/n: " key && echo
@@ -785,7 +786,6 @@ function Configure {
     ConfigureNetwork
     ConfigureLocale
 
-    ConfigureMC
     ConfigureGit
     ConfigureImwheel
     ConfigureIndicatorMultiload
@@ -793,6 +793,7 @@ function Configure {
     ConfigureStardict
     ConfigureTelegram
     ConfigureSmartgit
+    ConfigureMC
 }
 
 function Сompletion {
