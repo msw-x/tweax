@@ -648,6 +648,15 @@ function ConfigurePsensor {
     NextStep
 }
 
+function ConfigureVirtualBox {
+    if CheckStep; then
+        PrintTitle "Configure VirtualBox"
+
+        Exec "sudo usermod -a -G vboxusers $USER" "enable devices (including usb)"
+    fi
+    NextStep
+}
+
 function ConfigureStardict {
     if CheckStep; then
         PrintTitle "Configure Stardict"
@@ -790,6 +799,7 @@ function Configure {
     ConfigureImwheel
     ConfigureIndicatorMultiload
     ConfigurePsensor
+    ConfigureVirtualBox
     ConfigureStardict
     ConfigureTelegram
     ConfigureSmartgit
