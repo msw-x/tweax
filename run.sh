@@ -301,7 +301,7 @@ function Upgrading {
 function InstallOverApt {
     if CheckStep; then
         PrintTitle "Install from Apt"
-    
+
         for i in $AptList; do
             AptInstall $i
         done
