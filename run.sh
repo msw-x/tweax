@@ -135,6 +135,15 @@ function AddPath {
     fi
 }
 
+function CheckStepIfDisabled {
+    for i in $DisabledStepsList; do
+        if (( $i == $1 )); then
+            return 1
+        fi
+    done
+    return 0
+}
+
 function CheckStep {
     if (( OneStep != -1 )); then
         if (( Step == OneStep )); then
@@ -142,7 +151,7 @@ function CheckStep {
         fi
         return 1
     fi
-    if (( Step >= InitStep )); then
+    if (( Step >= InitStep )) && CheckStepIfDisabled Step; then
         if [[ $PerformCommands == 1 ]]; then
             echo "$Step" > "$StepFile"
         fi
@@ -154,11 +163,12 @@ function CheckStep {
 for i in "$@"; do
     case $i in
         help)
-            echo "help       - print this help"
-            echo "list       - print list of operations"
-            echo "list-short - print short list of operations"
-            echo "step       - initial step"
-            echo "step-one   - perform only one step"
+            echo "help         - print this help"
+            echo "list         - print list of operations"
+            echo "list-short   - print short list of operations"
+            echo "step         - initial step"
+            echo "step-one     - perform only one step"
+            echo "step-disable - list of disabled steps, for example: 4,8,26"
             exit 0
         ;;
         list)
@@ -171,14 +181,20 @@ for i in "$@"; do
         step=*)
             # init step
             s=$i
-            s=${s#*step=} 
+            s=${s#*step=}
             InitStep=$s
         ;;
         step-one=*)
             # only one step
             s=$i
-            s=${s#*step-one=} 
+            s=${s#*step-one=}
             OneStep=$s
+        ;;
+        step-disable=*)
+            s=$i
+            s=${s#*step-disable=}
+            DisabledStepsList=$s
+            DisabledStepsList=$(echo "$DisabledStepsList" | sed 's/,/ /g')
         ;;
         *)
             Fatal "unknown command: "$i
