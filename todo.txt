@@ -1,3 +1,12 @@
 sub-step
 группировка ярлыков в меню
 config VirtualBox vm dirs: /home/msw/ext/vm
+sudo apt install ubuntu-restricted-extras - кодеки (есть диалог при установке)
+sudo apt install graphviz
+sudo apt install ffmpeg
+sudo apt install filezilla
+
+sudo pip3 install numpy
+sudo pip3 install imutils
+sudo pip3 install opencv-contrib-python
+
