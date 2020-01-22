@@ -219,6 +219,7 @@ AptList='
     indicator-multiload
 
     mc
+    filezilla
 
     git
     gitk
@@ -249,14 +250,17 @@ AptList='
 
     vlc
     gimp
+    ffmpeg
     openshot
     audacity
+    graphviz
     gtk-recordmydesktop
 
     torbrowser-launcher
 '
 AptListDialog='
     wireshark
+    ubuntu-restricted-extras
     virtualbox-ext-pack
 '
 
