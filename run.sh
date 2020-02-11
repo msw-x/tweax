@@ -229,10 +229,12 @@ AptList='
     curl
     pkg-config
     libboost-all-dev
+    nlohmann-json3-dev
 
     wine
     virtualbox
     virtualbox-guest-additions-iso
+    docker.io
 
     p7zip-full
     unrar
@@ -257,6 +259,8 @@ AptList='
     gtk-recordmydesktop
 
     torbrowser-launcher
+
+    pgadmin3
 '
 AptListDialog='
     wireshark
