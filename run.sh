@@ -264,6 +264,7 @@ AptList='
     pgadmin3
 '
 AptListDialog='
+    smartmontools
     wireshark
     ubuntu-restricted-extras
     virtualbox-ext-pack
