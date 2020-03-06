@@ -245,6 +245,7 @@ AptList='
     picocom
     minicom
 
+    okular
     stardict
     sublime-text
 
