@@ -11,3 +11,5 @@ sudo pip3 install opencv-contrib-python
 
 install storage-monitor
 download, make and install opencv from source
+
+skype
