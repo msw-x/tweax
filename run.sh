@@ -255,7 +255,7 @@ AptList='
     openshot
     audacity
     graphviz
-    gtk-recordmydesktop
+    recordmydesktop
 
     torbrowser-launcher
 
