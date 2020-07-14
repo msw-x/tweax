@@ -245,7 +245,6 @@ AptList='
     minicom
 
     okular
-    stardict
     sublime-text
 
     qalculate
@@ -458,6 +457,18 @@ function InstallEtcher {
         Exec "unzip etcher.zip" "install Balena Etcher"
         Exec "sudo mkdir $OptDir/etcher"
         Exec "sudo mv *.AppImage $OptDir/etcher/etcher"
+    fi
+    NextStep
+}
+
+function InstallStardict {
+    if CheckStep; then
+        PrintTitle "Install Stardict"
+
+        ref=$(wget -qO- http://stardict-4.sourceforge.net/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*stardict.*deb.*')
+
+        Exec "wget $ref -O stardict.deb" "download Stardict"
+        Exec "sudo dpkg -i stardict.deb" "install Stardict"
     fi
     NextStep
 }
@@ -836,6 +847,7 @@ function Install {
     InstallGolang
     InstallTelegram
     InstallEtcher
+    InstallStardict
 }
 
 function Configure {
