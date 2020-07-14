@@ -303,8 +303,8 @@ function AddAptRepositories {
     if CheckStep; then
         PrintTitle "Add repositories"
 
-        Exec 'echo "deb https://deb.etcher.io stable etcher" | sudo tee /etc/apt/sources.list.d/balena-etcher.list'
-        Exec 'sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61' "add Etcher repository"
+        #Exec 'echo "deb https://deb.etcher.io stable etcher" | sudo tee /etc/apt/sources.list.d/balena-etcher.list'
+        #Exec 'sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61' "add Etcher repository"
 
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
@@ -445,6 +445,20 @@ function InstallTelegram {
 
         Exec "wget https://telegram.org/dl/desktop/linux -O tsetup.tar.xz" "download Telegram"
         Exec "sudo tar -C $OptDir -xvf tsetup.tar.xz" "install Telegram"
+    fi
+    NextStep
+}
+
+function InstallEtcher {
+    if CheckStep; then
+        PrintTitle "Install Balena Etcher"
+
+        ref=$(wget -qO- https://www.balena.io/etcher/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*balena-etcher-electron.*-linux-x64.zip')
+
+        Exec "wget $ref -O etcher.zip" "download Balena Etcher"
+        Exec "unzip etcher.zip" "install Balena Etcher"
+        Exec "sudo mkdir $OptDir/etcher"
+        Exec "sudo mv *.AppImage $OptDir/etcher/etcher"
     fi
     NextStep
 }
@@ -813,6 +827,7 @@ function Install {
     InstallPostman
     InstallGolang
     InstallTelegram
+    InstallEtcher
 }
 
 function Configure {
