@@ -209,7 +209,6 @@ AptList='
     iftop
     lnav
     gparted
-    balena-etcher-electron
 
     imwheel
     dconf-editor
