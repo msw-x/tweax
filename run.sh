@@ -727,6 +727,15 @@ function ConfigureTelegram {
     NextStep
 }
 
+function ConfigureEtcher {
+    if CheckStep; then
+        PrintTitle "Configure Telegram"
+
+        Exec "nohup $OptDir/etcher/etcher </dev/null >/dev/null 2>&1 &"
+    fi
+    NextStep
+}
+
 function ConfigureSmartgit {
     if CheckStep; then
         PrintTitle "Configure Smartgit"
@@ -849,6 +858,7 @@ function Configure {
     ConfigureVirtualBox
     ConfigureStardict
     ConfigureTelegram
+    ConfigureEtcher
     ConfigureSmartgit
     ConfigureMC
 }
