@@ -799,6 +799,15 @@ function ConfigureSmartgit {
     NextStep
 }
 
+function ConfigureArduino {
+    if CheckStep; then
+        PrintTitle "Configure Arduino"
+
+        Exec "sudo usermod -a -G dialout $User"
+    fi
+    NextStep
+}
+
 function ConfigureMC {
     if CheckStep; then
         PrintTitle "Configure mc"
@@ -905,6 +914,7 @@ function Configure {
     ConfigureTelegram
     ConfigureEtcher
     ConfigureSmartgit
+    ConfigureArduino
     ConfigureMC
 }
 
