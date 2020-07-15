@@ -848,7 +848,9 @@ function Install {
     InstallGolang
     InstallTelegram
     InstallEtcher
-    InstallStardict
+    if [[ $DistrVersion != "20.04" ]]; then
+        InstallStardict
+    fi
 }
 
 function Configure {
@@ -868,7 +870,9 @@ function Configure {
     ConfigureIndicatorMultiload
     ConfigurePsensor
     ConfigureVirtualBox
-    ConfigureStardict
+    if [[ $DistrVersion != "20.04" ]]; then
+        ConfigureStardict
+    fi
     ConfigureTelegram
     ConfigureEtcher
     ConfigureSmartgit
