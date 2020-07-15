@@ -370,11 +370,12 @@ function InstallSmartsynchronize {
     if CheckStep; then
         PrintTitle "Install Smartsynchronize"
 
-        version=$(wget -qO - https://www.syntevo.com/smartsynchronize/download/ | awk '/Version [0-9]/{print $2}')
-        Echo "version: "$version
-        version=$(echo "${version}" | sed 's/\./_/g')
-        Exec "wget https://www.syntevo.com/downloads/smartsynchronize/smartsynchronize-${version}.deb" "download Smartsynchronize"
-        Exec "sudo dpkg -i smartsynchronize-${version}.deb" "install Smartsynchronize"
+        ref=$(wget -qO- https://www.syntevo.com/smartsynchronize/download/ | grep -Eo 'href="[^\"]+"' | grep -Eo '/downloads.*.deb')
+        ref=https://www.syntevo.com$ref
+        Echo $ref
+
+        Exec "wget $ref -O smartsynchronize.deb" "download Smartsynchronize"
+        Exec "sudo dpkg -i smartsynchronize.deb" "install Smartsynchronize"
     fi
     NextStep
 }
