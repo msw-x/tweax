@@ -462,6 +462,18 @@ function InstallEtcher {
     NextStep
 }
 
+function InstallSkype {
+    if CheckStep; then
+        PrintTitle "Install Skype"
+
+        ref="https://go.skype.com/skypeforlinux-64.deb"
+
+        Exec "wget $ref -O skype.deb" "download Skype"
+        Exec "sudo dpkg -i skype.deb" "install Skype"
+    fi
+    NextStep
+}
+
 function InstallStardict {
     if CheckStep; then
         PrintTitle "Install Stardict"
@@ -864,6 +876,7 @@ function Install {
     InstallGolang
     InstallTelegram
     InstallEtcher
+    InstallSkype
     if [[ $DistrVersion != "20.04" ]]; then
         InstallStardict
     fi
