@@ -466,7 +466,7 @@ function InstallStardict {
     if CheckStep; then
         PrintTitle "Install Stardict"
 
-        ref=$(wget -qO- http://stardict-4.sourceforge.net/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*stardict.*deb.*')
+        ref=$(wget -qO- http://stardict-4.sourceforge.net/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*stardict.*deb.*download')
 
         Exec "wget $ref -O stardict.deb" "download Stardict"
         Exec "sudo dpkg -i stardict.deb" "install Stardict"
