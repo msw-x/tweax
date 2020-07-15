@@ -430,10 +430,10 @@ function InstallGolang {
     if CheckStep; then
         PrintTitle "Install Golang"
 
-        ref=$(wget -qO - https://golang.org/dl/ | egrep -o 'https://dl.google.com/go/go.*?linux-amd64.tar.gz' -m 1)
-        filename=$(echo $ref | sed -n 's|http.*go/||p')
-        Exec "wget ${ref}" "download Golang"
-        Exec "sudo tar -C $OptDir -xzf $filename" "install Golang"
+        ref=$(wget -qO- https://golang.org/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo '/dl/go.*linux-amd64.tar.gz' -m 1)
+        ref=https://golang.org$ref
+        Exec "wget ${ref} -O golang.tar.gz" "download Golang"
+        Exec "sudo tar -C $OptDir -xzf golang.tar.gz" "install Golang"
     fi
     NextStep
 }
