@@ -1,6 +1,3 @@
-https://www.glump.net/howto/desktop/create-global-shortcut-keys-for-rhythmbox-music-player-in-any-desktop
-rhytmybox settings
-
 sub-step
 группировка ярлыков в меню
 config VirtualBox vm dirs: /home/msw/ext/vm

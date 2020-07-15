@@ -610,6 +610,22 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-home false"
         Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-trash false"
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false"
+
+        key="org.gnome.settings-daemon.plugins.media-keys"
+        subkey="custom-keybindings"
+        custom0="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+        custom1="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+        custom2="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+        Exec "gsettings set $key $subkey \"['$custom0', '$custom1', '$custom2']\""
+        Exec "gsettings set $key.$subkey:$custom0 name 'Rhythmbox play-pause'"
+        Exec "gsettings set $key.$subkey:$custom0 command 'rhythmbox-client --play-pause'"
+        Exec "gsettings set $key.$subkey:$custom0 binding '<Alt>Insert'"
+        Exec "gsettings set $key.$subkey:$custom1 name 'Rhythmbox previous'"
+        Exec "gsettings set $key.$subkey:$custom1 command 'rhythmbox-client --previous'"
+        Exec "gsettings set $key.$subkey:$custom1 binding '<Alt>Delete'"
+        Exec "gsettings set $key.$subkey:$custom2 name 'Rhythmbox next'"
+        Exec "gsettings set $key.$subkey:$custom2 command 'rhythmbox-client --next'"
+        Exec "gsettings set $key.$subkey:$custom2 binding '<Alt>End'"
     fi
     NextStep
 }
