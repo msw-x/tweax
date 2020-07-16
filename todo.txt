@@ -8,5 +8,3 @@ sudo pip3 install imutils
 sudo pip3 install opencv-contrib-python
 
 download, make and install opencv from source
-
-install storage-monitor

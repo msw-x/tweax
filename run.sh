@@ -260,6 +260,8 @@ AptList='
     torbrowser-launcher
 
     pgadmin3
+
+    gir1.2-appindicator3-0.1
 '
 AptListDialog='
     smartmontools
@@ -474,6 +476,16 @@ function InstallSkype {
     NextStep
 }
 
+function InstallStorageIndicator {
+    if CheckStep; then
+        PrintTitle "Install Storage indicator"
+
+        Exec "git clone git://mswo.ru/msw/storage-indicator" "download Storage indicator"
+        Exec 'sudo storage-indicator/install.sh' "install Storage indicator"
+    fi
+    NextStep
+}
+
 function InstallStardict {
     if CheckStep; then
         PrintTitle "Install Stardict"
@@ -491,7 +503,7 @@ function InstallTruecrypt {
         PrintTitle "Install Truecrypt"
 
         Exec "tar xvf $SrcDebDir/truecrypt-7.1a-linux-console-x64.tar.gz" "unpack Truecrypt"
-        Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"        
+        Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"
 
         Exec "sudo cp -rv ${SrcDir}/tco ${OptDir}/" "install tc"
     fi
@@ -885,6 +897,7 @@ function Install {
     InstallTelegram
     InstallEtcher
     InstallSkype
+    InstallStorageIndicator
     if [[ $DistrVersion != "20.04" ]]; then
         InstallStardict
     fi
