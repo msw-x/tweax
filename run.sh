@@ -391,6 +391,7 @@ function InstallArduino {
         Exec 'cd arduino-nightly'
         Exec 'sudo ./install.sh' "install Arduino"
         Exec 'rm -rf ~/Desktop/*'
+        Exec 'cd ..'
     fi
     NextStep
 }
@@ -481,7 +482,9 @@ function InstallStorageIndicator {
         PrintTitle "Install Storage indicator"
 
         Exec "git clone git://mswo.ru/msw/storage-indicator" "download Storage indicator"
-        Exec 'sudo storage-indicator/install.sh' "install Storage indicator"
+        Exec 'cd storage-indicator'
+        Exec 'sudo ./install.sh' "install Storage indicator"
+        Exec 'cd ..'
     fi
     NextStep
 }
