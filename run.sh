@@ -12,6 +12,7 @@ Home='/home/'$User
 Media='/media/'$User
 OptDir='/opt'
 MntExt='/mnt/ext'
+VmPath=$MntExt'/vm'
 
 SrcDir=$PwdDir'/src'
 SrcHomeDir=$SrcDir'/home'
@@ -752,6 +753,18 @@ function ConfigureVirtualBox {
         PrintTitle "Configure VirtualBox"
 
         Exec "sudo usermod -a -G vboxusers $USER" "enable devices (including usb)"
+
+        Exec "nohup virtualbox </dev/null >/dev/null 2>&1 &"
+        if [[ $PerformCommands == 1 ]]; then
+            key='n'
+            until [ $key == 'y' ]; do
+                read -n 1 -p "Please close VirtualBox. Continue configure? y/n: " key && echo
+            done
+        fi
+        ConfFile="$Home/.config/VirtualBox/VirtualBox.xml"
+        exp='(defaultMachineFolder=)"[^\"]+"'
+        path="\"$VmPath\""
+        Exec "sed -i -E 's|$exp|\1$path|' $ConfFile"
     fi
     NextStep
 }
