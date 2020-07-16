@@ -484,7 +484,7 @@ function InstallStorageIndicator {
 
         Exec "git clone git://mswo.ru/msw/storage-indicator" "download Storage indicator"
         Exec 'cd storage-indicator'
-        Exec 'sudo ./install.sh' "install Storage indicator"
+        Exec './install.sh' "install Storage indicator"
         Exec 'cd ..'
     fi
     NextStep
