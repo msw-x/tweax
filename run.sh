@@ -240,6 +240,7 @@ AptList='
     unrar
 
     nmap
+    socat
     traceroute
 
     picocom
