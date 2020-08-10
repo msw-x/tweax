@@ -9,3 +9,6 @@ sudo pip3 install opencv-python
 sudo pip3 install opencv-contrib-python
 
 download, make and install opencv from source
+
+sudo systemctl disable rsyslog
+history -cw
