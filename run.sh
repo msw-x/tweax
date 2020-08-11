@@ -228,6 +228,7 @@ AptList='
     cmake
     curl
     pkg-config
+    libpcap-dev
     libboost-all-dev
     nlohmann-json3-dev
 
