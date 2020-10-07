@@ -258,6 +258,7 @@ AptList='
     openshot
     audacity
     graphviz
+    vokoscreen-ng
     recordmydesktop
 
     torbrowser-launcher
