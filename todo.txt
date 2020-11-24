@@ -1,6 +1,8 @@
 sub-step
 группировка ярлыков в меню
 
+dpkg --print-architecture
+
 install golang for arm
 https://askubuntu.com/questions/59126/reload-bashs-profile-without-logging-out-and-back-in-again
 go get golang.org/x/tools/cmd/stringer
