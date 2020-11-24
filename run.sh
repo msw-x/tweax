@@ -6,6 +6,7 @@ PwdDir=$(pwd)
 DistrName=$(cat /etc/*-release | sed -n 's/^ID=//p')
 DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
 DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
+DistrArch=$(dpkg --print-architecture)
 
 User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
@@ -352,8 +353,8 @@ function InstallChrome {
     if CheckStep; then
         PrintTitle "Install Chrome"
 
-        Exec 'wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' "download Chrome"
-        Exec 'sudo dpkg -i google-chrome-stable_current_amd64.deb' "install Chrome"
+        Exec "wget https://dl.google.com/linux/direct/google-chrome-stable_current_${DistrArch}.deb" "download Chrome"
+        Exec "sudo dpkg -i google-chrome-stable_current_${DistrArch}.deb" "install Chrome"
     fi
     NextStep
 }
@@ -418,8 +419,8 @@ function InstallTeamviewer {
     if CheckStep; then
         PrintTitle "Install Teamviewer"
 
-        Exec 'wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb' "download Teamviewer"
-        Exec "sudo dpkg -i teamviewer_amd64.deb ; sudo apt install -y -f" "install Teamviewer"
+        Exec "wget https://download.teamviewer.com/download/linux/teamviewer_${DistrArch}.deb" "download Teamviewer"
+        Exec "sudo dpkg -i teamviewer_${DistrArch}.deb ; sudo apt install -y -f" "install Teamviewer"
     fi
     NextStep
 }
@@ -437,7 +438,7 @@ function InstallGolang {
     if CheckStep; then
         PrintTitle "Install Golang"
 
-        ref=$(wget -qO- https://golang.org/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo '/dl/go.*linux-amd64.tar.gz' -m 1)
+        ref=$(wget -qO- https://golang.org/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-${DistrArch}.tar.gz" -m 1)
         ref=https://golang.org$ref
         Exec "wget ${ref} -O golang.tar.gz" "download Golang"
         Exec "sudo tar -C $OptDir -xzf golang.tar.gz" "install Golang"
@@ -860,7 +861,7 @@ function СonfirmationDialog {
 }
 
 function Launch {
-    PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName})"
+    PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName}) ${DistrArch}"
     if [[ $EUID == 0 ]]; then
         Fatal "the script should not be run from root"
     fi
