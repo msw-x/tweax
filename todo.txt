@@ -1,6 +1,11 @@
 sub-step
 группировка ярлыков в меню
 
+install golang for arm
+https://askubuntu.com/questions/59126/reload-bashs-profile-without-logging-out-and-back-in-again
+go get golang.org/x/tools/cmd/stringer
+go get golang.org/x/tools/cmd/goimports
+
 sudo apt install -y python3-pip
 sudo pip3 install toml
 sudo pip3 install numpy
