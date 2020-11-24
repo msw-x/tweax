@@ -228,6 +228,7 @@ AptList='
     cmake
     curl
     pkg-config
+    libpcap-dev
     libboost-all-dev
     nlohmann-json3-dev
 
@@ -257,6 +258,7 @@ AptList='
     openshot
     audacity
     graphviz
+    vokoscreen-ng
     recordmydesktop
 
     torbrowser-launcher
