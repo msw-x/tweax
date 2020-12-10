@@ -20,6 +20,8 @@ SrcHomeDir=$SrcDir'/home'
 SrcDconfDir=$SrcDir'/dconf'
 SrcDebDir=$SrcDir'/deb'
 
+SourcesListFile="/etc/apt/sources.list.back"
+
 StepFile=$PwdDir'/step'
 
 Wallpaper="wallpaper.jpg"
@@ -135,6 +137,15 @@ function AddPath {
     else
         AddToProfile 'export PATH=$PATH:'$path
     fi
+}
+
+function AddAptPortSource {
+    suffix=$1
+    if [[ $suffix != "" ]]; then
+        suffix="-${suffix}"
+    fi
+    s="deb [arch=armhf,arm64] http://ports.ubuntu.com/ ${DistrCodeName}${suffix} main restricted universe multiverse"
+    Exec "echo '${s}' | sudo tee -a ${SourcesListFile}"
 }
 
 function CheckStepIfDisabled {
@@ -311,11 +322,19 @@ function AddAptRepositories {
     if CheckStep; then
         PrintTitle "Add repositories"
 
-        #Exec 'echo "deb https://deb.etcher.io stable etcher" | sudo tee /etc/apt/sources.list.d/balena-etcher.list'
-        #Exec 'sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61' "add Etcher repository"
-
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
+
+        Exec "sudo sed -i \"s/deb http/deb [arch=${DistrArch}] http/\" ${SourcesListFile}"
+
+        Exec "echo '' | sudo tee -a ${SourcesListFile}"
+        AddAptPortSource
+        AddAptPortSource "security"
+        AddAptPortSource "updates"
+        AddAptPortSource "backports"
+
+        Exec "sudo dpkg --add-architecture armhf"
+        Exec "sudo dpkg --add-architecture arm64"
     fi
     NextStep
 }
