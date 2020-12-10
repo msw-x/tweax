@@ -232,6 +232,9 @@ AptList='
     libpcap-dev
     libboost-all-dev
     nlohmann-json3-dev
+    crossbuild-essential-arm64
+    crossbuild-essential-armel
+    crossbuild-essential-armhf
 
     wine
     virtualbox
