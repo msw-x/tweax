@@ -12,7 +12,3 @@ download, make and install opencv from source
 
 sudo systemctl disable rsyslog
 history -cw
-
-crossbuild-essential-arm64
-crossbuild-essential-armel
-crossbuild-essential-armhf
