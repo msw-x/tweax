@@ -236,6 +236,7 @@ AptList='
     crossbuild-essential-arm64
     crossbuild-essential-armel
     crossbuild-essential-armhf
+    arduino
 
     wine
     virtualbox
@@ -898,7 +899,7 @@ function Install {
     InstallChrome
     InstallSmartgit
     InstallSmartsynchronize
-    InstallArduino
+    #InstallArduino
     InstallWinBox
     InstallTeamviewer
     InstallPostman
