@@ -256,7 +256,7 @@ AptList='
     okular
     sublime-text
 
-    qalculate
+    qalculate-gtk
 
     vlc
     gimp
