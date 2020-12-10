@@ -368,6 +368,10 @@ function InstallSmartgit {
         PrintTitle "Install Smartgit"
 
         version=$(wget -qO - https://www.syntevo.com/smartgit/download/ | awk '/Version [0-9]/{print $2}')
+        pointcount=$(echo "${version}" | tr -cd . | wc -c)
+        if [[ $pointcount == 1 ]]; then
+            version="${version}.0"
+        fi
         Echo "version: "$version
         version=$(echo "${version}" | sed 's/\./_/g')
         Exec "wget https://www.syntevo.com/downloads/smartgit/smartgit-${version}.deb" "download Smartgit"
