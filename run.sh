@@ -498,18 +498,6 @@ function InstallStorageIndicator {
     NextStep
 }
 
-function InstallStardict {
-    if CheckStep; then
-        PrintTitle "Install Stardict"
-
-        ref=$(wget -qO- http://stardict-4.sourceforge.net/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*stardict.*deb.*download')
-
-        Exec "wget $ref -O stardict.deb" "download Stardict"
-        Exec "sudo dpkg -i stardict.deb" "install Stardict"
-    fi
-    NextStep
-}
-
 function InstallTruecrypt {
     if CheckStep; then
         PrintTitle "Install Truecrypt"
@@ -789,21 +777,6 @@ function ConfigureVirtualBox {
     NextStep
 }
 
-function ConfigureStardict {
-    if CheckStep; then
-        PrintTitle "Configure Stardict"
-
-        #https://www.sites.google.com/site/gtonguedict/home/stardict-dictionaries
-        Exec "wget http://downloads.sourceforge.net/xdxf/stardict-comn_sdict05_eng_rus_full-2.4.2.tar.bz2"
-        Exec "wget http://downloads.sourceforge.net/xdxf/stardict-comn_sdict05_rus_eng_full-2.4.2.tar.bz2"
-        for f in stardict*tar.bz2
-        do
-            Exec "sudo tar -xjvf $f -C /usr/share/stardict/dic"
-        done
-    fi
-    NextStep
-}
-
 function ConfigureTelegram {
     if CheckStep; then
         PrintTitle "Configure Telegram"
@@ -934,9 +907,6 @@ function Install {
     InstallEtcher
     InstallSkype
     InstallStorageIndicator
-    if [[ $DistrVersion != "20.04" ]]; then
-        InstallStardict
-    fi
 }
 
 function Configure {
@@ -956,9 +926,6 @@ function Configure {
     ConfigureIndicatorMultiload
     ConfigurePsensor
     ConfigureVirtualBox
-    if [[ $DistrVersion != "20.04" ]]; then
-        ConfigureStardict
-    fi
     ConfigureTelegram
     ConfigureEtcher
     ConfigureSmartgit
