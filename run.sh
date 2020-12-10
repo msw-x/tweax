@@ -597,7 +597,7 @@ function ConfigureEnvironment {
     if CheckStep; then
         PrintTitle "Configure Environment"
 
-        Echo "for debug gsettings use 'dconf-editor' or 'dconf dump /'"
+        Echo "Hint: for debug gsettings use 'dconf-editor' or 'dconf dump /'"
 
         Exec "gsettings set org.gnome.desktop.privacy report-technical-problems false"
 
