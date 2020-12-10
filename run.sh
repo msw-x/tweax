@@ -597,6 +597,8 @@ function ConfigureEnvironment {
     if CheckStep; then
         PrintTitle "Configure Environment"
 
+        Echo "for debug gsettings use 'dconf-editor' or 'dconf dump /'"
+
         Exec "gsettings set org.gnome.desktop.privacy report-technical-problems false"
 
         Exec "gsettings set org.gnome.desktop.interface clock-show-seconds true"
@@ -605,6 +607,8 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.desktop.interface clock-format '24h'"
 
         Exec "gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'"
+
+        Exec "gsettings set org.gnome.shell.extensions.user-theme name 'Yaru-dark'"
 
         LangToggle="['grp:alt_shift_toggle']"
         Exec 'gsettings set org.gnome.desktop.input-sources xkb-options "'$LangToggle'"'
@@ -624,6 +628,13 @@ function ConfigureEnvironment {
             Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
         fi
         if [[ $DistrVersion == "20.04" ]]; then
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
+
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
+        fi
+        if [[ $DistrVersion == "20.10" ]]; then
             Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
 
             Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
