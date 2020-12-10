@@ -215,6 +215,7 @@ AptList='
     imwheel
     dconf-editor
     gnome-tweak-tool
+    gnome-shell-extensions
 
     psensor
     indicator-multiload
@@ -609,6 +610,7 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'"
 
         Exec "gsettings set org.gnome.shell.extensions.user-theme name 'Yaru-dark'"
+        Exec "gsettings set org.gnome.shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\""
 
         LangToggle="['grp:alt_shift_toggle']"
         Exec 'gsettings set org.gnome.desktop.input-sources xkb-options "'$LangToggle'"'
