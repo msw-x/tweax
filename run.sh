@@ -269,8 +269,6 @@ AptList='
 
     torbrowser-launcher
 
-    pgadmin3
-
     gir1.2-appindicator3-0.1
 '
 AptListDialog='
