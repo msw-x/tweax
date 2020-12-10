@@ -20,7 +20,7 @@ SrcHomeDir=$SrcDir'/home'
 SrcDconfDir=$SrcDir'/dconf'
 SrcDebDir=$SrcDir'/deb'
 
-SourcesListFile="/etc/apt/sources.list.back"
+SourcesListFile="/etc/apt/sources.list"
 
 StepFile=$PwdDir'/step'
 
