@@ -1,5 +1,7 @@
 #!/bin/bash
 
+start=$(date +%s)
+
 TmpDir='/tmp/install-'$(date +%s%N)
 PwdDir=$(pwd)
 
@@ -37,12 +39,17 @@ OneStep=-1
 InitStep=0
 
 
+function PrintTime {
+    echo "execution time $(date -d @$(($(date +%s)-$start)) +"%Mm %Ss")"
+}
+
 function Fatal {
     msg=$*
     step=""
     if [[ $Step != -1 ]]; then
         step="[$Step]"
     fi
+    PrintTime
     if [[ $msg == "" ]]; then
         echo "[ERROR]${step}"
     else
@@ -958,6 +965,7 @@ function Configure {
 function Сompletion {
     Step=-1
     PrintTitle "Configuration successfully completed!"
+    PrintTime
     if [[ $PerformCommands == 1 ]]; then
         read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
         if [[ $key == 'y' ]]; then
