@@ -256,6 +256,9 @@ AptList='
     crossbuild-essential-armhf
     arduino
 
+    python3-pip
+    python-is-python3
+
     wine
     virtualbox
     virtualbox-guest-additions-iso
