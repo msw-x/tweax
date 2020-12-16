@@ -572,15 +572,16 @@ function ConfigureDirs {
         Exec "ln -s $Media $Home/usb" "usb"
 
         Exec "mkdir $Home/msw" "containers"
-        Exec "ln -s /mnt/tc/u $Home/msw/src"
-        Exec "ln -s /mnt/tc/l $Home/msw/lib"
-        Exec "ln -s /mnt/tc/n $Home/msw/bin"
-        Exec "ln -s /mnt/tc/s $Home/msw/signal"
         function maketcln {
             disk=$1
             name=$2
             Exec "ln -s /mnt/tc/$disk/$name $Home/msw/$name"
         }
+        maketcln "a" "ext"
+        maketcln "u" "src"
+        maketcln "l" "lib"
+        maketcln "n" "bin"
+        maketcln "s" "signal"
         maketcln "r" "archive"
         maketcln "j" "job"
         maketcln "o" "msw"
