@@ -185,7 +185,7 @@ for i in "$@"; do
         help)
             echo "help         - print this help"
             echo "list         - print list of operations"
-            echo "list-short   - print short list of operations"
+            echo "list-slim    - print short list of operations"
             echo "step         - initial step"
             echo "step-one     - perform only one step"
             echo "step-disable - list of disabled steps, for example: 4,8,26"
@@ -194,7 +194,7 @@ for i in "$@"; do
         list)
             PerformCommands=0
         ;;
-        list-short)
+        list-slim)
             PerformCommands=0
             PrintCommands=0
         ;;
