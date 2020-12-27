@@ -949,6 +949,7 @@ function InstallDialog {
 }
 
 function InstallNative {
+    Upgrading
     InstallOverAptNative
 }
 
