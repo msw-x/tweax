@@ -291,7 +291,7 @@ AptList='
 
     gir1.2-appindicator3-0.1
 '
-AptList64='
+AptListNative='
     wine
 '
 AptListDialog='
@@ -374,11 +374,11 @@ function InstallOverApt {
     NextStep
 }
 
-function InstallOverApt64 {
+function InstallOverAptNative {
     if CheckStep; then
         PrintTitle "Install from Apt (without foreign architectures)"
 
-        for i in $AptList64; do
+        for i in $AptListNative; do
             AptInstall $i
         done
     fi
@@ -939,8 +939,9 @@ function InstallDialog {
     InstallOverAptDialog
 }
 
-function Install64 {
-    InstallOverApt64
+function InstallNative {
+    Upgrading
+    InstallOverAptNative
 }
 
 function Install {
@@ -1003,7 +1004,7 @@ function Run {
     Launch
     Startup
     InstallDialog
-    Install64
+    InstallNative
     Install
     Configure
     Сompletion
