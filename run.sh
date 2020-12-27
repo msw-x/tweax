@@ -259,7 +259,6 @@ AptList='
     python3-pip
     python-is-python3
 
-    wine
     virtualbox
     virtualbox-guest-additions-iso
     docker.io
@@ -292,6 +291,9 @@ AptList='
 
     gir1.2-appindicator3-0.1
 '
+AptList64='
+    wine
+'
 AptListDialog='
     smartmontools
     wireshark
@@ -319,6 +321,8 @@ function Clean {
 
         Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos examples.desktop'
 
+        Exec 'sudo apt purge -y gnome-mines' "remove game mines"
+        Exec 'sudo apt purge -y gnome-sudoku' "remove game sudoku"
         Exec 'sudo apt purge -y gnome-mahjongg' "remove game mahjongg"
         Exec 'sudo apt purge -y aisleriot' "remove game solitaire"
         Exec 'sudo apt purge -y update-notifier' "remove Update Notifier"
@@ -364,6 +368,17 @@ function InstallOverApt {
         PrintTitle "Install from Apt"
 
         for i in $AptList; do
+            AptInstall $i
+        done
+    fi
+    NextStep
+}
+
+function InstallOverApt64 {
+    if CheckStep; then
+        PrintTitle "Install from Apt (without foreign architectures)"
+
+        for i in $AptList64; do
             AptInstall $i
         done
     fi
@@ -924,6 +939,10 @@ function InstallDialog {
     InstallOverAptDialog
 }
 
+function Install64 {
+    InstallOverApt64
+}
+
 function Install {
     Clean
     AddAptRepositories
@@ -984,6 +1003,7 @@ function Run {
     Launch
     Startup
     InstallDialog
+    Install64
     Install
     Configure
     Сompletion
