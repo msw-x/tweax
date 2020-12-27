@@ -550,6 +550,7 @@ function ConfigurePath {
         AddPath $OptDir'/tco/bin'
         AddPath $OptDir'/go/bin'
         AddPath $Home'/go/bin'
+        AddPath $Home'/msw/bin/bin/vit'
     fi
     NextStep
 }
