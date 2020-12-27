@@ -109,6 +109,15 @@ function AptInstall {
     Exec 'sudo apt install -y '$cmd "install ${title}"
 }
 
+function AptInstallFix {
+    cmd=$1
+    title=$2
+    if [[ $title == "" ]]; then
+        title=$cmd
+    fi
+    Exec 'sudo apt install -y '$cmd' --fix-missing' "install ${title}"
+}
+
 function NextStep {
     Step=$(($Step+1))
 }
@@ -358,7 +367,6 @@ function Upgrading {
         PrintTitle "Upgrading"
 
         Exec 'sudo apt update' "updating"
-        Exec 'sudo apt install --fix-missing' "fix missing"
         Exec 'sudo apt upgrade -y' "upgrading"
     fi
     NextStep
@@ -380,7 +388,7 @@ function InstallOverAptNative {
         PrintTitle "Install from Apt (without foreign architectures)"
 
         for i in $AptListNative; do
-            AptInstall $i
+            AptInstallFix $i
         done
     fi
     NextStep
@@ -941,6 +949,7 @@ function InstallDialog {
 }
 
 function InstallNative {
+    Upgrading
     InstallOverAptNative
 }
 
