@@ -346,13 +346,13 @@ function AddAptRepositories {
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
 
-        Exec "sudo sed -i \"s/deb http/deb [arch=${DistrArch}] http/\" ${SourcesListFile}"
+        #Exec "sudo sed -i \"s/deb http/deb [arch=${DistrArch}] http/\" ${SourcesListFile}"
 
-        Exec "echo '' | sudo tee -a ${SourcesListFile}"
-        AddAptPortSource
-        AddAptPortSource "security"
-        AddAptPortSource "updates"
-        AddAptPortSource "backports"
+        #Exec "echo '' | sudo tee -a ${SourcesListFile}"
+        #AddAptPortSource
+        #AddAptPortSource "security"
+        #AddAptPortSource "updates"
+        #AddAptPortSource "backports"
 
         #Exec "sudo dpkg --add-architecture armhf"
         #Exec "sudo dpkg --add-architecture arm64"
