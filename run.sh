@@ -268,6 +268,7 @@ AptList='
     python3-pip
     python-is-python3
 
+    wine
     virtualbox
     virtualbox-guest-additions-iso
     docker.io
@@ -299,10 +300,6 @@ AptList='
     torbrowser-launcher
 
     gir1.2-appindicator3-0.1
-'
-AptListNative='
-    libunwind8:i386
-    wine
 '
 AptListDialog='
     smartmontools
@@ -357,17 +354,8 @@ function AddAptRepositories {
         AddAptPortSource "updates"
         AddAptPortSource "backports"
 
-        Exec "sudo dpkg --add-architecture armhf"
-        Exec "sudo dpkg --add-architecture arm64"
-    fi
-    NextStep
-}
-
-function Updating {
-    if CheckStep; then
-        PrintTitle "Updating"
-
-        Exec 'sudo apt update' "updating"
+        #Exec "sudo dpkg --add-architecture armhf"
+        #Exec "sudo dpkg --add-architecture arm64"
     fi
     NextStep
 }
@@ -387,17 +375,6 @@ function InstallOverApt {
         PrintTitle "Install from Apt"
 
         for i in $AptList; do
-            AptInstall $i
-        done
-    fi
-    NextStep
-}
-
-function InstallOverAptNative {
-    if CheckStep; then
-        PrintTitle "Install from Apt (without foreign architectures)"
-
-        for i in $AptListNative; do
             AptInstall $i
         done
     fi
@@ -958,11 +935,6 @@ function InstallDialog {
     InstallOverAptDialog
 }
 
-function InstallNative {
-    Updating
-    InstallOverAptNative
-}
-
 function Install {
     Clean
     AddAptRepositories
@@ -1023,7 +995,6 @@ function Run {
     Launch
     Startup
     InstallDialog
-    InstallNative
     Install
     Configure
     Сompletion
