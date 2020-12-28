@@ -12,3 +12,5 @@ download, make and install opencv from source
 
 sudo systemctl disable rsyslog
 history -cw
+
+add arm arch -> wine problem, installed wine:armhf
