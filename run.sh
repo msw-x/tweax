@@ -362,6 +362,15 @@ function AddAptRepositories {
     NextStep
 }
 
+function Updating {
+    if CheckStep; then
+        PrintTitle "Updating"
+
+        Exec 'sudo apt update' "updating"
+    fi
+    NextStep
+}
+
 function Upgrading {
     if CheckStep; then
         PrintTitle "Upgrading"
@@ -949,7 +958,7 @@ function InstallDialog {
 }
 
 function InstallNative {
-    Upgrading
+    Updating
     InstallOverAptNative
 }
 
