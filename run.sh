@@ -301,6 +301,7 @@ AptList='
     gir1.2-appindicator3-0.1
 '
 AptListNative='
+    libunwind8:i386
     wine
 '
 AptListDialog='
@@ -397,7 +398,7 @@ function InstallOverAptNative {
         PrintTitle "Install from Apt (without foreign architectures)"
 
         for i in $AptListNative; do
-            AptInstallFix $i
+            AptInstall $i
         done
     fi
     NextStep
