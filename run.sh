@@ -258,6 +258,7 @@ AptList='
     curl
     pkg-config
     libpcap-dev
+    libfmt-dev
     libboost-all-dev
     nlohmann-json3-dev
     crossbuild-essential-arm64
