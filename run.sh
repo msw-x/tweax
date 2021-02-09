@@ -264,6 +264,7 @@ AptList='
     crossbuild-essential-arm64
     crossbuild-essential-armel
     crossbuild-essential-armhf
+    protobuf-compiler
     arduino
 
     python3-dev
