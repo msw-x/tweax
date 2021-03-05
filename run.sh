@@ -680,6 +680,13 @@ function ConfigureEnvironment {
             Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
             Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
         fi
+        if [[ $DistrVersion == "21.04" ]]; then
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
+
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
+            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
+        fi
 
         Exec "gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-up \"['<Super>Page_Up']\""
         Exec "gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down \"['<Super>Page_Down']\""
