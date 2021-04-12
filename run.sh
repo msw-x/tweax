@@ -10,6 +10,8 @@ DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
 DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
 
+CpuCoreCount=$(grep ^siblings /proc/cpuinfo | uniq | awk '{print $3}')
+
 User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
 Media='/media/'$User
@@ -259,7 +261,6 @@ AptList='
     pkg-config
     libpcap-dev
     libfmt-dev
-    libopencv-dev
     libboost-all-dev
     nlohmann-json3-dev
     crossbuild-essential-arm64
@@ -553,6 +554,33 @@ function InstallTruecrypt {
         Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"
 
         Exec "sudo cp -rv ${SrcDir}/tco ${OptDir}/" "install tc"
+    fi
+    NextStep
+}
+
+function InstallOpencv {
+    if CheckStep; then
+        PrintTitle "Install Opencv"
+
+        Exec 'mkdir -p opencv-build && cd opencv-build'
+        Exec 'git clone https://github.com/opencv/opencv.git'
+        Exec 'git clone https://github.com/opencv/opencv_contrib.git'
+        Exec 'cd opencv'
+        Exec 'mkdir -p build && cd build'
+
+        options="
+            -D CMAKE_BUILD_TYPE=RELEASE
+            -D CMAKE_INSTALL_PREFIX=/usr/local
+            -D OPENCV_GENERATE_PKGCONFIG=ON
+            -D OPENCV_ENABLE_NONFREE=ON
+            -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules
+            .."
+
+        Exec "cmake ${options}"
+        Exec "make -j${CpuCoreCount}"
+        Exec 'sudo make install'
+
+        Exec 'cd '${TmpDir}
     fi
     NextStep
 }
@@ -908,6 +936,7 @@ function СonfirmationDialog {
 
 function Launch {
     PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName}) ${DistrArch}"
+    printf "CPU core count: ${CpuCoreCount}\n"
     if [[ $EUID == 0 ]]; then
         Fatal "the script should not be run from root"
     fi
@@ -964,6 +993,7 @@ function Install {
     InstallEtcher
     InstallSkype
     InstallStorageIndicator
+    InstallOpencv
 }
 
 function Configure {
