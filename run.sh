@@ -562,10 +562,18 @@ function InstallOpencv {
     if CheckStep; then
         PrintTitle "Install Opencv"
 
-        Exec 'mkdir -p opencv-build && cd opencv-build'
-        Exec 'git clone https://github.com/opencv/opencv.git'
-        Exec 'git clone https://github.com/opencv/opencv_contrib.git'
-        Exec 'cd opencv'
+        Exec "sudo apt install -y build-essential cmake git pkg-config
+            libgtk-3-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+            libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev
+            gfortran openexr libatlas-base-dev python3-dev python3-numpy
+            libtbb2 libtbb-dev libdc1394-22-dev libopenexr-dev
+            libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev
+        "
+
+        Exec 'wget -O opencv.zip https://github.com/opencv/opencv/archive/master.zip'
+        Exec 'wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/master.zip'
+        Exec 'unzip opencv.zip'
+        Exec 'unzip opencv_contrib.zip'
         Exec 'mkdir -p build && cd build'
 
         options="
@@ -573,14 +581,16 @@ function InstallOpencv {
             -D CMAKE_INSTALL_PREFIX=/usr/local
             -D OPENCV_GENERATE_PKGCONFIG=ON
             -D OPENCV_ENABLE_NONFREE=ON
-            -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules
-            .."
+            -D -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-master/modules
+            ../opencv-master
+        "
 
         Exec "cmake ${options}"
         Exec "make -j${CpuCoreCount}"
         Exec 'sudo make install'
+        Exec 'sudo ldconfig'
 
-        Exec 'cd '${TmpDir}
+        Exec 'cd ..'
     fi
     NextStep
 }
