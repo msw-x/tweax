@@ -581,7 +581,7 @@ function InstallOpencv {
             -D CMAKE_INSTALL_PREFIX=/usr/local
             -D OPENCV_GENERATE_PKGCONFIG=ON
             -D OPENCV_ENABLE_NONFREE=ON
-            -D -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-master/modules
+            -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib-master/modules
             ../opencv-master
         "
 
