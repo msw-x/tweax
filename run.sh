@@ -750,9 +750,9 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.desktop.background picture-uri file://$WallpaperPath"
 
         Exec "gsettings set org.gnome.desktop.background show-desktop-icons false"
-        Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-home false"
-        Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-trash false"
-        Exec "gsettings set org.gnome.shell.extensions.desktop-icons show-mount false"
+        Exec "gsettings set org.gnome.shell.extensions.ding show-home false"
+        Exec "gsettings set org.gnome.shell.extensions.ding show-trash false"
+        Exec "gsettings set org.gnome.shell.extensions.ding show-volumes false"
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false"
 
         key="org.gnome.settings-daemon.plugins.media-keys"
