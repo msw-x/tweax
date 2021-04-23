@@ -272,7 +272,7 @@ AptList='
     arduino
     clang
     gcc-11
-    c++-11
+    g++-11
 
     python3-dev
     python3-pip
