@@ -356,6 +356,13 @@ function AddAptRepositories {
 
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
+    fi
+    NextStep
+}
+
+function AddPortRepositories {
+    if CheckStep; then
+        PrintTitle "Add Port repositories"
 
         Exec "sudo sed -i \"s/deb http/deb [arch=${DistrArch}] http/\" ${SourcesListFile}"
 
@@ -995,6 +1002,7 @@ function InstallDialog {
 function Install {
     Clean
     AddAptRepositories
+    #AddPortRepositories
     Upgrading
     InstallOverApt
     InstallChrome
