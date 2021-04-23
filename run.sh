@@ -258,9 +258,11 @@ AptList='
     build-essential
     cmake
     curl
+    golang
     pkg-config
     libpcap-dev
     libfmt-dev
+    libopencv-dev
     libboost-all-dev
     nlohmann-json3-dev
     crossbuild-essential-arm64
@@ -268,6 +270,9 @@ AptList='
     crossbuild-essential-armhf
     protobuf-compiler
     arduino
+    clang
+    gcc-11
+    c++-11
 
     python3-dev
     python3-pip
@@ -301,6 +306,7 @@ AptList='
     graphviz
     vokoscreen-ng
     recordmydesktop
+    simplescreenrecorder
 
     torbrowser-launcher
 
@@ -998,12 +1004,12 @@ function Install {
     InstallWinBox
     InstallTeamviewer
     InstallPostman
-    InstallGolang
+    #InstallGolang
     InstallTelegram
     InstallEtcher
     InstallSkype
     InstallStorageIndicator
-    InstallOpencv
+    #InstallOpencv
 }
 
 function Configure {
