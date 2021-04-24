@@ -102,13 +102,26 @@ function Exec {
     fi
 }
 
+function Exec2 {
+    PrintSubTitle $2
+    Echo $1
+    if [[ $PerformCommands == 1 ]]; then
+        if ! eval $1; then
+            Echo "Error. Attempt to repeat"
+            if ! eval $1; then
+                Fatal
+            fi
+        fi
+    fi
+}
+
 function AptInstall {
     cmd=$1
     title=$2
     if [[ $title == "" ]]; then
         title=$cmd
     fi
-    Exec 'sudo apt install -y '$cmd "install ${title}"
+    Exec2 'sudo apt install -y '$cmd "install ${title}"
 }
 
 function AptInstallFix {
