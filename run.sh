@@ -292,6 +292,7 @@ AptList='
     python3-venv
     python-is-python3
 
+    wine
     virtualbox
     virtualbox-guest-additions-iso
     docker.io
