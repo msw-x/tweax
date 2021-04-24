@@ -275,9 +275,9 @@ AptList='
     pkg-config
     libpcap-dev
     libfmt-dev
-    libopencv-dev
     libboost-all-dev
     nlohmann-json3-dev
+    catch2
     crossbuild-essential-arm64
     crossbuild-essential-armel
     crossbuild-essential-armhf
@@ -326,6 +326,7 @@ AptList='
 
     gir1.2-appindicator3-0.1
 '
+#libopencv-dev - without extra modules?
 AptListDialog='
     smartmontools
     wireshark
@@ -1031,7 +1032,7 @@ function Install {
     InstallEtcher
     InstallSkype
     InstallStorageIndicator
-    #InstallOpencv
+    InstallOpencv
 }
 
 function Configure {
