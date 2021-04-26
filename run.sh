@@ -271,7 +271,6 @@ AptList='
     build-essential
     cmake
     curl
-    golang
     pkg-config
     libpcap-dev
     libfmt-dev
@@ -326,6 +325,7 @@ AptList='
 
     gir1.2-appindicator3-0.1
 '
+#golang
 #libopencv-dev - without extra modules?
 AptListDialog='
     smartmontools
@@ -1027,7 +1027,7 @@ function Install {
     InstallWinBox
     InstallTeamviewer
     InstallPostman
-    #InstallGolang
+    InstallGolang
     InstallTelegram
     InstallEtcher
     InstallSkype
