@@ -306,6 +306,7 @@ AptList='
     picocom
     minicom
 
+    hyphen-ru
     okular
     sublime-text
 
