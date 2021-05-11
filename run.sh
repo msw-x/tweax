@@ -263,6 +263,7 @@ AptList='
     indicator-multiload
 
     mc
+    tree
     filezilla
 
     git
