@@ -282,7 +282,6 @@ AptList='
     crossbuild-essential-armel
     crossbuild-essential-armhf
     protobuf-compiler
-    arduino
     clang
     gcc-11
     g++-11
@@ -328,6 +327,7 @@ AptList='
     gir1.2-appindicator3-0.1
 '
 #golang
+#arduino
 #libopencv-dev - without extra modules?
 AptListDialog='
     smartmontools
@@ -1025,7 +1025,7 @@ function Install {
     InstallChrome
     InstallSmartgit
     InstallSmartsynchronize
-    #InstallArduino
+    InstallArduino
     InstallWinBox
     InstallTeamviewer
     InstallPostman
