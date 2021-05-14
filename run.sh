@@ -840,6 +840,17 @@ function ConfigureLocale {
     NextStep
 }
 
+function ConfigureDocker {
+    if CheckStep; then
+        PrintTitle "Configure Docker"
+
+        Echo "configure for resolve conflict Docker with VPN networks"
+        Echo "for use VPN: sudo systemctl stop docker"
+        Exec "sudo cp ${SrcDir}/docker/daemon.json /etc/docker" "docker daemon.json"
+    fi
+    NextStep
+}
+
 function ConfigureGit {
     if CheckStep; then
         PrintTitle "Configure Git"
@@ -1049,6 +1060,7 @@ function Configure {
     ConfigureNetwork
     ConfigureLocale
 
+    ConfigureDocker
     ConfigureGit
     ConfigureImwheel
     ConfigureIndicatorMultiload

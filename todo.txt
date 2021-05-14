@@ -15,3 +15,7 @@ sudo systemctl disable rsyslog
 history -cw
 
 add arm arch -> wine problem, installed wine:armhf
+
+https://www.lullabot.com/articles/fixing-docker-and-vpn-ip-address-conflicts
+for use VPN:
+sudo systemctl stop docker
