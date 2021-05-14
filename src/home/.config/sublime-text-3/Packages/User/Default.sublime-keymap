@@ -19,7 +19,7 @@
     { "keys": ["f10"]       , "command": "build", "args": {"variant": "format & make & run"}          },
     { "keys": ["ctrl+f10"]  , "command": "build", "args": {"variant": "format & make & run & detach"} },
     { "keys": ["f11"]       , "command": "build", "args": {"variant": "smartgit"}                     },
-    { "keys": ["ctrl+f11"]  , "command": "build", "args": {"variant": "gitstatus"}                    },
+    { "keys": ["ctrl+f11"]  , "command": "build", "args": {"variant": "git-status"}                   },
     { "keys": ["shift+f11"] , "command": "build", "args": {"variant": "console-project"}              },
     { "keys": ["f12"]       , "command": "build", "args": {"variant": "production"}                   },
     { "keys": ["pause"]     , "command": "build", "args": {"variant": "cancel"}                       }

@@ -55,8 +55,8 @@
 			"cmd": ["vit", "smartgit"]
 		},
 		{
-			"name": "gitstatus",
-			"cmd": ["vit", "gitstatus"]
+			"name": "git-status",
+			"cmd": ["vit", "git-status"]
 		},
 		{
 			"name": "console-project",
