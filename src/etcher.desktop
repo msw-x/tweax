@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=Balena Etcher
+Exec=/opt/etcher/etcher
