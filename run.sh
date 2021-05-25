@@ -309,6 +309,7 @@ AptList='
     hyphen-ru
     okular
     sublime-text
+    sublime-merge
 
     qalculate-gtk
 
