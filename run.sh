@@ -275,7 +275,9 @@ AptList='
     pkg-config
     libpcap-dev
     libfmt-dev
+    libdlib-dev
     libboost-all-dev
+    libsqlite3-dev
     nlohmann-json3-dev
     catch2
     crossbuild-essential-arm64
