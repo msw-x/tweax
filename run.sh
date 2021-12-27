@@ -268,6 +268,7 @@ AptList='
 
     git
     gitk
+    git-lfs
 
     build-essential
     cmake
@@ -863,6 +864,8 @@ function ConfigureGit {
 
         Exec 'git config --global gc.autoDetach false'
         Exec 'git config --global pull.rebase false'
+
+        Exec 'git lfs install'
     fi
     NextStep
 }
