@@ -1038,7 +1038,7 @@ function InstallDialog {
 function Install {
     Clean
     AddAptRepositories
-    #AddPortRepositories
+    AddPortRepositories
     Upgrading
     InstallOverApt
     InstallChrome
