@@ -215,13 +215,14 @@ function PreInstall {
 
     sudo dd if=/dev/urandom of=$BootKey bs=4096 count=1
     sudo chmod u=r,go-rwx $BootKey
-
     sudo cryptsetup luksFormat --type=luks1 $BootPartition
     sudo cryptsetup luksAddKey $BootPartition $BootKey
     sudo cryptsetup luksOpen $BootPartition $CryptBootFS --key-file=$BootKey
 
-    sudo cryptsetup luksFormat --hash=sha512 --key-size=512 $RootPartition --header $RootHeader --offset=$LuksOffset --luks2-keyslots-size=262144
-    sudo cryptsetup luksOpen $RootPartition $CryptRootFS --header $RootHeader
+    sudo dd if=/dev/urandom of=$RootKey bs=4096 count=1
+    sudo chmod u=r,go-rwx $RootKey
+    sudo cryptsetup luksFormat --hash=sha512 --key-size=512 --key-file=$RootKey $RootPartition --header $RootHeader --offset=$LuksOffset --luks2-keyslots-size=262144
+    sudo cryptsetup luksOpen $RootPartition $CryptRootFS --key-file=$RootKey --header $RootHeader
 
     sudo pvcreate /dev/mapper/${CryptRootFS}
     sudo vgcreate $LvmVG /dev/mapper/${CryptRootFS}
@@ -248,12 +249,12 @@ function PostInstall {
     local target='/target'
     local initramfsSecret='/etc/secret'
 
-    #sudo cp ${BootKey} ${target}/tmp
     sudo cp ${RootHeader} ${target}/tmp
     sudo cp ${PwdDir}/chroot.sh ${target}/tmp
 
     sudo mkdir -p ${target}/etc/secret
     sudo cp ${BootKey} ${target}/etc/secret
+    sudo cp ${RootKey} ${target}/etc/secret
     echo "KEYFILE_PATTERN=/etc/secret/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
     echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
 
@@ -267,7 +268,7 @@ function PostInstall {
     local UuidBoot=$(blkid -s UUID -o value $BootPartition)
     local UuidRoot=$(blkid -s UUID -o value $RootPartition)
     echo "$CryptBootFS UUID=${UuidBoot} ${initramfsSecret}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
-    echo "$CryptRootFS UUID=${UuidRoot} none luks,header=${initramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
+    echo "$CryptRootFS UUID=${UuidRoot} ${initramfsSecret}/${RootKey} luks,header=${initramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
 
     echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
