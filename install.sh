@@ -216,7 +216,7 @@ function PreInstall {
     sudo dd if=/dev/urandom of=$BootKey bs=4096 count=1
     sudo chmod u=r,go-rwx $BootKey
     sudo cryptsetup luksFormat --type=luks1 --key-file=$BootKey $BootPartition
-    sudo cryptsetup luksAddKey $BootPartition
+    sudo cryptsetup luksAddKey $BootPartition --key-file=$BootKey
     sudo cryptsetup luksOpen $BootPartition $CryptBootFS --key-file=$BootKey
 
     sudo dd if=/dev/urandom of=$RootKey bs=4096 count=1
