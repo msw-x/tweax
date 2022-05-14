@@ -12,6 +12,7 @@ CryptRootFS='rootfs'
 LvmVG='lvm'
 LvmRoot='root'
 LvmExt='ext'
+InitramfsSecret='/etc/secret'
 
 DevListFile='dev.lst'
 DevListCount=0
@@ -137,6 +138,20 @@ function SelectDevices {
     echo "$RootLabel device: $(DeviceInfo $RootDev)"
 }
 
+Reinstall=true
+
+function SelectMode {
+    read -n 1 -p "Re-Install mode? y/n: " key && echo
+    if [[ $key == 'n' ]]; then
+        Reinstall=false
+    fi
+    local mode='Install'
+    if $Reinstall; then
+        mode='Re-Install'
+    fi
+    echo "Mode: $mode"
+}
+
 function Launch {
     echo "Install ${DistrName} ${DistrVersion} (${DistrCodeName}) ${DistrArch}"
     if [[ $EUID == 0 ]]; then
@@ -178,28 +193,48 @@ EfiPartition=''
 BootPartition=''
 RootPartition=''
 
+function ExtractKeys {
+    sudo cryptsetup luksOpen $BootPartition $CryptBootFS
+    sudo mkdir $CryptBootFS
+    sudo mount "/dev/mapper/${CryptBootFS}" $CryptBootFS
+    sudo mkdir 'initramfs'
+    sudo unmkinitramfs "${CryptBootFS}/initrd.img" 'initramfs'
+    sudo umount $CryptBootFS
+    sudo cryptsetup luksClose $BootPartition
+    sudo cp "initramfs/main/cryptroot/keyfiles/${CryptRootFS}.key" ${RootKey}
+    sudo cp "initramfs/main${InitramfsSecret}/${RootHeader}" .
+
+
+    ls -l
+    lsblk
+    read -p "Press enter to continue 2"
+}
+
 function PreInstall {
     local sizeMiB=$(DeviceMiB $BootDev)
     local efiMiB=100
     local bootMiB=500
     local payMib=$((sizeMiB-efiMiB-bootMiB-2))
+
     BootDev='/dev/'$BootDev
     RootDev='/dev/'$RootDev
 
     sudo umount ${BootDev}*
     sudo umount ${RootDev}*
 
-    echo "make $BootLabel partition table: $BootDev"
-    sudo parted $BootDev mklabel gpt
-    sudo parted $BootDev mkpart primary 1MiB ${payMib}MiB
-    sudo parted $BootDev mkpart primary ${payMib}MiB $((payMib+efiMiB))MiB
-    sudo parted $BootDev mkpart primary $((payMib+efiMiB))MiB 100%
-    sudo parted $BootDev set 2 boot on
-    sudo parted $BootDev print
+    if ! $Reinstall; then
+        echo "make $BootLabel partition table: $BootDev"
+        sudo parted $BootDev mklabel gpt
+        sudo parted $BootDev mkpart primary 1MiB ${payMib}MiB
+        sudo parted $BootDev mkpart primary ${payMib}MiB $((payMib+efiMiB))MiB
+        sudo parted $BootDev mkpart primary $((payMib+efiMiB))MiB 100%
+        sudo parted $BootDev set 2 boot on
 
-    echo "make $RootLabel partition table: $RootDev"
-    sudo parted $RootDev mklabel gpt
-    sudo parted $RootDev mkpart primary 1MiB 100%
+        echo "make $RootLabel partition table: $RootDev"
+        sudo parted $RootDev mklabel gpt
+        sudo parted $RootDev mkpart primary 1MiB 100%
+    fi
+    sudo parted $BootDev print
     sudo parted $RootDev print
 
     PayPartition=$(DevicePatition $BootDev 1)
@@ -207,11 +242,15 @@ function PreInstall {
     BootPartition=$(DevicePatition $BootDev 3)
     RootPartition=$(DevicePatition $RootDev 1)
 
-    sudo mkfs.fat -F32 $PayPartition
-    sudo mkfs.fat -F32 $EfiPartition
-    sudo mkfs.btrfs -f $RootPartition
+    if Reinstall; then
+        ExtractKeys
+    fi
 
-    local LuksOffset=$((RootOffsetMiB*1024*2))
+    sudo mkfs.fat -F32 $EfiPartition
+    if ! $Reinstall; then
+        sudo mkfs.fat -F32 $PayPartition
+        sudo mkfs.btrfs -f $RootPartition
+    fi
 
     sudo dd if=/dev/urandom of=$BootKey bs=4096 count=1
     sudo chmod u=r,go-rwx $BootKey
@@ -219,19 +258,24 @@ function PreInstall {
     sudo cryptsetup luksAddKey $BootPartition --key-file=$BootKey
     sudo cryptsetup luksOpen $BootPartition $CryptBootFS --key-file=$BootKey
 
-    sudo dd if=/dev/urandom of=$RootKey bs=4096 count=1
-    sudo chmod u=r,go-rwx $RootKey
-    sudo cryptsetup luksFormat --hash=sha512 --key-size=512 --key-file=$RootKey $RootPartition --header $RootHeader --offset=$LuksOffset --luks2-keyslots-size=262144
+    if ! $Reinstall; then
+        local luksOffset=$((RootOffsetMiB*1024*2))
+        sudo dd if=/dev/urandom of=$RootKey bs=4096 count=1
+        sudo chmod u=r,go-rwx $RootKey
+        sudo cryptsetup luksFormat --hash=sha512 --key-size=512 --key-file=$RootKey $RootPartition --header $RootHeader --offset=$luksOffset --luks2-keyslots-size=262144
+    fi
     sudo cryptsetup luksOpen $RootPartition $CryptRootFS --key-file=$RootKey --header $RootHeader
 
-    sudo pvcreate /dev/mapper/${CryptRootFS}
-    sudo vgcreate $LvmVG /dev/mapper/${CryptRootFS}
-    sudo lvcreate -n $LvmRoot -L ${LvmRootGiB}G $LvmVG
-    sudo lvcreate -n $LvmExt -l 100%FREE $LvmVG
-
     sudo mkfs.ext4 /dev/mapper/${CryptBootFS}
+
+    if ! $Reinstall; then
+        sudo pvcreate /dev/mapper/${CryptRootFS}
+        sudo vgcreate $LvmVG /dev/mapper/${CryptRootFS}
+        sudo lvcreate -n $LvmRoot -L ${LvmRootGiB}G $LvmVG
+        sudo lvcreate -n $LvmExt -l 100%FREE $LvmVG
+        sudo mkfs.ext4 /dev/mapper/${LvmVG}-${LvmExt}
+    fi
     sudo mkfs.ext4 /dev/mapper/${LvmVG}-${LvmRoot}
-    sudo mkfs.ext4 /dev/mapper/${LvmVG}-${LvmExt}
 
     lsblk
 }
@@ -247,15 +291,14 @@ function Install {
 
 function PostInstall {
     local target='/target'
-    local initramfsSecret='/etc/secret'
 
     sudo cp ${RootHeader} ${target}/tmp
     sudo cp ${PwdDir}/chroot.sh ${target}/tmp
 
-    sudo mkdir -p ${target}/etc/secret
-    sudo cp ${BootKey} ${target}/etc/secret
-    sudo cp ${RootKey} ${target}/etc/secret
-    echo "KEYFILE_PATTERN=/etc/secret/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
+    sudo mkdir -p ${target}${initramfsSecret}
+    sudo cp ${BootKey} ${target}${initramfsSecret}
+    sudo cp ${RootKey} ${target}${initramfsSecret}
+    echo "KEYFILE_PATTERN=${initramfsSecret}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
     echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
 
     local initramfsHookCopy=/target/etc/initramfs-tools/hooks/copy
@@ -288,6 +331,7 @@ GetDeviceList
 PrintDeviceList
 CheckDeviceList
 SelectDevices
+SelectMode
 СonfirmationDialog
 PreInstall
 Install
