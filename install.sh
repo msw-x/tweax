@@ -260,8 +260,6 @@ function PostInstall {
     local initramfsHookCopy=/target/etc/initramfs-tools/hooks/copy
     echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
     echo 'mkdir -p ${DESTDIR}'"${initramfsSecret}" | sudo tee -a ${initramfsHookCopy}
-    #echo 'chmod u=rx,go-rwx ${DESTDIR}'"${initramfsSecret}" | sudo tee -a ${initramfsHookCopy}
-    #echo "cp /tmp/${BootKey}"' ${DESTDIR}'"${initramfsSecret}" | sudo tee -a ${initramfsHookCopy}
     echo "cp /tmp/${RootHeader}"' ${DESTDIR}'"${initramfsSecret}" | sudo tee -a ${initramfsHookCopy}
     echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
     sudo chmod +x ${initramfsHookCopy}
