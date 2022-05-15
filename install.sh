@@ -61,6 +61,8 @@ function GetEdgeDevice {
 function AutoSelectDevices {
     BootDev=$(GetEdgeDevice sd tail)
     RootDev=$(GetEdgeDevice nvme head)
+    echo "x${BootDev}x"
+    echo "y${RootDev}y"
     if [[ RootDev == "" ]]; then
         RootDev=$(GetEdgeDevice sd head)
     fi
