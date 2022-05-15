@@ -200,14 +200,9 @@ function ExtractKeys {
     sudo mkdir 'initramfs'
     sudo unmkinitramfs "${CryptBootFS}/initrd.img" 'initramfs'
     sudo umount $CryptBootFS
-    sudo cryptsetup luksClose $BootPartition
+    sudo cryptsetup luksClose $CryptBootFS
     sudo cp "initramfs/main/cryptroot/keyfiles/${CryptRootFS}.key" ${RootKey}
     sudo cp "initramfs/main${InitramfsSecret}/${RootHeader}" .
-
-
-    ls -l
-    lsblk
-    read -p "Press enter to continue 2"
 }
 
 function PreInstall {
@@ -275,7 +270,7 @@ function PreInstall {
         sudo lvcreate -n $LvmExt -l 100%FREE $LvmVG
         sudo mkfs.ext4 /dev/mapper/${LvmVG}-${LvmExt}
     fi
-    sudo mkfs.ext4 /dev/mapper/${LvmVG}-${LvmRoot}
+    sudo mkfs.ext4 -F /dev/mapper/${LvmVG}-${LvmRoot}
 
     lsblk
 }
