@@ -224,15 +224,15 @@ function PreInstall {
 
     if ! $Reinstall; then
         echo "make $BootLabel partition table: $BootDev"
-        sudo parted $BootDev mklabel gpt
-        sudo parted $BootDev mkpart primary 1MiB ${payMib}MiB
-        sudo parted $BootDev mkpart primary ${payMib}MiB $((payMib+efiMiB))MiB
-        sudo parted $BootDev mkpart primary $((payMib+efiMiB))MiB 100%
-        sudo parted $BootDev set 2 boot on
+        sudo parted --script $BootDev mklabel gpt
+        sudo parted --script $BootDev mkpart primary 1MiB ${payMib}MiB
+        sudo parted --script $BootDev mkpart primary ${payMib}MiB $((payMib+efiMiB))MiB
+        sudo parted --script $BootDev mkpart primary $((payMib+efiMiB))MiB 100%
+        sudo parted --script $BootDev set 2 boot on
 
         echo "make $RootLabel partition table: $RootDev"
-        sudo parted $RootDev mklabel gpt
-        sudo parted $RootDev mkpart primary 1MiB 100%
+        sudo parted --script $RootDev mklabel gpt
+        sudo parted --script $RootDev mkpart primary 1MiB 100%
     fi
     sudo parted $BootDev print
     sudo parted $RootDev print
@@ -254,7 +254,7 @@ function PreInstall {
 
     sudo dd if=/dev/urandom of=$BootKey bs=4096 count=1
     sudo chmod u=r,go-rwx $BootKey
-    sudo cryptsetup luksFormat --type=luks1 --key-file=$BootKey $BootPartition
+    sudo cryptsetup -q luksFormat --type=luks1 --key-file=$BootKey $BootPartition
     sudo cryptsetup luksAddKey $BootPartition --key-file=$BootKey
     sudo cryptsetup luksOpen $BootPartition $CryptBootFS --key-file=$BootKey
 
@@ -262,7 +262,7 @@ function PreInstall {
         local luksOffset=$((RootOffsetMiB*1024*2))
         sudo dd if=/dev/urandom of=$RootKey bs=4096 count=1
         sudo chmod u=r,go-rwx $RootKey
-        sudo cryptsetup luksFormat --hash=sha512 --key-size=512 --key-file=$RootKey $RootPartition --header $RootHeader --offset=$luksOffset --luks2-keyslots-size=262144
+        sudo cryptsetup -q luksFormat --hash=sha512 --key-size=512 --key-file=$RootKey $RootPartition --header $RootHeader --offset=$luksOffset --luks2-keyslots-size=262144
     fi
     sudo cryptsetup luksOpen $RootPartition $CryptRootFS --key-file=$RootKey --header $RootHeader
 
