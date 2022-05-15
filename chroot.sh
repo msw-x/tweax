@@ -8,6 +8,6 @@ mount -av
 
 apt install -y --reinstall grub-efi-amd64-signed linux-generic linux-headers-generic
 update-initramfs -c -k all
-grub-install $BootDev --no-nvram
+grub-install $BootDev --no-nvram --removable
 update-grub
 grub-probe -t device /boot/grub
