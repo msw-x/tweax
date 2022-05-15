@@ -316,7 +316,7 @@ function PostInstall {
 
     sudo mount /dev/mapper/${CryptBootFS} ${target}/boot
     for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n /target/$n; done
-    sudo chroot /target /tmp/chroot.sh $EfiPartition
+    sudo chroot /target /tmp/chroot.sh $BootDev
 }
 
 

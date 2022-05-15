@@ -1,12 +1,13 @@
 #!/bin/bash
 
-EfiPartition=$1
+BootDev=$1
 
-echo "efi-partition: $EfiPartition"
+echo "boot device: $BootDev"
 
 mount -av
 
 apt install -y --reinstall grub-efi-amd64-signed linux-generic linux-headers-generic
 update-initramfs -c -k all
-grub-install $EfiPartition --no-nvram
+grub-install $BootDev --no-nvram
 update-grub
+grub-probe -t device /boot/grub
