@@ -242,7 +242,7 @@ function PreInstall {
     BootPartition=$(DevicePatition $BootDev 3)
     RootPartition=$(DevicePatition $RootDev 1)
 
-    if Reinstall; then
+    if $Reinstall; then
         ExtractKeys
     fi
 
