@@ -91,7 +91,7 @@ function DeviceGiB {
 }
 
 function DeviceModel {
-    local model=$(lsblk '/dev/'$1 -o NAME,MODEL,TYPE | grep disk | awk '{print $2}')
+    local model=$(lsblk '/dev/'$1 -o NAME,TYPE,MODEL | grep disk | awk '{$1=$2=""; print $0}' | awk '{$1=$1}1')
     echo $model
 }
 
