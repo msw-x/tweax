@@ -64,6 +64,7 @@ function AutoSelectDevices {
     echo "x${BootDev}x"
     echo "y${RootDev}y"
     if [[ RootDev == "" ]]; then
+        echo "zz"
         RootDev=$(GetEdgeDevice sd head)
     fi
     if [[ BootDev == "" ]]; then
