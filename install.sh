@@ -311,9 +311,9 @@ function PostInstall {
     echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
 
-    sudo rm "${target}/etc/grub.d/*memtest*"
-    sudo rm "${target}/etc/grub.d/*os-prober*"
-    sudo rm "${target}/etc/grub.d/*uefi*"
+    sudo rm "${target}/etc/grub.d/20_memtest86+"
+    sudo rm "${target}/etc/grub.d/30_os-prober"
+    sudo rm "${target}/etc/grub.d/30_uefi-firmware"
 
     ls -1 /etc/grub.d
     cat ${initramfsHookCopy}
