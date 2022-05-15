@@ -11,3 +11,4 @@ update-initramfs -c -k all
 grub-install $BootDev --no-nvram
 update-grub
 grub-probe -t device /boot/grub
+grub-probe -t fs_uuid /boot/grub
