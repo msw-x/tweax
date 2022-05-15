@@ -295,23 +295,23 @@ function PostInstall {
     sudo cp ${RootHeader} ${target}/tmp
     sudo cp ${PwdDir}/chroot.sh ${target}/tmp
 
-    sudo mkdir -p ${target}${initramfsSecret}
-    sudo cp ${BootKey} ${target}${initramfsSecret}
-    sudo cp ${RootKey} ${target}${initramfsSecret}
-    echo "KEYFILE_PATTERN=${initramfsSecret}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
+    sudo mkdir -p ${target}${InitramfsSecret}
+    sudo cp ${BootKey} ${target}${InitramfsSecret}
+    sudo cp ${RootKey} ${target}${InitramfsSecret}
+    echo "KEYFILE_PATTERN=${InitramfsSecret}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
     echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
 
     local initramfsHookCopy=/target/etc/initramfs-tools/hooks/copy
     echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
-    echo 'mkdir -p ${DESTDIR}'"${initramfsSecret}" | sudo tee -a ${initramfsHookCopy}
-    echo "cp /tmp/${RootHeader}"' ${DESTDIR}'"${initramfsSecret}" | sudo tee -a ${initramfsHookCopy}
+    echo 'mkdir -p ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
+    echo "cp /tmp/${RootHeader}"' ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
     echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
     sudo chmod +x ${initramfsHookCopy}
 
     local UuidBoot=$(blkid -s UUID -o value $BootPartition)
     local UuidRoot=$(blkid -s UUID -o value $RootPartition)
-    echo "$CryptBootFS UUID=${UuidBoot} ${initramfsSecret}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
-    echo "$CryptRootFS UUID=${UuidRoot} ${initramfsSecret}/${RootKey} luks,header=${initramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
+    echo "$CryptBootFS UUID=${UuidBoot} ${InitramfsSecret}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
+    echo "$CryptRootFS UUID=${UuidRoot} ${InitramfsSecret}/${RootKey} luks,header=${InitramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
 
     echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
