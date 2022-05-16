@@ -298,7 +298,9 @@ function PreInstall {
     PayPartition=$(DevicePatition $BootDev 1)
     EfiPartition=$(DevicePatition $BootDev 2)
     BootPartition=$(DevicePatition $BootDev 3)
-    RootPartition=$(DevicePatition $RootDev 1)
+    if [[ $RootPartition == "" ]]; then
+        RootPartition=$(DevicePatition $RootDev 1)
+    fi
 
     if $Reinstall; then
         ExtractKeys
@@ -324,7 +326,7 @@ function PreInstall {
     fi
     sudo cryptsetup luksOpen $RootPartition $CryptRootFS --key-file=$RootKey --header $RootHeader
 
-    sudo mkfs.ext4 /dev/mapper/${CryptBootFS}
+    sudo mkfs.ext4 -f /dev/mapper/${CryptBootFS}
 
     if ! $Reinstall; then
         sudo pvcreate /dev/mapper/${CryptRootFS}
