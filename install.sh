@@ -359,6 +359,7 @@ function PostInstall {
     # to be able to update the kernel and rebuild initrd
     lksdir=$InitramfsSecret
 
+    sudo mkdir -p ${target}${lksdir}
     sudo cp ${RootHeader} ${target}${lksdir}
     sudo cp ${PwdDir}/chroot.sh ${target}/tmp
 
