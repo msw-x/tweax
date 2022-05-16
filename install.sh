@@ -204,7 +204,6 @@ function SelectDevices {
     fi
     echo "$BootLabel device: $(DeviceInfo $BootDev)"
     echo "$RootLabel device: $(DeviceInfo $RootDev) $rootpart"
-    exit 0
 }
 
 function SelectMode {
