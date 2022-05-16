@@ -326,7 +326,7 @@ function PreInstall {
     fi
     sudo cryptsetup luksOpen $RootPartition $CryptRootFS --key-file=$RootKey --header $RootHeader
 
-    sudo mkfs.ext4 -f /dev/mapper/${CryptBootFS}
+    sudo mkfs.ext4 -F /dev/mapper/${CryptBootFS}
 
     if ! $Reinstall; then
         sudo pvcreate /dev/mapper/${CryptRootFS}
