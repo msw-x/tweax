@@ -17,6 +17,9 @@ InitramfsSecret='/etc/secret'
 DevListFile='dev.lst'
 DevListCount=0
 
+RootPartFile='root.lst'
+RootPartCount=0
+
 BootLabel='BOOT'
 RootLabel='ROOT'
 
@@ -30,6 +33,12 @@ DistrName=$(cat /etc/*-release | sed -n 's/^ID=//p')
 DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
 DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
+
+Reinstall=true
+PayPartition=''
+EfiPartition=''
+BootPartition=''
+RootPartition=''
 
 function GetDeviceList {
     lsblk -o NAME,TYPE | grep disk | awk '{print $1}' > $DevListFile
@@ -69,6 +78,22 @@ function AutoSelectDevices {
     fi
 }
 
+function GetRootPartList {
+    local rootDev=$1
+    lsblk '/dev/'$rootDev -o NAME,TYPE --list | grep part | awk '{print $1}' > $RootPartFile
+    RootPartCount=$(wc -l $RootPartFile | awk '{print $1}')
+}
+
+function PrintRootPartList {
+    local n=0
+    cat $RootPartFile | \
+    while read part; do
+        n=$((n+1))
+        echo "[$n] $(PartitionInfo $part)"
+    done
+}
+
+
 function DevicePatition {
     local device=$1
     local number=$2
@@ -102,6 +127,23 @@ function DeviceInfo {
     echo "$name [$size GiB] $model"
 }
 
+function PartitionMiB {
+    local size=$(lsblk '/dev/'$1 -o NAME,SIZE,TYPE --byte | grep part | awk '{print $2}')
+    echo $(($size/1024/1024))
+}
+
+function PartitionGiB {
+    local size=$(PartitionMiB $1)
+    size=$(($size/1024))
+    echo $size
+}
+
+function PartitionInfo {
+    local name=$1
+    local size=$(PartitionGiB $name)
+    echo "$name [$size GiB]"
+}
+
 function SelectDevice {
     local label=$1
     local device=$BootDev
@@ -127,6 +169,24 @@ function CheckDeviceList {
     fi
 }
 
+function SelectRootPartition {
+    echo "[0] $RootDev"
+    PrintRootPartList
+    read -n 1 -p "$RootLabel partition [default=0]: " key
+    local re='^[0-9]+$'
+    if [[ $key == "" ]]; then
+        return
+    fi
+    if ! [[ $key =~ $re ]]; then
+       return
+    fi
+    echo
+    if [[ $key == 0 ]]; then
+        return
+    fi
+    RootPartition=$(DevicePatition $RootDev $key)
+}
+
 function SelectDevices {
     while : ; do
         AutoSelectDevices
@@ -134,11 +194,18 @@ function SelectDevices {
         SelectDevice $RootLabel
         [[ $RootDev == $BootDev ]] || break
     done
+    GetRootPartList $RootDev
+    if [[ $RootPartCount > 1 ]]; then
+        SelectRootPartition
+    fi
+    local rootpart=''
+    if [[ $RootPartition != "" ]]; then
+        rootpart="[$RootPartition]"
+    fi
     echo "$BootLabel device: $(DeviceInfo $BootDev)"
-    echo "$RootLabel device: $(DeviceInfo $RootDev)"
+    echo "$RootLabel device: $(DeviceInfo $RootDev) $rootpart"
+    exit 0
 }
-
-Reinstall=true
 
 function SelectMode {
     read -n 1 -p "Re-Install mode? y/n: " key && echo
@@ -188,11 +255,6 @@ function Сompletion {
     fi
 }
 
-PayPartition=''
-EfiPartition=''
-BootPartition=''
-RootPartition=''
-
 function ExtractKeys {
     sudo cryptsetup luksOpen $BootPartition $CryptBootFS
     sudo mkdir $CryptBootFS
@@ -225,9 +287,11 @@ function PreInstall {
         sudo parted --script $BootDev mkpart primary $((payMib+efiMiB))MiB 100%
         sudo parted --script $BootDev set 2 boot on
 
-        echo "make $RootLabel partition table: $RootDev"
-        sudo parted --script $RootDev mklabel gpt
-        sudo parted --script $RootDev mkpart primary 1MiB 100%
+        if [[ $RootPartition == "" ]]; then
+            echo "make $RootLabel partition table: $RootDev"
+            sudo parted --script $RootDev mklabel gpt
+            sudo parted --script $RootDev mkpart primary 1MiB 100%
+        fi
     fi
     sudo parted $BootDev print
     sudo parted $RootDev print
