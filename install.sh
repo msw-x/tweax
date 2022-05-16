@@ -184,7 +184,7 @@ function SelectRootPartition {
     if [[ $key == 0 ]]; then
         return
     fi
-    RootPartition=$(DevicePatition $RootDev $key)
+    RootPartition=$(DevicePatition '/dev/'$RootDev $key)
 }
 
 function SelectDevices {
