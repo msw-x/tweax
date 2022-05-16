@@ -23,6 +23,10 @@ RootPartCount=0
 BootLabel='BOOT'
 RootLabel='ROOT'
 
+EfiFsLabel='x-usb-efi'
+PayFsLabel='x-usb-pay'
+RootTrapFsLabel='x-data'
+
 BootDev=''
 RootDev=''
 
@@ -306,10 +310,10 @@ function PreInstall {
         ExtractKeys
     fi
 
-    sudo mkfs.fat -F32 $EfiPartition
+    sudo mkfs.fat -F32 $EfiPartition -n $EfiFsLabel
     if ! $Reinstall; then
-        sudo mkfs.fat -F32 $PayPartition
-        sudo mkfs.btrfs -f $RootPartition
+        sudo mkfs.fat -F32 $PayPartition -n $PayFsLabel
+        sudo mkfs.btrfs -f $RootPartition --label $RootTrapFsLabel
     fi
 
     sudo dd if=/dev/urandom of=$BootKey bs=4096 count=1
