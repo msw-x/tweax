@@ -355,9 +355,12 @@ function Install {
 
 function PostInstall {
     local target='/target'
+    local lksdir='/tmp'
+    # to be able to update the kernel and rebuild initrd
+    lksdir=$InitramfsSecret
 
-    sudo cp ${RootHeader} ${target}/tmp
-    sudo cp ${PwdDir}/chroot.sh ${target}/tmp
+    sudo cp ${RootHeader} ${target}${lksdir}
+    sudo cp ${PwdDir}/chroot.sh ${target}${lksdir}
 
     sudo mkdir -p ${target}${InitramfsSecret}
     sudo cp ${BootKey} ${target}${InitramfsSecret}
@@ -368,7 +371,7 @@ function PostInstall {
     local initramfsHookCopy=/target/etc/initramfs-tools/hooks/copy
     echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
     echo 'mkdir -p ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
-    echo "cp /tmp/${RootHeader}"' ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
+    echo "cp /${lksdir}/${RootHeader}"' ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
     echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
     sudo chmod +x ${initramfsHookCopy}
 
