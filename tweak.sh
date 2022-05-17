@@ -559,6 +559,7 @@ function InstallSkype {
 
         ref="https://go.skype.com/skypeforlinux-64.deb"
 
+        Exec "sudo apt install -y libgdk-pixbuf2.0-0"
         Exec "wget $ref -O skype.deb" "download Skype"
         Exec "sudo dpkg -i skype.deb" "install Skype"
     fi
