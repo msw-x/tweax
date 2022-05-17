@@ -319,7 +319,6 @@ AptList='
     vlc
     gimp
     ffmpeg
-    openshot
     audacity
     graphviz
     kazam
