@@ -241,6 +241,9 @@ function Startup {
     else
         sudo sed -i "10i Defaults        timestamp_timeout=-1" /etc/sudoers
     fi
+    sudo gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    sudo gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-purple-dark'
+    sudo gsettings set org.gnome.desktop.interface icon-theme 'Yaru-purple'
 }
 
 function СonfirmationDialog {
