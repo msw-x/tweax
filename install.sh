@@ -403,14 +403,15 @@ function PostInstall {
     cat ${target}/etc/default/grub
     cat ${target}/etc/fstab
 
-    #if ! $Reinstall; then
-    #    local user=$(ls -1 ${target}/home | awk '(NR == 1)')
-    #    local mnt=${target}/${MntExt}
-    #    echo "user: $user"
-    #    sudo mkdir $mnt
-    #    sudo mount /dev/mapper/${LvmVG}-${LvmExt} $mnt
-    #    sudo chown -R ${user}:${user} $mnt
-    #fi
+    if ! $Reinstall; then
+        local user=$(ls -1 ${target}/home | awk '(NR == 1)')
+        local mnt=${target}/${MntExt}
+        echo "user: $user"
+        sudo useradd $user
+        sudo mkdir $mnt
+        sudo mount /dev/mapper/${LvmVG}-${LvmExt} $mnt
+        sudo chown -R ${user}:${user} $mnt
+    fi
 
     for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n /target/$n; done
     sudo chroot /target /tmp/chroot.sh
