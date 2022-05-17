@@ -403,6 +403,7 @@ function PostInstall {
     if ! $Reinstall; then
         local user="ls -1 ${target}/home | awk '(NR == 1)'"
         local mnt=${target}/${MntExt}
+        echo "user: $user"
         sudo mkdir $mnt
         sudo mount /dev/mapper/${LvmVG}-${LvmExt} $mnt
         sudo chown -R ${user}:${user} $mnt
