@@ -286,8 +286,8 @@ AptList='
     crossbuild-essential-armhf
     protobuf-compiler
     clang
-    gcc-11
-    g++-11
+    gcc
+    g++
 
     python3-dev
     python3-pip
@@ -322,6 +322,7 @@ AptList='
     openshot
     audacity
     graphviz
+    kazam
     vokoscreen-ng
     recordmydesktop
     simplescreenrecorder
@@ -330,9 +331,6 @@ AptList='
 
     gir1.2-appindicator3-0.1
 '
-#golang
-#arduino
-#libopencv-dev - without extra modules?
 AptListDialog='
     smartmontools
     wireshark
@@ -717,49 +715,23 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.desktop.interface clock-show-date true"
         Exec "gsettings set org.gnome.desktop.interface clock-format '24h'"
 
-        Exec "gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'"
-
-        Exec "gsettings set org.gnome.shell.extensions.user-theme name 'Yaru-dark'"
+        Exec "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'"
+        Exec "gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-purple-dark'"
+        Exec "gsettings set org.gnome.desktop.interface icon-theme 'Yaru-purple'"
         Exec "gsettings set org.gnome.shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\""
+
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock autohide true"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false"
 
         LangToggle="['grp:alt_shift_toggle']"
         Exec 'gsettings set org.gnome.desktop.input-sources xkb-options "'$LangToggle'"'
 
-        if [[ $DistrVersion == "19.04" ]]; then
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal '<Alt>t'"
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
 
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up '<Alt>Page_Up'"
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute '<Alt>Pause'"
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down '<Alt>Page_Down'"
-        fi
-        if [[ $DistrVersion == "19.10" ]]; then
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
-
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
-        fi
-        if [[ $DistrVersion == "20.04" ]]; then
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
-
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
-        fi
-        if [[ $DistrVersion == "20.10" ]]; then
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
-
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
-        fi
-        if [[ $DistrVersion == "21.04" ]]; then
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
-
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
-            Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
-        fi
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
 
         Exec "gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-up \"['<Super>Page_Up']\""
         Exec "gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down \"['<Super>Page_Down']\""
@@ -1012,7 +984,6 @@ function InstallDialog {
 function Install {
     Clean
     AddAptRepositories
-    AddPortRepositories
     Upgrading
     InstallOverApt
     InstallChrome
@@ -1038,7 +1009,7 @@ function Configure {
     ConfigureHomeConfig
     ConfigureTerminal
     ConfigureEnvironment
-    ConfigureNetwork
+    #ConfigureNetwork
     ConfigureLocale
 
     ConfigureDocker
