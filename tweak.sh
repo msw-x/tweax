@@ -256,7 +256,7 @@ AptList='
 
     imwheel
     dconf-editor
-    gnome-tweak-tool
+    gnome-tweaks
     gnome-shell-extensions
 
     psensor
