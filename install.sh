@@ -14,6 +14,8 @@ LvmRoot='root'
 LvmExt='ext'
 InitramfsSecret='/etc/secret'
 
+MntExt='/mnt/ext'
+
 DevListFile='dev.lst'
 DevListCount=0
 
@@ -391,13 +393,14 @@ function PostInstall {
     sudo sed -i '\|boot/efi|d' ${target}/etc/fstab
     local UuidEfi=$(blkid -s UUID -o value $EfiPartition)
     echo "UUID=$UuidEfi /boot/efi vfat umask=0077 0 1" | sudo tee -a ${target}/etc/fstab
+    echo "/dev/mapper/${LvmVG}-${LvmExt} $MntExt ext4 defaults 0 2" | sudo tee -a ${target}/etc/fstab
 
     ls -1 /etc/grub.d
     cat ${initramfsHookCopy}
     cat ${target}/etc/default/grub
     cat ${target}/etc/fstab
 
-    sudo mount /dev/mapper/${CryptBootFS} ${target}/boot
+    #sudo mount /dev/mapper/${CryptBootFS} ${target}/boot
     for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n /target/$n; done
     sudo chroot /target /tmp/chroot.sh
 }
