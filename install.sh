@@ -400,7 +400,6 @@ function PostInstall {
     cat ${target}/etc/default/grub
     cat ${target}/etc/fstab
 
-    #sudo mount /dev/mapper/${CryptBootFS} ${target}/boot
     for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n /target/$n; done
     sudo chroot /target /tmp/chroot.sh
 }
