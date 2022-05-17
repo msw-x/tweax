@@ -401,7 +401,7 @@ function PostInstall {
     cat ${target}/etc/fstab
 
     if ! $Reinstall; then
-        local user="ls -1 ${target}/home | awk '(NR == 1)'"
+        local user=$(ls -1 ${target}/home | awk '(NR == 1)')
         local mnt=${target}/${MntExt}
         echo "user: $user"
         sudo mkdir $mnt
