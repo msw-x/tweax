@@ -474,8 +474,8 @@ function InstallArduino {
     if CheckStep; then
         PrintTitle "Install Arduino"
 
-        Exec 'wget https://www.arduino.cc/download.php?f=/arduino-nightly-linux64.tar.xz' "download Arduino"
-        Exec 'tar xf download.php\?f\=%2Farduino-nightly-linux64.tar.xz' "unpack Arduino"
+        Exec 'wget https://downloads.arduino.cc/arduino-nightly-linux64.tar.xz' "download Arduino"
+        Exec 'tar xf arduino-nightly-linux64.tar.xz' "unpack Arduino"
         Exec 'mv arduino-nightly arduino'
         Exec 'sudo mv arduino /opt'
         Exec 'sudo /opt/arduino/install.sh' "install Arduino"
