@@ -559,7 +559,7 @@ function InstallSkype {
 
         ref="https://go.skype.com/skypeforlinux-64.deb"
 
-        Exec "sudo apt install -y libgdk-pixbuf2.0-0"
+        Exec "sudo apt install -y libgdk-pixbuf-xlib-2.0-0 libgdk-pixbuf2.0-0"
         Exec "wget $ref -O skype.deb" "download Skype"
         Exec "sudo dpkg -i skype.deb" "install Skype"
     fi
@@ -598,7 +598,7 @@ function InstallOpencv {
             libgtk-3-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
             libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev
             gfortran openexr libatlas-base-dev python3-dev python3-numpy
-            libtbb2 libtbb-dev libdc1394-22-dev libopenexr-dev
+            libtbb2 libtbb-dev libdc1394-dev libopenexr-dev
             libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev
         "
 
