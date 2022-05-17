@@ -646,6 +646,7 @@ function ConfigureAliase {
     if CheckStep; then
         PrintTitle "Configure Aliase"
 
+        AddAliase "pw='poweroff'"
         AddAliase "hs='history | grep'"
         AddAliase "winbox='nohup wine ${WinBoxDir}/$exename </dev/null >/dev/null 2>&1 &'"
     fi
@@ -790,33 +791,6 @@ function ConfigureEnvironment {
         Exec "gsettings set $key.custom-keybinding:$custom2 name 'Rhythmbox next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 command 'rhythmbox-client --next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 binding '<Alt>End'"
-    fi
-    NextStep
-}
-
-function ConfigureExtPartition {
-    if CheckStep; then
-        PrintTitle "Configure Ext Partition"
-
-        partition="/dev/nvme0n1p3"
-        mountpoint="$MntExt"
-        fstab="/etc/fstab"
-        rule="$partition $mountpoint ext4 defaults 0 2"
-
-        if [ -e "$partition" ]; then
-            if grep "$partition" ${fstab} >/dev/null; then
-                Echo "[Warning] partition ${partition} already exist in fstab"
-            else
-                AddToFstab $rule
-            fi
-        else
-            Echo "[Warning] partition ${partition} not found"
-        fi
-
-        if [ ! -d "$mountpoint" ]; then
-            Exec "sudo mkdir $mountpoint"
-        fi
-        Exec "sudo chown $User:$User $mountpoint"
     fi
     NextStep
 }
@@ -1064,7 +1038,6 @@ function Configure {
     ConfigureHomeConfig
     ConfigureTerminal
     ConfigureEnvironment
-    ConfigureExtPartition
     ConfigureNetwork
     ConfigureLocale
 
