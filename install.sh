@@ -401,7 +401,7 @@ function PostInstall {
     cat ${target}/etc/fstab
 
     if ! $Reinstall; then
-        local user="ls -1 /home | awk '(NR == 1)'"
+        local user="ls -1 ${target}/home | awk '(NR == 1)'"
         local mnt=${target}/${MntExt}
         sudo mkdir $mnt
         sudo mount /dev/mapper/${LvmVG}-${LvmExt} $mnt
