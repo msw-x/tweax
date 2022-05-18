@@ -764,6 +764,8 @@ function ConfigureEnvironment {
         Exec "gsettings set $key.custom-keybinding:$custom2 name 'Rhythmbox next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 command 'rhythmbox-client --next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 binding '<Alt>End'"
+
+        Exec "sudo sed -i 's/#WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/custom.conf"
     fi
     NextStep
 }
