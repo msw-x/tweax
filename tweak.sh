@@ -938,7 +938,7 @@ function ConfigureTor {
     if CheckStep; then
         PrintTitle "Configure Tor"
 
-        Exec "cp ${SrcDir}/fix-tor/* /usr/lib/python3/dist-packages/torbrowser_launcher" "fix tor"
+        Exec "sudo cp ${SrcDir}/fix-tor/* /usr/lib/python3/dist-packages/torbrowser_launcher" "fix tor"
     fi
     NextStep
 }
