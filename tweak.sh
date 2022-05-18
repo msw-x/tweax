@@ -720,6 +720,8 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.desktop.interface icon-theme 'Yaru-purple'"
         Exec "gsettings set org.gnome.shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\""
 
+        Exec "gsettings set org.gnome.gedit.preferences.editor scheme 'Yaru-dark'"
+
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock autohide true"
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false"
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false"
