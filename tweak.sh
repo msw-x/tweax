@@ -881,8 +881,7 @@ function ConfigureEtcher {
     if CheckStep; then
         PrintTitle "Configure Telegram"
 
-        Exec "nohup $OptDir/etcher/etcher </dev/null >/dev/null 2>&1 &"
-
+        Exec "sudo cp ${SrcDir}/etcher.png ${OptDir}/etcher" "copy menu icon"
         Exec "sudo cp ${SrcDir}/etcher.desktop /usr/share/applications" "make menu icon"
     fi
     NextStep
