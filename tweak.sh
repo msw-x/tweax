@@ -748,6 +748,7 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.shell.extensions.ding show-trash false"
         Exec "gsettings set org.gnome.shell.extensions.ding show-volumes false"
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false"
 
         key="org.gnome.settings-daemon.plugins.media-keys"
         custom0="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
