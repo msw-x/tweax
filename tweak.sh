@@ -667,7 +667,6 @@ function ConfigureDirs {
         }
         maketcln "a" "ext"
         maketcln "u" "src"
-        maketcln "l" "lib"
         maketcln "n" "bin"
         maketcln "s" "signal"
         maketcln "r" "archive"
@@ -675,8 +674,7 @@ function ConfigureDirs {
         maketcln "o" "msw"
         maketcln "m" "music"
         maketcln "p" "projects"
-        maketcln "q" "repo"
-        maketcln "w" "soft"
+        maketcln "w" "media"
         maketcln "x" "x"
 
         Exec "ln -s $MntExt $Home/ext" "ext"
