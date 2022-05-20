@@ -327,7 +327,7 @@ function PreInstall {
     sudo mkfs.fat -F32 $EfiPartition -n $EfiFsLabel
     if ! $Reinstall; then
         sudo mkfs.fat -F32 $PayPartition -n $PayFsLabel
-        sudo mkfs.ext4 $IsoPartition -L $IsoFsLabel
+        sudo mkfs.ext4 -F $IsoPartition -L $IsoFsLabel
         sudo mkfs.btrfs -f $RootPartition --label $RootTrapFsLabel
     fi
 
