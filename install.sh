@@ -219,9 +219,9 @@ function SelectMode {
     if [[ $key == 'n' ]]; then
         Reinstall=false
     fi
-    local mode='Install'
+    local mode="Full-Install (erase all data on $BootLabel and $RootLabel)"
     if $Reinstall; then
-        mode='Re-Install'
+        mode="Re-Install (save $PayFsLabel, $IsoFsLabel and $RootTrapFsLabel)"
     fi
     echo "Mode: $mode"
 }
