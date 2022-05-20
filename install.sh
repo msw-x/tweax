@@ -26,6 +26,7 @@ BootLabel='BOOT'
 RootLabel='ROOT'
 
 EfiFsLabel='x-usb-efi'
+IsoFsLabel='x-usb-iso'
 PayFsLabel='x-usb-pay'
 RootTrapFsLabel='x-data'
 
@@ -44,6 +45,7 @@ Reinstall=true
 PayPartition=''
 EfiPartition=''
 BootPartition=''
+IsoPartition=''
 RootPartition=''
 
 function GetDeviceList {
@@ -274,9 +276,17 @@ function ExtractKeys {
 
 function PreInstall {
     local sizeMiB=$(DeviceMiB $BootDev)
+    local minMiB=6000
+    if [[ $sizeMiB < $minMiB ]]; then
+        echo "Error: size of $BootDev ($sizeMiB MiB) very small, it is necessary to at least $minMiB MiB"
+        exit 1
+    fi
     local efiMiB=100
     local bootMiB=500
-    local payMib=$((sizeMiB-efiMiB-bootMiB-2))
+    local isoMiB=4000
+    local payMiB=$((sizeMiB-efiMiB-bootMiB-isoMiB-2))
+    local bootOffsetMiB=$((payMiB+efiMiB))
+    local isoOffsetMiB=$((bootOffsetMiB+bootMiB))
 
     BootDev='/dev/'$BootDev
     RootDev='/dev/'$RootDev
@@ -287,9 +297,10 @@ function PreInstall {
     if ! $Reinstall; then
         echo "make $BootLabel partition table: $BootDev"
         sudo parted --script $BootDev mklabel gpt
-        sudo parted --script $BootDev mkpart primary 1MiB ${payMib}MiB
-        sudo parted --script $BootDev mkpart primary ${payMib}MiB $((payMib+efiMiB))MiB
-        sudo parted --script $BootDev mkpart primary $((payMib+efiMiB))MiB 100%
+        sudo parted --script $BootDev mkpart primary 1MiB ${payMiB}MiB
+        sudo parted --script $BootDev mkpart primary ${payMiB}MiB ${bootOffsetMiB}MiB
+        sudo parted --script $BootDev mkpart primary ${bootOffsetMiB}MiB ${isoOffsetMiB}MiB
+        sudo parted --script $BootDev mkpart primary ${isoOffsetMiB}MiB 100%
         sudo parted --script $BootDev set 2 boot on
 
         if [[ $RootPartition == "" ]]; then
@@ -304,6 +315,7 @@ function PreInstall {
     PayPartition=$(DevicePatition $BootDev 1)
     EfiPartition=$(DevicePatition $BootDev 2)
     BootPartition=$(DevicePatition $BootDev 3)
+    IsoPartition=$(DevicePatition $BootDev 4)
     if [[ $RootPartition == "" ]]; then
         RootPartition=$(DevicePatition $RootDev 1)
     fi
@@ -315,6 +327,7 @@ function PreInstall {
     sudo mkfs.fat -F32 $EfiPartition -n $EfiFsLabel
     if ! $Reinstall; then
         sudo mkfs.fat -F32 $PayPartition -n $PayFsLabel
+        sudo mkfs.ext4 $IsoPartition -L $IsoFsLabel
         sudo mkfs.btrfs -f $RootPartition --label $RootTrapFsLabel
     fi
 
@@ -378,17 +391,41 @@ function PostInstall {
     echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
     sudo chmod +x ${initramfsHookCopy}
 
-    local UuidBoot=$(blkid -s UUID -o value $BootPartition)
-    local UuidRoot=$(blkid -s UUID -o value $RootPartition)
-    echo "$CryptBootFS UUID=${UuidBoot} ${InitramfsSecret}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
-    echo "$CryptRootFS UUID=${UuidRoot} ${InitramfsSecret}/${RootKey} luks,header=${InitramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
+    local uuidBoot=$(blkid -s UUID -o value $BootPartition)
+    local uuidRoot=$(blkid -s UUID -o value $RootPartition)
+    echo "$CryptBootFS UUID=${uuidBoot} ${InitramfsSecret}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
+    echo "$CryptRootFS UUID=${uuidRoot} ${InitramfsSecret}/${RootKey} luks,header=${InitramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
 
+    echo "GRUB_TIMEOUT=0" | sudo tee -a ${target}/etc/default/grub
+    echo "GRUB_TIMEOUT_STYLE=hidden" | sudo tee -a ${target}/etc/default/grub
+    echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
 
-    sudo rm "${target}/etc/grub.d/20_memtest86+"
-    sudo rm "${target}/etc/grub.d/30_os-prober"
-    sudo rm "${target}/etc/grub.d/30_uefi-firmware"
+    local menuIsoFile=${target}/etc/grub.d/50_iso
+    local uuidIso=$(blkid -s UUID -o value $IsoPartition)
+    sudo cat > $menuIsoFile <<"EOL"
+menuentry "ISO" {
+   set isofile="/x.iso"
+   insmod part_gpt
+   insmod ext2
+   search --no-floppy --fs-uuid --set $uuidIso
+   loopback loop $isofile
+   linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+   initrd (loop)/casper/initrd
+}
+EOL
+    sed -i 's/$uuidIso/'"$uuidIso/g" $menuIsoFile
+    sudo chown root:root $menuIsoFile
+
+    sudo chmod -x ${target}/etc/grub.d/10_linux_zfs
+    sudo chmod -x ${target}/etc/grub.d/20_linux_xen
+    sudo chmod -x ${target}/etc/grub.d/20_memtest86+
+    sudo chmod -x ${target}/etc/grub.d/30_os-prober
+    sudo chmod -x ${target}/etc/grub.d/30_uefi-firmware
+    sudo chmod -x ${target}/etc/grub.d/40_custom
+    sudo chmod -x ${target}/etc/grub.d/41_custom
+    sudo chmod +x $menuIsoFile
 
     sudo sed -i '\|boot/efi|d' ${target}/etc/fstab
     local UuidEfi=$(blkid -s UUID -o value $EfiPartition)
@@ -396,9 +433,10 @@ function PostInstall {
     echo "/dev/mapper/${LvmVG}-${LvmExt} $MntExt ext4 defaults 0 2" | sudo tee -a ${target}/etc/fstab
 
     ls -1 /etc/grub.d
-    cat ${initramfsHookCopy}
+    cat ${menuIsoFile}
     cat ${target}/etc/default/grub
     cat ${target}/etc/fstab
+    cat ${initramfsHookCopy}
 
     if ! $Reinstall; then
         local user=$(ls -1 ${target}/home | awk '(NR == 1)')
