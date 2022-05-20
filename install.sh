@@ -400,7 +400,7 @@ function PostInstall {
     echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
 
-    local menuIsoFile=${target}/etc/grub.d/41_custom
+    local menuIsoFile=${target}/etc/grub.d/40_custom
     local uuidIso=$(blkid -s UUID -o value $IsoPartition)
     sudo bash -c 'cat >> '"$menuIsoFile"' << "EOL"
 menuentry "ISO" {
