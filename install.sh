@@ -277,7 +277,7 @@ function ExtractKeys {
 function PreInstall {
     local sizeMiB=$(DeviceMiB $BootDev)
     local minMiB=6000
-    if [[ $sizeMiB < $minMiB ]]; then
+    if (( sizeMiB < minMiB )); then
         echo "Error: size of $BootDev ($sizeMiB MiB) very small, it is necessary to at least $minMiB MiB"
         exit 1
     fi
