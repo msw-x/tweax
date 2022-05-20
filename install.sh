@@ -396,15 +396,13 @@ function PostInstall {
     echo "$CryptBootFS UUID=${uuidBoot} ${InitramfsSecret}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
     echo "$CryptRootFS UUID=${uuidRoot} ${InitramfsSecret}/${RootKey} luks,header=${InitramfsSecret}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
 
-    #echo "GRUB_TIMEOUT=0" | sudo tee -a ${target}/etc/default/grub
-    #echo "GRUB_TIMEOUT_STYLE=hidden" | sudo tee -a ${target}/etc/default/grub
-    #echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a ${target}/etc/default/grub
+    echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
     echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
 
-    local menuIsoFile=${target}/etc/grub.d/50_iso
+    local menuIsoFile=${target}/etc/grub.d/41_custom
     local uuidIso=$(blkid -s UUID -o value $IsoPartition)
-    sudo bash -c 'cat > '"$menuIsoFile"' << "EOL"
+    sudo bash -c 'cat >> '"$menuIsoFile"' << "EOL"
 menuentry "ISO" {
    set isofile="/x.iso"
    insmod part_gpt
@@ -422,9 +420,7 @@ EOL'
     sudo chmod -x ${target}/etc/grub.d/20_memtest86+
     sudo chmod -x ${target}/etc/grub.d/30_os-prober
     sudo chmod -x ${target}/etc/grub.d/30_uefi-firmware
-    sudo chmod -x ${target}/etc/grub.d/40_custom
-    sudo chmod -x ${target}/etc/grub.d/41_custom
-    #sudo chmod +x $menuIsoFile
+    sudo chmod -x ${target}/etc/grub.d/35_fwupd
 
     sudo sed -i '\|boot/efi|d' ${target}/etc/fstab
     local UuidEfi=$(blkid -s UUID -o value $EfiPartition)
