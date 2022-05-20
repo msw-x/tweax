@@ -404,7 +404,7 @@ function PostInstall {
 
     local menuIsoFile=${target}/etc/grub.d/50_iso
     local uuidIso=$(blkid -s UUID -o value $IsoPartition)
-    sudo bash -c 'cat > $menuIsoFile << "EOL"
+    sudo bash -c 'cat > '"$menuIsoFile"' << "EOL"
 menuentry "ISO" {
    set isofile="/x.iso"
    insmod part_gpt
@@ -415,7 +415,7 @@ menuentry "ISO" {
    initrd (loop)/casper/initrd
 }
 EOL'
-    sed -i 's/$uuidIso/'"$uuidIso/g" $menuIsoFile
+    sudo sed -i 's/$uuidIso/'"$uuidIso/g" $menuIsoFile
 
     sudo chmod -x ${target}/etc/grub.d/10_linux_zfs
     sudo chmod -x ${target}/etc/grub.d/20_linux_xen
