@@ -288,6 +288,8 @@ AptList='
     clang
     gcc
     g++
+    gcc-12
+    g++-12
     pgadmin4-desktop
 
     python3-dev
