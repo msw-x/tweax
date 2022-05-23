@@ -288,6 +288,7 @@ AptList='
     clang
     gcc
     g++
+    pgadmin4-desktop
 
     python3-dev
     python3-pip
@@ -374,6 +375,9 @@ function AddAptRepositories {
 
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
+
+        Exec 'curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add'  "add pgAdmin4 repository"
+        Exec 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list'
     fi
     NextStep
 }
