@@ -746,7 +746,7 @@ function ConfigureEnvironment {
 
         WallpaperPath=$Home/.$Wallpaper
         Exec "cp ${SrcDir}/${Wallpaper} ${WallpaperPath}"
-        Exec "gsettings set org.gnome.desktop.background picture-uri file://$WallpaperPath"
+        Exec "gsettings set org.gnome.desktop.background picture-uri-dark file://$WallpaperPath"
 
         Exec "gsettings set org.gnome.desktop.background show-desktop-icons false"
         Exec "gsettings set org.gnome.shell.extensions.ding show-home false"
