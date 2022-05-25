@@ -209,7 +209,7 @@ for i in "$@"; do
         help)
             echo "help         - print this help"
             echo "list         - print list of operations"
-            echo "list-slim    - print short list of operations"
+            echo "list-head    - print list heads of operations"
             echo "step         - initial step"
             echo "step-one     - perform only one step"
             echo "step-disable - list of disabled steps, for example: 4,8,26"
@@ -218,7 +218,7 @@ for i in "$@"; do
         list)
             PerformCommands=0
         ;;
-        list-slim)
+        list-head)
             PerformCommands=0
             PrintCommands=0
         ;;
@@ -298,6 +298,7 @@ AptList='
     python-is-python3
 
     wine
+    winetricks
     virtualbox
     virtualbox-guest-additions-iso
     docker.io
@@ -494,12 +495,32 @@ function InstallWinBox {
     if CheckStep; then
         PrintTitle "Install Winbox"
 
-        WinBoxDir=$OptDir'/winbox'
-        exename='winbox.exe'
-        ref='https://mt.lv/winbox'
+        local dir=$OptDir'/winbox'
+        local exename='winbox.exe'
+        local ref='https://mt.lv/winbox'
         Exec "wget $ref -O $exename" "download Winbox"
-        Exec 'sudo mkdir '${WinBoxDir}
-        Exec "sudo mv $exename ${WinBoxDir}"
+        Exec 'sudo mkdir '${dir}
+        Exec "sudo mv $exename ${dir}"
+        WinBoxExe=$dir/$exename
+    fi
+    NextStep
+}
+
+function InstallStamina {
+    if CheckStep; then
+        PrintTitle "Install Stamina"
+
+        Exec "winetricks mfc42" "install mfc42 for wine"
+        Exec 'wine reg add "HKCU\Keyboard Layout\Preload" /f /v "2" /t REG_SZ /d "00000419"'
+
+        local dir=$OptDir'/stamina'
+        Exec "wget https://stamina.ru/files/Stamina.zip -O stamina.zip" "download Stamina"
+        Exec "unzip stamina.zip" "install Stamina"
+        Exec "sudo mkdir $dir"
+        Exec "sudo mv Stamina/* $dir"
+        StaminaExe="$dir/stamina.exe"
+        Exec "sudo mv $dir/Stamina.exe $StaminaExe"
+        Exec "sudo chown -R $User:$User $dir"
     fi
     NextStep
 }
@@ -653,7 +674,8 @@ function ConfigureAliase {
 
         AddAliase "pw='poweroff'"
         AddAliase "hs='history | grep'"
-        AddAliase "winbox='nohup wine ${WinBoxDir}/$exename </dev/null >/dev/null 2>&1 &'"
+        AddAliase "winbox='nohup wine ${WinBoxExe} </dev/null >/dev/null 2>&1 &'"
+        AddAliase "stamina='export LC_ALL=ru_RU.UTF-8 && nohup wine ${StaminaExe} </dev/null >/dev/null 2>&1 &'"
     fi
     NextStep
 }
@@ -1009,6 +1031,7 @@ function Install {
     InstallSmartsynchronize
     InstallArduino
     InstallWinBox
+    InstallStamina
     InstallTeamviewer
     InstallPostman
     InstallGolang
