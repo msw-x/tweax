@@ -16,7 +16,7 @@ User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
 Media='/media/'$User
 OptDir='/opt'
-MntExt='/mnt/ext'
+MntExt='/mnt/ext/ext'
 VmPath=$MntExt'/vm'
 
 SrcDir=$PwdDir'/src'
