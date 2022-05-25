@@ -61,7 +61,7 @@ function DownloadFar {
 }
 
 function DownloadSublime {
-    local url=$(wget -qO - https://www.sublimetext.com/download | grep -P -o "href=\".*?\"" | grep -o "https.*x64.*zip")
+    local url=$(wget -qO - https://www.sublimetext.com/download | grep -P -o "href=\".*?\"" | grep -o "https.*x64.*exe")
     local file=$(basename $url)
     url=$(dirname $url)
     Download $url $file
