@@ -1,0 +1,8 @@
+[Unit]
+Description=BootEject Timer
+
+[Timer]
+OnStartupSec=10
+
+[Install]
+WantedBy=timers.target

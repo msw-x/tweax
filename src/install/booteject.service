@@ -1,0 +1,7 @@
+[Unit]
+Description=BootEject
+
+[Service]
+ExecStart=/opt/booteject/booteject.sh
+Type=oneshot
+RemainAfterExit=true
