@@ -259,9 +259,6 @@ AptList='
     gnome-tweaks
     gnome-shell-extensions
 
-    psensor
-    indicator-multiload
-
     mc
     tree
     filezilla
@@ -594,13 +591,13 @@ function InstallSkype {
     NextStep
 }
 
-function InstallStorageIndicator {
+function InstallSysMon {
     if CheckStep; then
-        PrintTitle "Install Storage indicator"
+        PrintTitle "Install SysMon"
 
-        Exec "git clone git://mswo.ru/msw/storage-indicator" "download Storage indicator"
-        Exec 'cd storage-indicator'
-        Exec './install.sh' "install Storage indicator"
+        Exec "git clone git://mswo.ru/msw/sysmon" "download SysMon"
+        Exec 'cd sysmon'
+        Exec './install.sh' "install SysMon"
         Exec 'cd ..'
     fi
     NextStep
@@ -858,24 +855,6 @@ function ConfigureImwheel {
     NextStep
 }
 
-function ConfigureIndicatorMultiload {
-    if CheckStep; then
-        PrintTitle "Configure Indicator-Multiload"
-
-        Exec "dconf load /de/mh21/indicator-multiload/ < ${SrcDconfDir}/indicator-multiload"
-    fi
-    NextStep
-}
-
-function ConfigurePsensor {
-    if CheckStep; then
-        PrintTitle "Configure Psensor"
-
-        Exec "dconf write /apps/psensor/interface-hide-on-startup true"
-    fi
-    NextStep
-}
-
 function ConfigureVirtualBox {
     if CheckStep; then
         PrintTitle "Configure VirtualBox"
@@ -1038,7 +1017,7 @@ function Install {
     InstallTelegram
     InstallEtcher
     InstallSkype
-    InstallStorageIndicator
+    InstallSysMon
     InstallOpencv
 }
 
@@ -1056,8 +1035,6 @@ function Configure {
     ConfigureDocker
     ConfigureGit
     ConfigureImwheel
-    ConfigureIndicatorMultiload
-    ConfigurePsensor
     ConfigureVirtualBox
     ConfigureTelegram
     ConfigureEtcher

@@ -1,9 +1,0 @@
-[general]
-background-color='traditional:background'
-color-scheme='traditional'
-indicator-expressions=['CPU $(percent(cpu.inuse)) $(size(mem.user))', 'Mem $(size(mem.user))', 'Net $(speed(net.down))/$(speed(net.up))', 'Swap $(size(swap.used))', 'Load $(decimals(load.avg,2))', 'Disk $(speed(disk.read))/$(speed(disk.write))']
-settings-version=uint32 3
-width=uint16 30
-
-[graphs/cpu]
-enabled=false
