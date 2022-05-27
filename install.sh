@@ -35,6 +35,7 @@ RootDev=''
 
 TmpDir='/tmp/install-'$(date +%s%N)
 PwdDir=$(pwd)
+SrcDir=${PwdDir}'/src/install'
 
 DistrName=$(cat /etc/*-release | sed -n 's/^ID=//p')
 DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
@@ -376,7 +377,7 @@ function PostInstall {
 
     sudo mkdir -p ${target}${lksdir}
     sudo cp ${RootHeader} ${target}${lksdir}
-    sudo cp ${PwdDir}/chroot.sh ${target}/tmp
+    sudo cp ${SrcDir}/chroot.sh ${target}/tmp
 
     sudo mkdir -p ${target}${InitramfsSecret}
     sudo cp ${BootKey} ${target}${InitramfsSecret}
