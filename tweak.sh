@@ -10,7 +10,7 @@ DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
 DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
 
-CpuCoreCount=$(grep ^siblings /proc/cpuinfo | uniq | awk '{print $3}')
+CpuCoreCount=$(lscpu | grep -P 'CPU\(s\):.*\d+' | awk '{print $2}' | head -n 1)
 
 User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
