@@ -327,6 +327,7 @@ AptList='
     vokoscreen-ng
     recordmydesktop
     simplescreenrecorder
+    pulseeffects
 
     torbrowser-launcher
 
