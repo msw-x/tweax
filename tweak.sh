@@ -367,6 +367,7 @@ function Clean {
         Exec 'sudo apt purge -y aisleriot' "remove game solitaire"
         Exec 'sudo apt purge -y update-notifier' "remove update notifier"
         Exec 'sudo apt purge -y brltty' "remove brltty"
+        Exec 'sudo apt purge -y gstreamer1.0-vaapi' "remove gstreamer1.0-vaapi"
         Exec 'sudo apt autoremove -y'
         Exec 'sudo snap remove gnome-calculator' "remove gnome-calculator"
     fi
