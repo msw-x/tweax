@@ -305,6 +305,7 @@ AptList='
 
     nmap
     socat
+    ethtool
     traceroute
 
     picocom
