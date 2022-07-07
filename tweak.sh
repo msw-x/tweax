@@ -12,7 +12,7 @@ DistrArch=$(dpkg --print-architecture)
 
 CpuCoreCount=$(lscpu | grep -P 'CPU\(s\):.*\d+' | awk '{print $2}' | head -n 1)
 
-User=$(who | awk '(NR == 1)' | awk '{print $1}')
+User=$(whoami)
 Home='/home/'$User
 Media='/media/'$User
 OptDir='/opt'
@@ -299,6 +299,7 @@ AptList='
     virtualbox
     virtualbox-guest-additions-iso
     docker.io
+    docker-compose
 
     p7zip-full
     unrar
@@ -829,6 +830,7 @@ function ConfigureDocker {
         Echo "configure for resolve conflict Docker with VPN networks"
         Echo "for use VPN: sudo systemctl stop docker"
         Exec "sudo cp ${SrcDir}/docker/daemon.json /etc/docker" "docker daemon.json"
+        Exec "sudo usermod -aG docker ${User}" "docker usermod"
     fi
     NextStep
 }
