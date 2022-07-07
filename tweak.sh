@@ -362,7 +362,8 @@ function Clean {
         Exec 'sudo apt purge -y gnome-sudoku' "remove game sudoku"
         Exec 'sudo apt purge -y gnome-mahjongg' "remove game mahjongg"
         Exec 'sudo apt purge -y aisleriot' "remove game solitaire"
-        Exec 'sudo apt purge -y update-notifier' "remove Update Notifier"
+        Exec 'sudo apt purge -y update-notifier' "remove update notifier"
+        Exec 'sudo apt purge -y brltty' "remove brltty"
         Exec 'sudo apt autoremove -y'
         Exec 'sudo snap remove gnome-calculator' "remove gnome-calculator"
     fi
