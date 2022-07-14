@@ -614,8 +614,6 @@ function InstallTruecrypt {
 
         Exec "tar xvf $SrcDebDir/truecrypt-7.1a-linux-console-x64.tar.gz" "unpack Truecrypt"
         Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"
-
-        Exec "sudo cp -rv ${SrcDir}/tc ${OptDir}/" "install tc"
     fi
     NextStep
 }
