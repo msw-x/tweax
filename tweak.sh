@@ -615,7 +615,16 @@ function InstallTruecrypt {
         Exec "tar xvf $SrcDebDir/truecrypt-7.1a-linux-console-x64.tar.gz" "unpack Truecrypt"
         Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"
 
-        Exec "sudo cp -rv ${SrcDir}/cm ${OptDir}/" "install tc"
+        Exec "sudo cp -rv ${SrcDir}/tc ${OptDir}/" "install tc"
+    fi
+    NextStep
+}
+
+function InstallSly {
+    if CheckStep; then
+        PrintTitle "Install Sly"
+
+        Exec "sudo cp -rv ${SrcDir}/sly ${OptDir}/" "install sly"
     fi
     NextStep
 }
@@ -662,7 +671,7 @@ function ConfigurePath {
     if CheckStep; then
         PrintTitle "Configure Path"
 
-        AddPath $OptDir'/cm'
+        AddPath $OptDir'/sly'
         AddPath $OptDir'/go/bin'
         AddPath $Home'/go/bin'
         AddPath $Home'/msw/bin/bin/vit'
@@ -1002,7 +1011,7 @@ function Launch {
 }
 
 function InstallDialog {
-    InstallTruecrypt
+    #InstallTruecrypt
     InstallOverAptDialog
 }
 
@@ -1025,6 +1034,7 @@ function Install {
     InstallSkype
     InstallSysMon
     InstallOpencv
+    InstallSly
 }
 
 function Configure {

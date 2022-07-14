@@ -1,0 +1,305 @@
+#!/bin/bash
+
+Label='x-usb-pay'
+MountName='usbfs'
+MountPoint='/mnt/'$MountName
+Key='/etc/secret/usb.key'
+Header='/etc/secret/usb.lks'
+OffsetMiB=2048
+
+LocalPoint='/mnt/ext/ext/aux'
+LocalMountPoint='/mnt/local'
+LocalMountName='auxfs'
+
+PrintCommands=0
+PerformCommands=1
+
+RED='\e[1;31m'
+Green='\e[1;32m'
+Yellow='\e[1;33m'
+Blue='\e[1;34m'
+Purple='\e[1;35m'
+CYAN='\e[1;36m'
+NC='\e[0m'
+
+export GREP_COLORS='ms=01;36'
+
+function Fatal {
+    msg=$*
+    if [[ $msg == "" ]]; then
+        echo -e "${RED}[ERROR]${NC}"
+    else
+        echo -e "${RED}[ERROR]:${NC} ${msg}"
+    fi
+    exit 1
+}
+
+function Echo {
+    if [[ $PrintCommands == 1 ]]; then
+        echo -e $@
+    fi
+}
+
+function Exec {
+    Echo "${Yellow}[EXEC]:${NC} $1"
+    if [[ $PerformCommands == 1 ]]; then
+        if ! eval $1; then
+            Fatal
+        fi
+    fi
+}
+
+function Confirm {
+    msg=$1
+    read -n 1 -p $'\e[1;35m'"$msg"$'\e[0m y/n: ' key && echo
+    if [[ $key != 'y' ]]; then
+        echo "cancel"
+        exit 0
+    fi
+}
+
+function ShowAllMounts {
+    Exec "lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep -v loop | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*'"
+    echo -e "${Purple}[/dev/mapper]${NC}"
+    Exec "ls -la /dev/mapper | grep '\->' | awk '{print \$9}' | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*'"
+}
+
+function FindPartition {
+    PayName=$(lsblk -o NAME,LABEL | awk '/'$Label'/{print $1}' | grep -o -P "\w+")
+    if [[ $PayName == "" ]]; then
+        Fatal "partition not found"
+    fi
+    Partition="/dev/$PayName"
+}
+
+function MountNative {
+    local name=$1
+    local point=$2
+    local flag=$3
+    if [[ "$flag" == "--readonly" ]]; then
+        flag='-o ro'
+    fi
+    Exec "sudo mount '/dev/mapper/$name' $point $flag"
+}
+
+function New {
+    FindPartition
+    local luksOffset=$((OffsetMiB*1024*2))
+    Confirm "Are you sure want to crate new crypt container on $Partition?"
+    UmountFS
+    echo "key: $Key"
+    echo "header: $Header"
+    Exec "sudo dd if=/dev/urandom of=$Key bs=4096 count=1"
+    Exec "sudo chmod u=r,go-rwx $Key"
+    Exec "sudo cryptsetup -q luksFormat --hash=sha512 --key-size=512 --key-file=$Key $Partition --header $Header --offset=$luksOffset --luks2-keyslots-size=262144"
+    MountCrypt
+    Exec "sudo mkfs.ext4 -F '/dev/mapper/$MountName'"
+    Exec "sudo sync"
+    MountFS
+    Exec "sudo chown -R $USER $MountPoint"
+    Exec "sudo sync"
+    UmountFS
+    UmountCrypt
+}
+
+function MountFS {
+    local flag=$1
+    echo "mount(fs): $MountPoint"
+    Exec "sudo mkdir -p $MountPoint"
+    MountNative $MountName $MountPoint $flag
+}
+
+function UmountFS {
+    local type='part'
+    local mountPoint=$(lsblk -o TYPE,MOUNTPOINT $Partition | awk '/part/{print $2}')
+    if [[ $mountPoint == "" ]]; then
+        type='crypt'
+        mountPoint=$(lsblk -o TYPE,MOUNTPOINT $Partition | awk '/crypt/{print $2}')
+    fi
+    if [[ $mountPoint != "" ]]; then
+        echo "umount(fs[$type]): $mountPoint"
+        Exec "sudo umount $mountPoint"
+    fi
+}
+
+function MountCrypt {
+    local flag=$1
+    echo "mount(luks): $MountName"
+    Exec "sudo cryptsetup luksOpen $Partition $MountName --key-file=$Key --header $Header $flag"
+}
+
+function UmountCrypt {
+    echo "umount(luks): $MountName"
+    Exec "sudo cryptsetup luksClose $MountName"
+}
+
+function Mount {
+    local flag=$1
+    FindPartition
+    echo -e "mount[${CYAN}$PayName${NC}]"
+    UmountFS
+    MountCrypt $flag
+    MountFS $flag
+}
+
+function Umount {
+    local point=$(lsblk -o MOUNTPOINT | grep "$MountPoint")
+    if [[ $point != "" ]]; then
+        FindPartition
+        echo -e "umount[${CYAN}$PayName${NC}]"
+        Exec "sudo sync"
+        UmountFS
+        UmountCrypt
+    fi
+}
+
+
+function NewLocal {
+    local file=$1
+    local size=$2
+    local name=${file:0:1}
+    if [ "$size" == "" ]; then
+        Fatal "container size is not specified"
+    fi
+    Confirm "Are you sure want to crate new local crypt container ($file:$name:${size}G)?"
+    local container=$LocalPoint/cnt/$file
+    echo "init container: $container"
+    Exec "dd if=/dev/zero of=$container bs=1 count=0 seek=${size}G"
+    Exec "sudo cryptsetup -q luksFormat $container"
+    MountCryptLocal $name
+    Exec "sudo mkfs.ext4 -F '/dev/mapper/$LocalMountName-$name'"
+    Exec "sudo sync"
+    MountFSLocal $name
+    Exec "sudo chown -R $USER '$LocalMountPoint/$name'"
+    Exec "sudo sync"
+    UmountFSLocal $name
+    UmountCryptLocal $name
+}
+
+function MountFSLocal {
+    local name=$1
+    local flag=$2
+    echo "mount(fs): $name"
+    Exec "sudo mkdir -p '$LocalMountPoint/$name'"
+    MountNative "$LocalMountName-$name" "$LocalMountPoint/$name" $flag
+}
+
+function UmountFSLocal {
+    echo "umount(fs): $name"
+    Exec "sudo umount '$LocalMountPoint/$name'"
+}
+
+function MountCryptLocal {
+    local name=$1
+    local flag=$2
+    local file=$(ls "$LocalPoint/cnt" -1 | egrep -o "^$name.*" -m 1)
+    echo "mount(luks): $name"
+    Exec "sudo cryptsetup luksOpen '$LocalPoint/cnt/$file' '$LocalMountName-$name' $flag"
+}
+
+function UmountCryptLocal {
+    local name=$1
+    echo "umount(luks): $name"
+    Exec "sudo cryptsetup luksClose '$LocalMountName-$name'"
+}
+
+function MountLocal {
+    local name=$1
+    local flag=$2
+    echo -e "mount[${CYAN}$name${NC}]"
+    MountCryptLocal $name $flag
+    MountFSLocal $name $flag
+}
+
+function UmountLocal {
+    echo -e "umount[${CYAN}$name${NC}]"
+    Exec "sudo sync"
+    UmountFSLocal $name
+    UmountCryptLocal $name
+}
+
+function UmountLocalAll {
+    lsblk -o MOUNTPOINT | grep -P -o "(?<=$LocalMountPoint/).*" | while read name; do
+        UmountLocal $name
+    done
+}
+
+
+function RSync {
+    local src=$1
+    local dst=$2
+    local flag=$3
+    Exec "rsync --verbose --progress --recursive --times --update --delete $flag $src/* $dst"
+}
+
+function Sync {
+    local src=$1
+    local dst=$2
+    local action=$3
+    RSync $src $dst '--dry-run'
+    echo "sync: $src => $dst"
+    read -n 1 -p $'\e[1;35m'"$action?"$'\e[0m y/n: ' key && echo
+    if [[ $key == 'y' ]]; then
+        RSync $src $dst
+    fi
+}
+
+function Pull {
+    Mount
+    Sync "$MountPoint/aux" $LocalPoint "Pull"
+    Umount
+}
+
+function Push {
+    Mount
+    Sync $LocalPoint "$MountPoint/aux" "Push"
+    Umount
+}
+
+
+if [ "$#" -eq 0 ]; then
+    ShowAllMounts
+else
+    arg=$1
+    name=$2
+    if [ $arg == "help" ] || [ $arg == "?" ]; then
+        echo "help,?                    - print help"
+        echo "new         [local][size] - create new container; local - filename, not index"
+        echo "mount,m     [local]       - mount with r/w mode"
+        echo "read-only,r [local]       - mount with read-only mode"
+        echo "umount,u,d  [local]       - unmount"
+        echo "pull                      - pull changes to removable"
+        echo "push                      - push changes from removable"
+    elif [ $arg == "new" ]; then
+        if [ "$name" == "" ]; then
+            New
+        else
+            NewLocal $name $3
+        fi
+    elif [ $arg == "mount" ] || [ $arg == "m" ]; then
+        if [ "$name" == "" ]; then
+            Mount
+        else
+            MountLocal $name
+        fi
+    elif [ $arg == "read-only" ] || [ $arg == "r" ]; then
+        if [ "$name" == "" ]; then
+            Mount '--readonly'
+        else
+            MountLocal $name '--readonly'
+        fi
+    elif [ $arg == "umount" ] || [ $arg == "u" ] || [ $arg == "d" ]; then
+        if [ "$name" == "" ]; then
+            Umount
+            UmountLocalAll
+        else
+            UmountLocal $name
+        fi
+    elif [ $arg == "pull" ]; then
+        Pull
+    elif [ $arg == "push" ]; then
+        Push
+    else
+        echo "unknown command: $arg"
+    fi
+fi
