@@ -24,6 +24,8 @@ NC='\e[0m'
 
 export GREP_COLORS='ms=01;36'
 
+start=$(date +%s)
+
 function Fatal {
     msg=$*
     if [[ $msg == "" ]]; then
@@ -47,6 +49,10 @@ function Exec {
             Fatal
         fi
     fi
+}
+
+function PrintTime {
+    echo "completed: $(date -d @$(($(date +%s)-$start)) +"%M:%S s")"
 }
 
 function Confirm {
@@ -248,12 +254,14 @@ function Pull {
     Mount
     Sync "$MountPoint/aux" $LocalPoint "Pull"
     Umount
+    PrintTime
 }
 
 function Push {
     Mount
     Sync $LocalPoint "$MountPoint/aux" "Push"
     Umount
+    PrintTime
 }
 
 
