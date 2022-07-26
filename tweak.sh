@@ -700,9 +700,9 @@ function ConfigureDirs {
         function maketcln {
             disk=$1
             name=$2
-            Exec "ln -s /mnt/tc/$disk/$name $Home/msw/$name"
+            Exec "ln -s /mnt/local/$disk/$name $Home/msw/$name"
         }
-        maketcln "a" "ext"
+        maketcln "d" "dnn"
         maketcln "u" "src"
         maketcln "n" "bin"
         maketcln "s" "signal"
