@@ -19,3 +19,6 @@ add arm arch -> wine problem, installed wine:armhf
 https://www.lullabot.com/articles/fixing-docker-and-vpn-ip-address-conflicts
 for use VPN:
 sudo systemctl stop docker
+
+boot раздел расширить до 1G или 2G ?
+or disable kernel upgrade
