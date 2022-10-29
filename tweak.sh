@@ -546,6 +546,15 @@ function InstallPostman {
     NextStep
 }
 
+function InstallDBeaver {
+    if CheckStep; then
+        PrintTitle "Install DBeaver"
+
+        Exec 'sudo snap install dbeaver-ce'
+    fi
+    NextStep
+}
+
 function InstallGolang {
     if CheckStep; then
         PrintTitle "Install Golang"
@@ -1026,6 +1035,7 @@ function Install {
     InstallStamina
     InstallTeamviewer
     InstallPostman
+    InstallDBeaver
     InstallGolang
     InstallTelegram
     InstallEtcher
