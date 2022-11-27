@@ -582,10 +582,9 @@ function InstallEtcher {
         ref=$(wget -qO- https://www.balena.io/etcher/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*balenaEtcher-.*-x64.AppImage')
 
         Exec "sudo apt install -y libfuse2"
-        Exec "wget $ref -O etcher.zip" "download Balena Etcher"
-        Exec "unzip etcher.zip" "install Balena Etcher"
+        Exec "wget $ref -O etcher" "download Balena Etcher"
         Exec "sudo mkdir $OptDir/etcher"
-        Exec "sudo mv *.AppImage $OptDir/etcher/etcher"
+        Exec "sudo mv etcher $OptDir/etcher/etcher"
     fi
     NextStep
 }
