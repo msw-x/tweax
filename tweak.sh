@@ -624,6 +624,7 @@ function InstallYandex {
 
         Exec "wget '$ref' -O yandex.deb" "download Yandex"
         Exec "sudo dpkg -i yandex.deb" "install Yandex"
+        Exec 'rm -f ~/Desktop/yandex-browser.desktop'
     fi
     NextStep
 }
