@@ -975,15 +975,6 @@ function ConfigureMC {
     NextStep
 }
 
-function ConfigureTor {
-    if CheckStep; then
-        PrintTitle "Configure Tor"
-
-        Exec "sudo cp ${SrcDir}/fix-tor/* /usr/lib/python3/dist-packages/torbrowser_launcher" "fix tor"
-    fi
-    NextStep
-}
-
 
 function СonfirmationDialog {
     read -n 1 -p "Attention! Are you sure you want to start configuring your system for user '${User}' (${Home})? y/n: " key && echo
@@ -1076,7 +1067,6 @@ function Configure {
     ConfigureSmartgit
     ConfigureArduino
     ConfigureMC
-    ConfigureTor
 }
 
 function Сompletion {
