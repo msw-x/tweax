@@ -622,7 +622,7 @@ function InstallYandex {
 
         ref="https://browser.yandex.ru/download?os=linux&package=deb&x64=1"
 
-        Exec "wget $ref -O yandex.deb" "download Yandex"
+        Exec "wget '$ref' -O yandex.deb" "download Yandex"
         Exec "sudo dpkg -i yandex.deb" "install Yandex"
     fi
     NextStep
