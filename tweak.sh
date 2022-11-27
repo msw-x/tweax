@@ -812,8 +812,7 @@ function ConfigureNetwork {
         PrintTitle "Configure Network"
 
         eth=$(nmcli device | awk '/ethernet/{print $1; exit}')
-        Exec "nmcli connection add con-name inet type ethernet ifname $eth conn.autoconnect-p 10"
-        Exec "nmcli connection add con-name print type ethernet ifname $eth ipv4.method manual ipv4.addr 195.200.200.57/24 ipv4.gateway 195.200.200.1"
+        Exec "nmcli connection add con-name inet type ethernet ifname $eth ipv4.method manual ipv4.addr 192.168.66.2/24 ipv4.gateway 192.168.66.6"
     fi
     NextStep
 }
@@ -1042,7 +1041,6 @@ function Configure {
     ConfigureHomeConfig
     ConfigureTerminal
     ConfigureEnvironment
-    #ConfigureNetwork
     ConfigureLocale
 
     ConfigureDocker
