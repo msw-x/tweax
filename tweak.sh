@@ -579,7 +579,7 @@ function InstallEtcher {
     if CheckStep; then
         PrintTitle "Install Balena Etcher"
 
-        ref=$(wget -qO- https://www.balena.io/etcher/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*balena-etcher-electron.*-linux-x64.zip')
+        ref=$(wget -qO- https://www.balena.io/etcher/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*balenaEtcher-.*-x64.AppImage')
 
         Exec "sudo apt install -y libfuse2"
         Exec "wget $ref -O etcher.zip" "download Balena Etcher"
