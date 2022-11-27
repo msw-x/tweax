@@ -384,6 +384,9 @@ function AddAptRepositories {
 
         Exec 'wget -qO - https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor | sudo tee /usr/share/keyrings/packages-pgadmin-org.gpg > /dev/null'
         Exec 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list'
+
+        Exec 'wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/packages.microsoft.gpg > /dev/null' "add VS Code"
+        Exec 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list'
     fi
     NextStep
 }
@@ -1039,6 +1042,7 @@ function Install {
     InstallPostman
     InstallDBeaver
     InstallGolang
+    InstallVscode
     InstallTelegram
     InstallEtcher
     InstallSkype
