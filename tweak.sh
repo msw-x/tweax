@@ -285,6 +285,7 @@ AptList='
     clang
     gcc
     g++
+    nodejs
     pgadmin4-desktop
 
     python3-dev
@@ -752,7 +753,9 @@ function ConfigureEnvironment {
         Exec "gsettings set org.gnome.desktop.interface icon-theme 'Yaru-purple'"
         Exec "gsettings set org.gnome.shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\""
 
-        Exec "gsettings set org.gnome.gedit.preferences.editor scheme 'Yaru-dark'"
+        Exec "gsettings set org.gnome.TextEditor show-line-numbers true"
+        Exec "gsettings set org.gnome.TextEditor spellcheck false"
+        Exec "gsettings set org.gnome.TextEditor highlight-current-line true"
 
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock autohide true"
         Exec "gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false"
@@ -1049,7 +1052,7 @@ function Configure {
     ConfigureSmartgit
     ConfigureArduino
     ConfigureMC
-    #ConfigureTor
+    ConfigureTor
 }
 
 function Сompletion {
