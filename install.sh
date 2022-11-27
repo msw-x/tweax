@@ -5,6 +5,10 @@ RootKey=root.key
 RootHeader=root.lks
 RootOffsetMiB=512
 
+EfiMiB=100
+BootMiB=500
+IsoMiB=4000
+
 LvmRootGiB=80
 
 CryptBootFS='bootfs'
@@ -277,17 +281,14 @@ function ExtractKeys {
 
 function PreInstall {
     local sizeMiB=$(DeviceMiB $BootDev)
-    local minMiB=6000
+    local minMiB=$((EfiMiB+BootMiB+IsoMiB+100))
     if (( sizeMiB < minMiB )); then
         echo "Error: size of $BootDev ($sizeMiB MiB) very small, it is necessary to at least $minMiB MiB"
         exit 1
     fi
-    local efiMiB=100
-    local bootMiB=500
-    local isoMiB=4000
-    local payMiB=$((sizeMiB-efiMiB-bootMiB-isoMiB-2))
-    local bootOffsetMiB=$((payMiB+efiMiB))
-    local isoOffsetMiB=$((bootOffsetMiB+bootMiB))
+    local payMiB=$((sizeMiB-EfiMiB-BootMiB-IsoMiB-2))
+    local bootOffsetMiB=$((payMiB+EfiMiB))
+    local isoOffsetMiB=$((bootOffsetMiB+BootMiB))
 
     BootDev='/dev/'$BootDev
     RootDev='/dev/'$RootDev
