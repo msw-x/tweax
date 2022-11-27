@@ -617,16 +617,6 @@ function InstallSysMon {
     NextStep
 }
 
-function InstallTruecrypt {
-    if CheckStep; then
-        PrintTitle "Install Truecrypt"
-
-        Exec "tar xvf $SrcDebDir/truecrypt-7.1a-linux-console-x64.tar.gz" "unpack Truecrypt"
-        Exec 'sudo ./truecrypt-7.1a-setup-console-x64' "install Truecrypt"
-    fi
-    NextStep
-}
-
 function InstallSly {
     if CheckStep; then
         PrintTitle "Install Sly"
@@ -1018,7 +1008,6 @@ function Launch {
 }
 
 function InstallDialog {
-    #InstallTruecrypt
     InstallOverAptDialog
 }
 
