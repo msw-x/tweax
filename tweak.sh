@@ -324,6 +324,7 @@ AptList='
     okular
     sublime-text
     sublime-merge
+    code
 
     qalculate-gtk
 
@@ -571,18 +572,6 @@ function InstallGolang {
         PrintTitle "Install Golang"
 
         ref=$(wget -qO- https://golang.org/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-${DistrArch}.tar.gz" -m 1)
-        ref=https://golang.org$ref
-        Exec "wget ${ref} -O golang.tar.gz" "download Golang"
-        Exec "sudo tar -C $OptDir -xzf golang.tar.gz" "install Golang"
-    fi
-    NextStep
-}
-
-function InstallVscode {
-    if CheckStep; then
-        PrintTitle "Install VS Code"
-
-        ref=$(wget -qO- https://code.visualstudio.com | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-${DistrArch}.tar.gz" -m 1)
         ref=https://golang.org$ref
         Exec "wget ${ref} -O golang.tar.gz" "download Golang"
         Exec "sudo tar -C $OptDir -xzf golang.tar.gz" "install Golang"
@@ -1051,7 +1040,6 @@ function Install {
     InstallStamina
     InstallTeamviewer
     InstallGolang
-    InstallVscode
     InstallTelegram
     InstallEtcher
     InstallSkype
