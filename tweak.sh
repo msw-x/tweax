@@ -1036,8 +1036,6 @@ function Install {
     InstallSmartgit
     InstallSmartsynchronize
     InstallArduino
-    InstallWinBox
-    InstallStamina
     InstallTeamviewer
     InstallGolang
     InstallTelegram
@@ -1046,6 +1044,8 @@ function Install {
     InstallYandex
     InstallSysMon
     InstallOpencv
+    InstallWinBox
+    InstallStamina
     InstallSly
 }
 
