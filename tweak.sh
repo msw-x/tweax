@@ -133,6 +133,15 @@ function AptInstallFix {
     Exec 'sudo apt install -y '$cmd' --fix-missing' "install ${title}"
 }
 
+function SnapInstall {
+    cmd=$1
+    title=$2
+    if [[ $title == "" ]]; then
+        title=$cmd
+    fi
+    Exec2 'sudo snap install '$cmd "install ${title}"
+}
+
 function NextStep {
     Step=$(($Step+1))
 }
@@ -341,6 +350,11 @@ AptListDialog='
     winetricks
     virtualbox-ext-pack
 '
+SnapList='
+    postman
+    dbeaver-ce
+    opera
+'
 
 
 function Startup {
@@ -436,6 +450,17 @@ function InstallOverAptDialog {
 
         for i in $AptListDialog; do
             AptInstall $i
+        done
+    fi
+    NextStep
+}
+
+function InstallOverSnap {
+    if CheckStep; then
+        PrintTitle "Install from Snap"
+
+        for i in $SnapList; do
+            SnapInstall $i
         done
     fi
     NextStep
@@ -537,24 +562,6 @@ function InstallTeamviewer {
 
         Exec "wget https://download.teamviewer.com/download/linux/teamviewer_${DistrArch}.deb" "download Teamviewer"
         Exec "sudo dpkg -i teamviewer_${DistrArch}.deb ; sudo apt install -y -f" "install Teamviewer"
-    fi
-    NextStep
-}
-
-function InstallPostman {
-    if CheckStep; then
-        PrintTitle "Install Postman"
-
-        Exec 'sudo snap install postman'
-    fi
-    NextStep
-}
-
-function InstallDBeaver {
-    if CheckStep; then
-        PrintTitle "Install DBeaver"
-
-        Exec 'sudo snap install dbeaver-ce'
     fi
     NextStep
 }
@@ -1032,6 +1039,7 @@ function Install {
     AddAptRepositories
     Upgrading
     InstallOverApt
+    InstallOverSnap
     InstallChrome
     InstallSmartgit
     InstallSmartsynchronize
@@ -1039,8 +1047,6 @@ function Install {
     InstallWinBox
     InstallStamina
     InstallTeamviewer
-    InstallPostman
-    InstallDBeaver
     InstallGolang
     InstallVscode
     InstallTelegram
