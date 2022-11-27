@@ -6,8 +6,8 @@ RootHeader=root.lks
 RootOffsetMiB=512
 
 EfiMiB=100
-BootMiB=500
-IsoMiB=4000
+BootMiB=2000
+IsoMiB=6000
 
 LvmRootGiB=80
 

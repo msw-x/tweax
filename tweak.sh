@@ -304,6 +304,8 @@ AptList='
 
     virtualbox
     virtualbox-guest-additions-iso
+    wine
+    winetricks
     docker.io
     docker-compose
 
@@ -346,8 +348,6 @@ AptListDialog='
     smartmontools
     wireshark
     ubuntu-restricted-extras
-    wine
-    winetricks
     virtualbox-ext-pack
 '
 SnapList='
