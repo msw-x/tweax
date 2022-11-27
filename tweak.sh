@@ -329,6 +329,8 @@ AptList='
     simplescreenrecorder
     pulseeffects
 
+    keepass2
+
     torbrowser-launcher
 
     gir1.2-appindicator3-0.1
