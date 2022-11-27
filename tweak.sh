@@ -1049,7 +1049,7 @@ function Configure {
     ConfigureSmartgit
     ConfigureArduino
     ConfigureMC
-    ConfigureTor
+    #ConfigureTor
 }
 
 function Сompletion {
