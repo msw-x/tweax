@@ -378,11 +378,11 @@ function AddAptRepositories {
     if CheckStep; then
         PrintTitle "Add repositories"
 
-        Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -' "add Sublime-text repository"
+        Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null' "add Sublime-text repository"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
 
-        Exec 'curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add'  "add pgAdmin4 repository"
-        Exec 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list'
+        Exec 'wget -qO - https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor | sudo tee /usr/share/keyrings/packages-pgadmin-org.gpg > /dev/null'
+        Exec 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list'
     fi
     NextStep
 }
