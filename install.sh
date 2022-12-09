@@ -379,6 +379,7 @@ function PostInstall {
     sudo mkdir -p ${target}${lksdir}
     sudo cp ${RootHeader} ${target}${lksdir}
     sudo cp ${SrcDir}/chroot.sh ${target}/tmp
+    sudo chmod +x ${target}/tmp/chroot.sh
 
     sudo mkdir -p ${target}${InitramfsSecret}
     sudo cp ${BootKey} ${target}${InitramfsSecret}
