@@ -106,7 +106,6 @@ function PrintRootPartList {
     done
 }
 
-
 function DevicePatition {
     local device=$1
     local number=$2
@@ -155,6 +154,14 @@ function PartitionInfo {
     local name=$1
     local size=$(PartitionGiB $name)
     echo "$name [$size GiB]"
+}
+
+function ShowMounts {
+    Purple='\e[1;35m'
+    NC='\e[0m'
+    Exec "lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep -v loop"
+    echo -e "${Purple}[/dev/mapper]${NC}"
+    Exec "ls -la /dev/mapper | grep '\->' | awk '{print \$9}'"
 }
 
 function SelectDevice {
@@ -358,7 +365,7 @@ function PreInstall {
     fi
     sudo mkfs.ext4 -F /dev/mapper/${LvmVG}-${LvmRoot}
 
-    lsblk
+    ShowMounts
 }
 
 function Install {
@@ -368,6 +375,30 @@ function Install {
     read -p "Press enter to continue"
 
     ubiquity --no-bootloader
+}
+
+function UnmountTarget {
+    for ((;;))
+    do
+        echo "wait unmount of target..."
+        sleep 1s
+        if ! lsblk | grep "target"; then
+            break
+        fi
+    done
+    sleep 1s
+}
+
+function MountTarget {
+    local target='/target'
+    local targetRoot="${target}"
+    local targetBoot="${target}/boot"
+    sudo mkdir -p ${targetRoot}
+    sudo mkdir -p ${targetBoot}
+    sudo mount "/dev/mapper/${LvmVG}-${LvmRoot}" ${targetRoot}
+    sudo mount "/dev/mapper/${CryptBootFS}" ${targetBoot}
+
+    ShowMounts
 }
 
 function PostInstall {
@@ -461,5 +492,7 @@ SelectMode
 СonfirmationDialog
 PreInstall
 Install
+UnmountTarget
+MountTarget
 PostInstall
 Сompletion
