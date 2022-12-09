@@ -446,8 +446,8 @@ EOL'
         sudo chown -R ${user}:${user} $mnt
     fi
 
-    for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n /target/$n; done
-    sudo chroot /target /tmp/chroot.sh
+    for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n ${target}/$n; done
+    sudo chroot ${target} /tmp/chroot.sh
 }
 
 
