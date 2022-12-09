@@ -161,7 +161,7 @@ function ShowMounts {
     NC='\e[0m'
     lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep -v loop
     echo -e "${Purple}[/dev/mapper]${NC}"
-    ls -la /dev/mapper | grep '\->' | awk '{print \$9}'
+    ls -la /dev/mapper | grep '\->' | awk '{print $9}'
 }
 
 function SelectDevice {
