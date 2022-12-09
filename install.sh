@@ -159,9 +159,9 @@ function PartitionInfo {
 function ShowMounts {
     Purple='\e[1;35m'
     NC='\e[0m'
-    Exec "lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep -v loop"
+    lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep -v loop
     echo -e "${Purple}[/dev/mapper]${NC}"
-    Exec "ls -la /dev/mapper | grep '\->' | awk '{print \$9}'"
+    ls -la /dev/mapper | grep '\->' | awk '{print \$9}'
 }
 
 function SelectDevice {
