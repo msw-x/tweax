@@ -259,6 +259,7 @@ AptList='
     apt-transport-https
 
     htop
+    btop
     iftop
     lnav
     gparted
