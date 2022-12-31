@@ -1,3 +1,12 @@
 https://www.lullabot.com/articles/fixing-docker-and-vpn-ip-address-conflicts
 for use VPN:
 sudo systemctl stop docker
+
+opencv cuda:
+-D WITH_CUDA=ON
+-D WITH_CUDNN=ON
+-D OPENCV_DNN_CUDA=ON
+-D ENABLE_FAST_MATH=1
+-D CUDA_FAST_MATH=1
+-D CUDA_ARCH_BIN=11.5
+-D WITH_CUBLAS=1
