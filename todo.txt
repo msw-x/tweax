@@ -10,3 +10,6 @@ opencv cuda:
 -D CUDA_FAST_MATH=1
 -D CUDA_ARCH_BIN=11.5
 -D WITH_CUBLAS=1
+
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install nodejs
