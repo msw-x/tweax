@@ -11,6 +11,7 @@ DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
 
 CpuCoreCount=$(lscpu | grep -P 'CPU\(s\):.*\d+' | awk '{print $2}' | head -n 1)
+Gpu=$(sudo lshw -c display | grep -E "product:" | sed -nE "s/.*\[(.*)\]/\1/p")
 
 User=$(whoami)
 Home='/home/'$User
@@ -949,7 +950,8 @@ function СonfirmationDialog {
 
 function Launch {
     PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName}) ${DistrArch}"
-    printf "CPU core count: ${CpuCoreCount}\n"
+    printf "CPU (cores): ${CpuCoreCount}\n"
+    printf "GPU: ${Gpu}\n"
     if [[ $EUID == 0 ]]; then
         Fatal "the script should not be run from root"
     fi
