@@ -263,6 +263,7 @@ AptList='
     iftop
     lnav
     gparted
+    balena-etcher
 
     imwheel
     dconf-editor
@@ -395,14 +396,16 @@ function AddAptRepositories {
     if CheckStep; then
         PrintTitle "Add repositories"
 
-        Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null' "add Sublime-text repository"
+        Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null' "add sublime-text"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
 
         Exec 'wget -qO - https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor | sudo tee /usr/share/keyrings/packages-pgadmin-org.gpg > /dev/null'
         Exec 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list'
 
-        Exec 'wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/packages.microsoft.gpg > /dev/null' "add VS Code"
+        Exec 'wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/packages.microsoft.gpg > /dev/null' "add vs Code"
         Exec 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list'
+
+        Exec 'curl -1sLf https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh | sudo -E bash' "add balena etcher"
     fi
     NextStep
 }
@@ -586,20 +589,6 @@ function InstallTelegram {
 
         Exec "wget https://telegram.org/dl/desktop/linux -O tsetup.tar.xz" "download Telegram"
         Exec "sudo tar -C $OptDir -xvf tsetup.tar.xz" "install Telegram"
-    fi
-    NextStep
-}
-
-function InstallEtcher {
-    if CheckStep; then
-        PrintTitle "Install Balena Etcher"
-
-        ref=$(wget -qO- https://www.balena.io/etcher/ | grep -Eo 'href="[^\"]+"' | grep -Eo 'http.*balenaEtcher-.*-x64.AppImage')
-
-        Exec "sudo apt install -y libfuse2"
-        Exec "wget $ref -O etcher" "download Balena Etcher"
-        Exec "sudo mkdir $OptDir/etcher"
-        Exec "sudo mv etcher $OptDir/etcher/etcher"
     fi
     NextStep
 }
@@ -1041,7 +1030,6 @@ function Install {
     InstallTeamviewer
     InstallGolang
     InstallTelegram
-    InstallEtcher
     InstallSkype
     InstallYandex
     InstallSysMon
