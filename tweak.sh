@@ -297,7 +297,6 @@ AptList='
     gcc
     g++
     nodejs
-    pgadmin4-desktop
 
     python3-dev
     python3-pip
@@ -399,9 +398,6 @@ function AddAptRepositories {
         Exec 'wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null' "add sublime-text"
         Exec 'echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list'
 
-        Exec 'wget -qO - https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor | sudo tee /usr/share/keyrings/packages-pgadmin-org.gpg > /dev/null'
-        Exec 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list'
-
         Exec 'wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/packages.microsoft.gpg > /dev/null' "add vs Code"
         Exec 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list'
 
@@ -495,20 +491,6 @@ function InstallSmartgit {
         version=$(echo "${version}" | sed 's/\./_/g')
         Exec "wget https://www.syntevo.com/downloads/smartgit/smartgit-${version}.deb" "download Smartgit"
         Exec "sudo dpkg -i smartgit-${version}.deb" "install Smartgit"
-    fi
-    NextStep
-}
-
-function InstallSmartsynchronize {
-    if CheckStep; then
-        PrintTitle "Install Smartsynchronize"
-
-        ref=$(wget -qO- https://www.syntevo.com/smartsynchronize/download/ | grep -Eo 'href="[^\"]+"' | grep -Eo '/downloads.*.deb')
-        ref=https://www.syntevo.com$ref
-        Echo $ref
-
-        Exec "wget $ref -O smartsynchronize.deb" "download Smartsynchronize"
-        Exec "sudo dpkg -i smartsynchronize.deb" "install Smartsynchronize"
     fi
     NextStep
 }
@@ -1025,7 +1007,6 @@ function Install {
     InstallOverSnap
     InstallChrome
     InstallSmartgit
-    InstallSmartsynchronize
     InstallArduino
     InstallTeamviewer
     InstallGolang
