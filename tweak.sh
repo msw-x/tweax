@@ -630,6 +630,16 @@ function InstallOpencv {
         Exec 'unzip opencv_contrib.zip'
         Exec 'mkdir -p build && cd build'
 
+        #cuda=
+        #CudaVersion=$(nvcc --version)
+        #-D WITH_CUDA=ON
+        #-D WITH_CUDNN=ON
+        #-D OPENCV_DNN_CUDA=ON
+        #-D ENABLE_FAST_MATH=1
+        #-D CUDA_FAST_MATH=1
+        #-D CUDA_ARCH_BIN=${CudaVersion}
+        #-D WITH_CUBLAS=1
+
         options="
             -D CMAKE_BUILD_TYPE=RELEASE
             -D CMAKE_INSTALL_PREFIX=/usr/local
