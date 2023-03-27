@@ -404,6 +404,7 @@ function AddAptRepositories {
 
         Exec 'wget -qO - https://deb.nodesource.com/setup_18.x | sudo -E bash -' "add nodejs-18"
 
+        AptInstall 'curl'
         Exec 'wget -qO - https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh | sudo -E bash' "add balena etcher"
     fi
     NextStep
