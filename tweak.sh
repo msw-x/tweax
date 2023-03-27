@@ -296,7 +296,6 @@ AptList='
     clang
     gcc
     g++
-    nodejs
 
     python3-dev
     python3-pip
