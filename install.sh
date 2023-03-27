@@ -9,7 +9,7 @@ EfiMiB=100
 BootMiB=2000
 IsoMiB=6000
 
-LvmRootGiB=80
+LvmRootGiB=120
 
 CryptBootFS='bootfs'
 CryptRootFS='rootfs'
