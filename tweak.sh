@@ -951,7 +951,11 @@ function СonfirmationDialog {
 function Launch {
     PrintTitle "Configure for ${DistrName} ${DistrVersion} (${DistrCodeName}) ${DistrArch}"
     printf "CPU (cores): ${CpuCoreCount}\n"
-    printf "GPU: ${Gpu}\n"
+    if [ ! -z "$Gpu" ]; then
+        printf "GPU: ${Gpu}\n"
+    else
+        printf "GPU: not found\n"
+    fi
     if [[ $EUID == 0 ]]; then
         Fatal "the script should not be run from root"
     fi
