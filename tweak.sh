@@ -590,19 +590,6 @@ function InstallSkype {
     NextStep
 }
 
-function InstallYandex {
-    if CheckStep; then
-        PrintTitle "Install Yandex"
-
-        ref="https://browser.yandex.ru/download?os=linux&package=deb&x64=1"
-
-        Exec "wget '$ref' -O yandex.deb" "download Yandex"
-        Exec "sudo dpkg -i yandex.deb" "install Yandex"
-        Exec 'rm -f ~/Desktop/yandex-browser.desktop'
-    fi
-    NextStep
-}
-
 function InstallSysMon {
     if CheckStep; then
         PrintTitle "Install SysMon"
@@ -1014,7 +1001,6 @@ function Install {
     InstallGolang
     InstallTelegram
     InstallSkype
-    InstallYandex
     InstallSysMon
     InstallOpencv
     InstallWinBox
