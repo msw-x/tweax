@@ -1020,7 +1020,7 @@ function Install {
     InstallTelegram
     InstallSkype
     InstallSysMon
-    InstallOpencv
+    #InstallOpencv
     InstallWinBox
     InstallStamina
     InstallSly
