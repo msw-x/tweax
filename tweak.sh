@@ -339,6 +339,7 @@ AptList='
     vokoscreen-ng
     recordmydesktop
     simplescreenrecorder
+    pulseaudio
     pulseeffects
 
     keepass2
