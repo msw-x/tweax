@@ -402,7 +402,7 @@ function AddAptRepositories {
         Exec 'wget -qO - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/packages.microsoft.gpg > /dev/null' "add vs Code"
         Exec 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list'
 
-        Exec 'wget -qO - https://deb.nodesource.com/setup_18.x | sudo -E bash -' "add nodejs-18"
+        #Exec 'wget -qO - https://deb.nodesource.com/setup_18.x | sudo -E bash -' "add nodejs-18"
 
         AptInstall 'curl'
         Exec 'wget -qO - https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh | sudo -E bash' "add balena etcher"
