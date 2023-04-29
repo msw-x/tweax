@@ -562,6 +562,7 @@ function InstallEtcher {
 
         local ver=$(wget -qO - https://github.com/balena-io/etcher | grep -Eo 'href="[^\"]+"' | grep -Eo 'v[0-9][0-9.]+' | grep -Eo '[0-9][0-9.]+')
         local ref="https://github.com/balena-io/etcher/releases/download/v${ver}/balena-etcher_${ver}_amd64.deb"
+        Exec "sudo apt install -y gconf-service gconf-service-backend gconf2 gconf2-common libgconf-2-4 libgdk-pixbuf-xlib-2.0-0 libgdk-pixbuf2.0-0"
         Exec "wget $ref -O etcher.deb" "download Etcher"
         Exec "sudo dpkg -i etcher.deb" "install Etcher"
     fi
