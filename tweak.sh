@@ -264,7 +264,6 @@ AptList='
     iftop
     lnav
     gparted
-    balena-etcher
 
     imwheel
     dconf-editor
@@ -405,9 +404,6 @@ function AddAptRepositories {
         Exec 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list'
 
         #Exec 'wget -qO - https://deb.nodesource.com/setup_18.x | sudo -E bash -' "add nodejs-18"
-
-        AptInstall 'curl'
-        Exec 'wget -qO - https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh | sudo -E bash' "add balena etcher"
     fi
     NextStep
 }
@@ -515,40 +511,6 @@ function InstallArduino {
     NextStep
 }
 
-function InstallWinBox {
-    if CheckStep; then
-        PrintTitle "Install Winbox"
-
-        local dir=$OptDir'/winbox'
-        local exename='winbox.exe'
-        local ref='https://mt.lv/winbox'
-        Exec "wget $ref -O $exename" "download Winbox"
-        Exec 'sudo mkdir '${dir}
-        Exec "sudo mv $exename ${dir}"
-        WinBoxExe=$dir/$exename
-    fi
-    NextStep
-}
-
-function InstallStamina {
-    if CheckStep; then
-        PrintTitle "Install Stamina"
-
-        Exec "winetricks mfc42" "install mfc42 for wine"
-        Exec 'wine reg add "HKCU\Keyboard Layout\Preload" /f /v "2" /t REG_SZ /d "00000419"'
-
-        local dir=$OptDir'/stamina'
-        Exec "wget https://stamina.ru/files/Stamina.zip -O stamina.zip" "download Stamina"
-        Exec "unzip stamina.zip" "install Stamina"
-        Exec "sudo mkdir $dir"
-        Exec "sudo mv Stamina/* $dir"
-        StaminaExe="$dir/stamina.exe"
-        Exec "sudo mv $dir/Stamina.exe $StaminaExe"
-        Exec "sudo chown -R $User:$User $dir"
-    fi
-    NextStep
-}
-
 function InstallTeamviewer {
     if CheckStep; then
         PrintTitle "Install Teamviewer"
@@ -590,6 +552,18 @@ function InstallSkype {
         Exec "sudo apt install -y libgdk-pixbuf-xlib-2.0-0 libgdk-pixbuf2.0-0"
         Exec "wget $ref -O skype.deb" "download Skype"
         Exec "sudo dpkg -i skype.deb" "install Skype"
+    fi
+    NextStep
+}
+
+function InstallEtcher {
+    if CheckStep; then
+        PrintTitle "Install Etcher"
+
+        local ver=$(wget -qO - https://github.com/balena-io/etcher | grep -Eo 'href="[^\"]+"' | grep -Eo 'v[0-9][0-9.]+' | grep -Eo '[0-9][0-9.]+')
+        local ref="https://github.com/balena-io/etcher/releases/download/v${ver}/balena-etcher_${ver}_amd64.deb"
+        Exec "wget $ref -O etcher.deb" "download Etcher"
+        Exec "sudo dpkg -i etcher.deb" "install Etcher"
     fi
     NextStep
 }
@@ -658,6 +632,40 @@ function InstallOpencv {
         Exec 'sudo ldconfig'
 
         Exec 'cd ..'
+    fi
+    NextStep
+}
+
+function InstallWinBox {
+    if CheckStep; then
+        PrintTitle "Install Winbox"
+
+        local dir=$OptDir'/winbox'
+        local exename='winbox.exe'
+        local ref='https://mt.lv/winbox'
+        Exec "wget $ref -O $exename" "download Winbox"
+        Exec 'sudo mkdir '${dir}
+        Exec "sudo mv $exename ${dir}"
+        WinBoxExe=$dir/$exename
+    fi
+    NextStep
+}
+
+function InstallStamina {
+    if CheckStep; then
+        PrintTitle "Install Stamina"
+
+        Exec "winetricks mfc42" "install mfc42 for wine"
+        Exec 'wine reg add "HKCU\Keyboard Layout\Preload" /f /v "2" /t REG_SZ /d "00000419"'
+
+        local dir=$OptDir'/stamina'
+        Exec "wget https://stamina.ru/files/Stamina.zip -O stamina.zip" "download Stamina"
+        Exec "unzip stamina.zip" "install Stamina"
+        Exec "sudo mkdir $dir"
+        Exec "sudo mv Stamina/* $dir"
+        StaminaExe="$dir/stamina.exe"
+        Exec "sudo mv $dir/Stamina.exe $StaminaExe"
+        Exec "sudo chown -R $User:$User $dir"
     fi
     NextStep
 }
@@ -1020,6 +1028,7 @@ function Install {
     InstallGolang
     InstallTelegram
     InstallSkype
+    InstallEtcher
     InstallSysMon
     #InstallOpencv
     #InstallWinBox
