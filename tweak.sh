@@ -358,6 +358,7 @@ SnapList='
     postman
     dbeaver-ce
     opera
+    winbox
 '
 
 
@@ -680,8 +681,8 @@ function ConfigureAliase {
 
         AddAliase "pw='poweroff'"
         AddAliase "hs='history | grep'"
-        AddAliase "winbox='nohup wine ${WinBoxExe} </dev/null >/dev/null 2>&1 &'"
-        AddAliase "stamina='export LC_ALL=ru_RU.UTF-8 && nohup wine ${StaminaExe} </dev/null >/dev/null 2>&1 &'"
+        #AddAliase "winbox='nohup wine ${WinBoxExe} </dev/null >/dev/null 2>&1 &'"
+        #AddAliase "stamina='export LC_ALL=ru_RU.UTF-8 && nohup wine ${StaminaExe} </dev/null >/dev/null 2>&1 &'"
     fi
     NextStep
 }
@@ -1021,8 +1022,8 @@ function Install {
     InstallSkype
     InstallSysMon
     #InstallOpencv
-    InstallWinBox
-    InstallStamina
+    #InstallWinBox
+    #InstallStamina
     InstallSly
 }
 
