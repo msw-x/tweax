@@ -356,7 +356,9 @@ AptListDialog='
 SnapList='
     postman
     dbeaver-ce
+    skype
     opera
+    yandex
     winbox
 '
 
@@ -1028,7 +1030,7 @@ function Install {
     InstallTeamviewer
     InstallGolang
     InstallTelegram
-    InstallSkype
+    #InstallSkype
     InstallEtcher
     InstallSysMon
     #InstallOpencv
