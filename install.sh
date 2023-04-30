@@ -375,8 +375,9 @@ function Install {
     echo "After installation set: Continue testing, without rebooting"
     read -p "Press enter to continue"
 
-    #ubiquity --no-bootloader
-    ubuntu-desktop-installer
+    sudo apt install -y ubiquity ubiquity-frontend-gtk
+    ubiquity --no-bootloader
+    #ubuntu-desktop-installer
 }
 
 function UnmountTarget {
