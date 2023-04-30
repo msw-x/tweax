@@ -281,7 +281,7 @@ function ExtractKeys {
     sudo mount "/dev/mapper/${CryptBootFS}" $CryptBootFS
     sudo mkdir 'initramfs'
     sudo unmkinitramfs "${CryptBootFS}/initrd.img" 'initramfs'
-    sudo umount $CryptBootFS --quiet
+    sudo umount $CryptBootFS || true
     sudo cryptsetup luksClose $CryptBootFS
     sudo cp "initramfs/main/cryptroot/keyfiles/${CryptRootFS}.key" ${RootKey}
     sudo cp "initramfs/main${InitramfsSecret}/${RootHeader}" .
@@ -301,8 +301,8 @@ function PreInstall {
     BootDev='/dev/'$BootDev
     RootDev='/dev/'$RootDev
 
-    sudo umount ${BootDev}* --quiet
-    sudo umount ${RootDev}* --quiet
+    sudo umount ${BootDev}* || true
+    sudo umount ${RootDev}* || true
 
     if ! $Reinstall; then
         echo "make $BootLabel partition table: $BootDev"
