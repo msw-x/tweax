@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 BootKey=boot.key
 RootKey=root.key
@@ -374,7 +375,8 @@ function Install {
     echo "After installation set: Continue testing, without rebooting"
     read -p "Press enter to continue"
 
-    ubiquity --no-bootloader
+    #ubiquity --no-bootloader
+    ubuntu-desktop-installer
 }
 
 function UnmountTarget {
