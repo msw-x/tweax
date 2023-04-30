@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -euo
 
 BootKey=boot.key
 RootKey=root.key
