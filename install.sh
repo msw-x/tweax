@@ -376,8 +376,8 @@ function Install {
     read -p "Press enter to continue"
 
     #sudo apt install -y ubiquity ubiquity-frontend-gtk
-    #ubiquity --no-bootloader
-    ubuntu-desktop-installer
+    ubiquity --no-bootloader
+    #ubuntu-desktop-installer
 }
 
 function UnmountTarget {
