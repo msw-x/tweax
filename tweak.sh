@@ -358,7 +358,6 @@ SnapList='
     dbeaver-ce
     skype
     opera
-    yandex
     winbox
 '
 
