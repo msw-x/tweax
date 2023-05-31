@@ -10,7 +10,7 @@ DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
 DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
 
-CpuCoreCount=$(lscpu | grep -P 'CPU\(s\):.*\d+' | awk '{print $2}' | head -n 1)
+CpuCoreCount=$(nproc)
 Gpu=$(sudo lshw -c display | grep -E "product:" | sed -nE "s/.*\[(.*)\]/\1/p")
 
 User=$(whoami)
@@ -611,17 +611,7 @@ function InstallOpencv {
         Exec 'unzip opencv_contrib.zip'
         Exec 'mkdir -p build && cd build'
 
-        #cuda=
-        #CudaVersion=$(nvcc --version)
-        #-D WITH_CUDA=ON
-        #-D WITH_CUDNN=ON
-        #-D OPENCV_DNN_CUDA=ON
-        #-D ENABLE_FAST_MATH=1
-        #-D CUDA_FAST_MATH=1
-        #-D CUDA_ARCH_BIN=${CudaVersion}
-        #-D WITH_CUBLAS=1
-
-        options="
+        local options="
             -D CMAKE_BUILD_TYPE=RELEASE
             -D CMAKE_INSTALL_PREFIX=/usr/local
             -D OPENCV_GENERATE_PKGCONFIG=ON
@@ -630,10 +620,31 @@ function InstallOpencv {
             ../opencv-master
         "
 
-        Exec "cmake ${options}"
+        local CudaArch=""
+        if [ "$Gpu" = "GeForce RTX 3090" ]; then
+            CudaArch="8.6"
+        fi
+        if [ ! -z "$CudaArch" ]; then
+            local cuda="
+                -D CMAKE_C_COMPILER=/usr/bin/gcc-11
+                -D CMAKE_CXX_COMPILER=/usr/bin/g++-11
+                -D WITH_TBB=ON
+                -D WITH_CUDA=ON
+                -D WITH_CUDNN=ON
+                -D OPENCV_DNN_CUDA=ON
+                -D ENABLE_FAST_MATH=1
+                -D CUDA_FAST_MATH=1
+                -D CUDA_ARCH_BIN=${CudaArch}
+                -D WITH_CUBLAS=1
+                -D WITH_OPENGL=ON
+            "
+            options="$cuda $options"
+        fi
+
+        Exec "cmake ${cuda} ${options}"
         Exec "make -j${CpuCoreCount}"
-        Exec 'sudo make install'
-        Exec 'sudo ldconfig'
+        #Exec 'sudo make install'
+        #Exec 'sudo ldconfig'
 
         Exec 'cd ..'
     fi
@@ -814,8 +825,6 @@ function ConfigureEnvironment {
         Exec "gsettings set $key.custom-keybinding:$custom2 name 'Rhythmbox next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 command 'rhythmbox-client --next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 binding '<Alt>End'"
-
-        #Exec "sudo sed -i 's/#WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/custom.conf"
     fi
     NextStep
 }
@@ -1034,7 +1043,7 @@ function Install {
     #InstallSkype
     InstallEtcher
     InstallSysMon
-    #InstallOpencv
+    InstallOpencv
     #InstallWinBox
     #InstallStamina
     InstallSly
