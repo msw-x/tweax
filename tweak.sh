@@ -1043,7 +1043,6 @@ function InstallDialog {
 }
 
 function Install {
-    InstallFonts
     Clean
     AddAptRepositories
     Upgrading
@@ -1101,6 +1100,7 @@ function Сompletion {
 function Run {
     Launch
     Startup
+    InstallFonts
     InstallDialog
     Install
     Configure
