@@ -825,6 +825,10 @@ function ConfigureEnvironment {
         Exec "gsettings set $key.custom-keybinding:$custom2 name 'Rhythmbox next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 command 'rhythmbox-client --next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 binding '<Alt>End'"
+
+        Exec "wget https://launchpad.net/ubuntu/+archive/primary/+files/fonts-ubuntu_0.83-6ubuntu1_all.deb"
+        Exec "sudo dpkg -i fonts-ubuntu_0.83-6ubuntu1_all.deb"
+        Exec "sudo apt-mark hold fonts-ubuntu fonts-ubuntu-console"
     fi
     NextStep
 }
