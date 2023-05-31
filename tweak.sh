@@ -685,6 +685,20 @@ function InstallStamina {
     NextStep
 }
 
+function InstallFonts {
+    if CheckStep; then
+        PrintTitle "Install Fonts"
+        Exec "wget https://launchpad.net/ubuntu/+archive/primary/+files/fonts-ubuntu_0.83-6ubuntu1_all.deb"
+        Exec "sudo dpkg -i fonts-ubuntu_0.83-6ubuntu1_all.deb"
+        Exec "sudo apt-mark hold fonts-ubuntu fonts-ubuntu-console"
+        read -n 1 -p "Continue? y/n: " key && echo
+        if [[ $key != 'y' ]]; then
+            exit
+        fi
+fi
+    NextStep
+}
+
 
 function ConfigurePath {
     if CheckStep; then
@@ -825,10 +839,6 @@ function ConfigureEnvironment {
         Exec "gsettings set $key.custom-keybinding:$custom2 name 'Rhythmbox next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 command 'rhythmbox-client --next'"
         Exec "gsettings set $key.custom-keybinding:$custom2 binding '<Alt>End'"
-
-        Exec "wget https://launchpad.net/ubuntu/+archive/primary/+files/fonts-ubuntu_0.83-6ubuntu1_all.deb"
-        Exec "sudo dpkg -i fonts-ubuntu_0.83-6ubuntu1_all.deb"
-        Exec "sudo apt-mark hold fonts-ubuntu fonts-ubuntu-console"
     fi
     NextStep
 }
@@ -1033,6 +1043,7 @@ function InstallDialog {
 }
 
 function Install {
+    InstallFonts
     Clean
     AddAptRepositories
     Upgrading
