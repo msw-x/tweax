@@ -5,6 +5,6 @@ menu-accelerator-enabled=false
 background-color='rgb(0,0,0)'
 foreground-color='rgb(170,170,170)'
 use-theme-colors=false
-font='Ubuntu Mono 12'
+font='Ubuntu Mono 13'
 use-system-font=false
 visible-name='msw'
