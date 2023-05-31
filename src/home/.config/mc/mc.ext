@@ -1,3 +1,0 @@
-default/*
-    Open=(xdg-open %f >/dev/null 2>&1 &)
-    View=
