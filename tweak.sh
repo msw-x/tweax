@@ -625,7 +625,7 @@ function InstallOpencv {
             CudaArch="8.6"
         fi
         if [ ! -z "$CudaArch" ]; then
-            Exec "sudo apt install -y g++-11 gcc-11"
+            Exec "sudo apt install -y g++-11 gcc-11 nvidia-cuda-toolkit"
             local cuda="
                 -D CMAKE_C_COMPILER=/usr/bin/gcc-11
                 -D CMAKE_CXX_COMPILER=/usr/bin/g++-11
