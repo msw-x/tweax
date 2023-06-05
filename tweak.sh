@@ -644,8 +644,8 @@ function InstallOpencv {
 
         Exec "cmake ${cuda} ${options}"
         Exec "make -j${CpuCoreCount}"
-        #Exec 'sudo make install'
-        #Exec 'sudo ldconfig'
+        Exec 'sudo make install'
+        Exec 'sudo ldconfig'
 
         Exec 'cd ..'
     fi
