@@ -624,6 +624,9 @@ function InstallOpencv {
         if [ "$Gpu" = "GeForce RTX 3090" ]; then
             CudaArch="8.6"
         fi
+        if [ "$Gpu" = "GeForce RTX 3050 4GB Laptop GPU" ]; then
+            CudaArch="8.6"
+        fi
         if [ ! -z "$CudaArch" ]; then
             Exec "sudo apt install -y g++-11 gcc-11 nvidia-cuda-toolkit nvidia-cudnn"
             local cuda="
