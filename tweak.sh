@@ -695,9 +695,11 @@ function InstallFonts {
         Exec "wget https://launchpad.net/ubuntu/+archive/primary/+files/fonts-ubuntu_0.83-6ubuntu1_all.deb"
         Exec "sudo dpkg -i fonts-ubuntu_0.83-6ubuntu1_all.deb"
         Exec "sudo apt-mark hold fonts-ubuntu fonts-ubuntu-console"
-        read -n 1 -p "Fonts may be unreadable. Recommended NOT(n) to continue, but restart from next step. Continue? y/n: " key && echo
-        if [[ $key != 'y' ]]; then
-            exit
+        if [[ $PerformCommands == 1 ]]; then
+            read -n 1 -p "Fonts may be unreadable. Recommended NOT(n) to continue, but restart from next step. Continue? y/n: " key && echo
+            if [[ $key != 'y' ]]; then
+                exit
+            fi
         fi
 fi
     NextStep
