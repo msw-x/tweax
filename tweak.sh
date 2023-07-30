@@ -217,36 +217,36 @@ function CheckStep {
 for i in "$@"; do
     case $i in
         help)
-            echo "help         - print this help"
-            echo "list         - print list of operations"
-            echo "list-head    - print list heads of operations"
-            echo "step         - initial step"
-            echo "step-one     - perform only one step"
-            echo "step-disable - list of disabled steps, for example: 4,8,26"
+            echo "help   - print this help"
+            echo "list   - print list of operations"
+            echo "heads  - print list heads of operations"
+            echo "from   - initial step"
+            echo "only   - perform only one step"
+            echo "ignore - list of ignored steps, for example: 4,8,26"
             exit 0
         ;;
         list)
             PerformCommands=0
         ;;
-        list-head)
+        heads)
             PerformCommands=0
             PrintCommands=0
         ;;
-        step=*)
+        from=*)
             # init step
             s=$i
-            s=${s#*step=}
+            s=${s#*from=}
             InitStep=$s
         ;;
-        step-one=*)
+        only=*)
             # only one step
             s=$i
-            s=${s#*step-one=}
+            s=${s#*only=}
             OneStep=$s
         ;;
-        step-disable=*)
+        ignore=*)
             s=$i
-            s=${s#*step-disable=}
+            s=${s#*ignore=}
             DisabledStepsList=$s
             DisabledStepsList=$(echo "$DisabledStepsList" | sed 's/,/ /g')
         ;;
