@@ -11,7 +11,7 @@ DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
 
 CpuCoreCount=$(nproc)
-Gpu=$(sudo lshw -c display | grep -E "product:" | sed -nE "s/.*\[(.*)\]/\1/p")
+Gpu=$(sudo lshw -c display | grep -E "product:" | tail -n1 | sed -nE "s/.*\[(.*)\]/\1/p")
 
 User=$(whoami)
 Home='/home/'$User
