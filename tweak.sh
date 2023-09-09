@@ -11,7 +11,14 @@ DistrCodeName=$(cat /etc/*-release | sed -n 's/^DISTRIB_CODENAME=//p')
 DistrArch=$(dpkg --print-architecture)
 
 CpuCoreCount=$(nproc)
-Gpu=$(sudo lshw -c display | grep -E "product:" | tail -n1 | sed -nE "s/.*\[(.*)\]/\1/p")
+GpuList=$(sudo lshw -c display | grep -E "product:" | sed -nE "s/.*\[(.*)\]/\1/p")
+GpuCount=$(echo "$GpuList" | wc -l)
+
+if [[ $GpuCount == 1 ]]; then
+    Gpu=$GpuList
+else
+    Gpu=$(echo "$GpuList" | grep "RTX")
+fi
 
 User=$(whoami)
 Home='/home/'$User
