@@ -570,10 +570,12 @@ function InstallEtcher {
         PrintTitle "Install Etcher"
 
         local ver=$(wget -qO - https://github.com/balena-io/etcher | grep -Eo 'href="[^\"]+"' | grep -Eo 'v[0-9][0-9.]+' | grep -Eo '[0-9][0-9.]+')
-        local ref="https://github.com/balena-io/etcher/releases/download/v${ver}/balena-etcher_${ver}_amd64.deb"
-        Exec "sudo apt install -y gconf-service gconf-service-backend gconf2 gconf2-common libgconf-2-4 libgdk-pixbuf-xlib-2.0-0 libgdk-pixbuf2.0-0"
-        Exec "wget $ref -O etcher.deb" "download Etcher"
-        Exec "sudo dpkg -i etcher.deb" "install Etcher"
+        local ref="https://github.com/balena-io/etcher/releases/download/v${ver}/balenaEtcher-${ver}-x64.AppImage"
+        Echo "version: ${ver}"
+        Exec "sudo apt install -y libfuse2"
+        Exec "wget $ref -O etcher" "download Etcher"
+        Exec "sudo mkdir $OptDir/etcher"
+        Exec "sudo mv etcher $OptDir/etcher/etcher"
     fi
     NextStep
 }
@@ -582,7 +584,7 @@ function InstallSysMon {
     if CheckStep; then
         PrintTitle "Install SysMon"
 
-        Exec "git clone git://mswo.ru/msw/sysmon" "download SysMon"
+        Exec "git clone https://github.com/msw-x/sysmon" "download SysMon"
         Exec 'cd sysmon'
         Exec './install.sh' "install SysMon"
         Exec 'cd ..'
@@ -946,7 +948,7 @@ function ConfigureTelegram {
 
 function ConfigureEtcher {
     if CheckStep; then
-        PrintTitle "Configure Telegram"
+        PrintTitle "Configure Etcher"
 
         Exec "sudo cp ${SrcDir}/etcher.png ${OptDir}/etcher" "copy menu icon"
         Exec "sudo cp ${SrcDir}/etcher.desktop /usr/share/applications" "make menu icon"
