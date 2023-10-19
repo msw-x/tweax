@@ -1,3 +1,0 @@
-[
-	{ "caption": "Build System: vit", "command": "set_build_system", "args": {"file": "Packages/vit/vit.sublime-build"}},
-]
