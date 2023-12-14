@@ -319,6 +319,7 @@ AptList='
     winetricks
     docker.io
     docker-compose
+    docker-buildx
 
     p7zip-full
     unrar
