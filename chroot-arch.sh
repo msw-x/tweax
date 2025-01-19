@@ -14,10 +14,12 @@
 #FILES=(/etc/secret/boot.key /etc/secret/root.key /etc/secret/root.lks)
 
 mkinitcpio -P
+#mkinitcpio -p linux -g /mnt/your_root_partition/boot/initramfs-linux.img --root /mnt/your_root_partition
 
 # Install GRUB to the mounted ESP for UEFI booting
 # grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB --recheck
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --removable
+#grub-install --root-directory=/mnt --target=x86_64-efi --efi-directory=/boot/efi --removable
 #grub-install --no-nvram --recheck
 #grub-install --root-directory=/mnt /dev/sdb
 

@@ -10,8 +10,8 @@ RootHeader=root.lks
 RootOffsetMiB=512
 
 EfiMiB=100
-BootMiB=2000
-IsoMiB=6000
+BootMiB=500
+IsoMiB=2000
 
 LvmRootGiB=120
 
@@ -462,8 +462,8 @@ function MakePartitions {
     dd if=/dev/urandom of=$BootKey bs=4096 count=1
     chmod u=r,go-rwx $BootKey
     #
-    #cryptsetup -q luksFormat --type=luks1 --cipher=aes-xts-plain64 --hash=sha512 --iter-time=5000 --key-size=512 --key-file=$BootKey $bootPartition
-    cryptsetup -q luksFormat --type=luks1 --key-file=$BootKey $bootPartition
+    cryptsetup -q luksFormat --type=luks1 --cipher=aes-xts-plain64 --hash=sha512 --iter-time=5000 --key-size=512 --key-file=$BootKey $bootPartition
+    #cryptsetup -q luksFormat --type=luks1 --key-file=$BootKey $bootPartition
     # Warning: GRUB's support for LUKS2 is limited; Use LUKS2 with PBKDF2 for partitions that GRUB will need to unlock
     ##cryptsetup -q luksFormat --pbkdf pbkdf2 --key-file=$BootKey $bootPartition
     #
@@ -502,14 +502,14 @@ function MakePartitions {
 
 function Install {
     echo
-    echo "install..."
+    echo -e "${Bold}${Green}Install${NC}"
 
     # Syncronise the Package Database
     pacman -Syy
 
     # Install the Arch Base System
     #linux-firmware
-    pacstrap $Target base base-devel linux intel-ucode grub efibootmgr lvm2 nano dhcpcd iproute2 iwd networkmanager git wget cryptsetup openssh
+    pacstrap $Target base base-devel linux intel-ucode grub lvm2 nano dhcpcd iproute2 networkmanager cryptsetup
 }
 
 function Ls {
@@ -527,84 +527,28 @@ function Cat {
 }
 
 function PostInstall {
-    mkdir -p $Target$Secrets
-    cp $RootHeader $Target$Secrets
-    cp $BootKey $Target$Secrets
-    cp $RootKey $Target$Secrets
+    echo 
+    echo -e "${Bold}${Green}Postinstall${NC}"
 
-    # Generate fstab
+    mkdir -p $Target/$Secrets
+    cp $RootHeader $Target/$Secrets
+    cp $BootKey $Target/$Secrets
+    cp $RootKey $Target/$Secrets
+
+    ShowMounts
+
+    # mount /mnt/ext чтобы fstab запомнил его и нужен ли там boot?
     local fstab=$Target/etc/fstab
     genfstab -U $Target >> $fstab
-
-    #sed -i '\|boot/efi|d' $fstab
-    #local UuidEfi=$(PartitionUUID $EfiPartition)
-    #echo "UUID=$UuidEfi /boot/efi vfat umask=0077 0 1" | sudo tee -a $fstab
-    ###
-    #echo "$deviceMapper/${LvmVG}-${LvmExt} $MntExt ext4 defaults 0 2" | sudo tee -a $fstab
-
-
-
-    local crypttab=$Target/etc/crypttab
-    local uuidBoot=$(PartitionUUID $bootPartition)
-    local uuidRoot=$(PartitionUUID $rootPartition)
-    echo "$CryptBootFS UUID=$uuidBoot $Secrets/$BootKey luks" | sudo tee -a $crypttab
-    echo "$CryptRootFS UUID=$uuidRoot $Secrets/$RootKey luks,header=$Secrets/$RootHeader" | sudo tee -a $crypttab
-
-
-
-    #mkdir -p ${target}${InitramfsSecret}
-    #cp ${BootKey} ${target}${InitramfsSecret}
-    #cp ${RootKey} ${target}${InitramfsSecret}
-    #echo "KEYFILE_PATTERN=${InitramfsSecret}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
-    #echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
-
-    #local initramfsHookCopy=${target}/etc/initramfs-tools/hooks/copy
-    #echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
-    #echo 'mkdir -p ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
-    #echo "cp ${secrets}/${RootHeader}"' ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
-    #echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
-    #sudo chmod +x ${initramfsHookCopy}
-
-
-
+    Cat $fstab
 
     local grub=$Target/etc/default/grub
     #echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a $grub
     # Allow booting from /boot on a LUKS encrypted partition
-    echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a $grub
+    echo "GRUB_ENABLE_CRYPTODISK=y" | tee -a $grub
     # Disable discover other OS installed
-    echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a $grub
-
-
-#    local menuIsoFile=${target}/etc/grub.d/40_custom
-#    local uuidIso=$(blkid -s UUID -o value $IsoPartition)
-#    sudo bash -c 'cat >> '"$menuIsoFile"' << "EOL"
-#menuentry "ISO" {
-#   set isofile="/x.iso"
-#   insmod part_gpt
-#   insmod ext2
-#   search --no-floppy --fs-uuid --set $uuidIso
-#   loopback loop $isofile
-#   linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
-#   initrd (loop)/casper/initrd
-#}
-#EOL'
-#    sudo sed -i 's/$uuidIso/'"$uuidIso/g" $menuIsoFile
-
-    #sudo chmod -x ${target}/etc/grub.d/10_linux_zfs
-    #sudo chmod -x ${target}/etc/grub.d/20_linux_xen
-    #sudo chmod -x ${target}/etc/grub.d/20_memtest86+
-    #sudo chmod -x ${target}/etc/grub.d/30_os-prober
-    #sudo chmod -x ${target}/etc/grub.d/30_uefi-firmware
-    #sudo chmod -x ${target}/etc/grub.d/35_fwupd
-
-
-
-    #Ls /etc/grub.d
-    #cat ${menuIsoFile}
+    echo "GRUB_DISABLE_OS_PROBER=true" | tee -a $grub
     Cat $grub
-    Cat $fstab
-    Cat $crypttab
 
     #if ! $Reinstall; then
     #    local user=$(ls -1 ${target}/home | awk '(NR == 1)')
@@ -616,23 +560,37 @@ function PostInstall {
     #    sudo chown -R ${user}:${user} $mnt
     #fi
 
-    # Configuring mkinitcpio
-    echo "Configuring mkinitcpio"
-    exit 0
+    local encryptHook='encrypt2'
+    local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
+    cp $PwdDir/crypthook-arch $encryptHookFile
+    cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
+    local bootUUID=$(PartitionUUID $bootPartition)
+    local rootUUID=$(PartitionUUID $rootPartition)
+    sed -i "s|@BootUUID|$bootUUID|" $encryptHookFile
+    sed -i "s|@BootKey|$Secrets/$BootKey|" $encryptHookFile
+    sed -i "s|@CryptBootFS|$CryptBootFS|" $encryptHookFile
+    sed -i "s|@RootUUID|$rootUUID|" $encryptHookFile
+    sed -i "s|@CryptRootFS|$CryptRootFS|" $encryptHookFile
+    sed -i "s|@RootKey|$Secrets/$RootKey|" $encryptHookFile
+    sed -i "s|@RootHeader|$Secrets/$RootHeader|" $encryptHookFile
+    Cat $encryptHookFile
+
+    local mkinitcpio=$Target/etc/mkinitcpio.conf
+    local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
+    cp $mkinitcpio $mkinitcpio.bk
+    cp $PwdDir/'mkinitcpio-arch.conf' $mkinitcpio
+    sed -i "s|@FILES|$secretFiles|" $mkinitcpio
+    sed -i "s|@ENCRYPT|$encryptHook|" $mkinitcpio
+    Cat $mkinitcpio
 
     cp $PwdDir/chroot-arch.sh $Target/root/chroot.sh
     chmod +x $Target/root/chroot.sh
 
-    #for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n ${target}/$n; done
-    arch-chroot $target /root/chroot.sh
-    #rm ${target}/root/chroot.sh
+    arch-chroot $Target /root/chroot.sh
+    rm $Target/root/chroot.sh
 }
 
 # Run
-
-#cd /tmp/install-1737097390579789390
-#PostInstall
-#exit 0
 
 Startup
 CheckEfi
