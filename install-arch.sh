@@ -33,6 +33,10 @@ Secrets='/etc/secret'
 
 MntExt='/mnt/ext'
 
+TimeZone='Europe/Moscow'
+
+Locales='en_US ru_RU'
+
 # Tools
 
 TmpDir='/tmp/install-'$(date +%s%N)
@@ -55,6 +59,9 @@ function Fatal {
     echo -e "${Red}$msg${NC}"
     exit 1
 }
+
+username=''
+hostname=''
 
 # Devices
 
@@ -352,6 +359,11 @@ function SelectMode {
     echo -e "Mode: $mode"
 }
 
+function SetPersonal {
+    read -p "Username: " username
+    read -p "Hostname: " hostname
+}
+
 function Сonfirmation {
     local key=''
     read -n 1 -p "$(echo -e "${Red}Attention! Are you sure you want to install system?${NC} y/n: ")" key && echo
@@ -461,12 +473,7 @@ function MakePartitions {
 
     dd if=/dev/urandom of=$BootKey bs=4096 count=1
     chmod u=r,go-rwx $BootKey
-    #
     cryptsetup -q luksFormat --type=luks1 --cipher=aes-xts-plain64 --hash=sha512 --iter-time=5000 --key-size=512 --key-file=$BootKey $bootPartition
-    #cryptsetup -q luksFormat --type=luks1 --key-file=$BootKey $bootPartition
-    # Warning: GRUB's support for LUKS2 is limited; Use LUKS2 with PBKDF2 for partitions that GRUB will need to unlock
-    ##cryptsetup -q luksFormat --pbkdf pbkdf2 --key-file=$BootKey $bootPartition
-    #
     cryptsetup luksAddKey $bootPartition --key-file=$BootKey
     cryptsetup luksOpen $bootPartition $CryptBootFS --key-file=$BootKey
 
@@ -494,6 +501,7 @@ function MakePartitions {
     local targetEfi="$Target/boot/efi"
 
     mount --mkdir "$deviceMapper/${LvmVG}-${LvmRoot}" $targetRoot
+    mount --mkdir "$deviceMapper/${LvmVG}-${LvmExt}" $MntExt
     mount --mkdir "$deviceMapper/${CryptBootFS}" $targetBoot
     mount --mkdir $efiPartition $targetEfi
 
@@ -509,6 +517,9 @@ function Install {
 
     # Install the Arch Base System
     #linux-firmware
+    #x86-video-intel — Это для интел
+    #xf86-vide-amdgpu xf86-video-ati — Это для AMD
+    #xf86-video-nouveau — Это для нвидиа
     pacstrap $Target base base-devel linux intel-ucode grub lvm2 nano dhcpcd iproute2 networkmanager cryptsetup
 }
 
@@ -526,6 +537,11 @@ function Cat {
     echo
 }
 
+function EnableLocale {
+    local name=$1
+    sed -i "/#$name/s/^.//" $Target/etc/locale.gen
+}
+
 function PostInstall {
     echo 
     echo -e "${Bold}${Green}Postinstall${NC}"
@@ -537,17 +553,15 @@ function PostInstall {
 
     ShowMounts
 
-    # mount /mnt/ext чтобы fstab запомнил его и нужен ли там boot?
     local fstab=$Target/etc/fstab
     genfstab -U $Target >> $fstab
     Cat $fstab
 
     local grub=$Target/etc/default/grub
-    #echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a $grub
     # Allow booting from /boot on a LUKS encrypted partition
-    echo "GRUB_ENABLE_CRYPTODISK=y" | tee -a $grub
+    sed -i "/#GRUB_ENABLE_CRYPTODISK=y/s/^.//" $grub
     # Disable discover other OS installed
-    echo "GRUB_DISABLE_OS_PROBER=true" | tee -a $grub
+    sed -i "s|#GRUB_DISABLE_OS_PROBER=false|GRUB_DISABLE_OS_PROBER=true|" $grub
     Cat $grub
 
     #if ! $Reinstall; then
@@ -583,11 +597,39 @@ function PostInstall {
     sed -i "s|@ENCRYPT|$encryptHook|" $mkinitcpio
     Cat $mkinitcpio
 
+    ln -s /usr/share/zoneinfo/$TimeZone $Target/etc/localtime
+
+    for locale in $Locales
+    do
+        EnableLocale "$locale.UTF-8 UTF-8"
+    done
+
+    echo $hostname > $Target/etc/hostname
+
+    #vim $Target/etc/hosts
+    #127.0.0.1 localhost
+    #::1 localhost
+    #127.0.0.1 ARCH.localdomain ARCH
+    #Вместо ARCH можете написать ваше имя компьтера , у меня это ARCH
+
+    local sudoers=$Target/etc/sudoers
+    sed -i "/# %wheel ALL=(ALL:ALL) ALL/s/^..//" $sudoers
+    Cat $sudoers
+
+    #nano $Target/etc/vconsole.conf
+    #KEYMAP=ru
+    #FONT=cyr-sun16
+
+    #local grubconf=$Target/boot/grub/grub.cfg
+    #Cat grubconf
+
     cp $PwdDir/chroot-arch.sh $Target/root/chroot.sh
     chmod +x $Target/root/chroot.sh
 
-    arch-chroot $Target /root/chroot.sh
+    arch-chroot $Target /root/chroot.sh $username
     rm $Target/root/chroot.sh
+
+    umount -R /mnt
 }
 
 # Run
@@ -602,6 +644,7 @@ SelectDevices
 CheckBootDeviceSize
 CheckRootDeviceSize
 SelectMode
+SetPersonal
 Сonfirmation
 CloseDevices
 WipeDevice
