@@ -22,3 +22,5 @@ grub-probe -t device /boot/grub
 grub-probe -t fs_uuid /boot/grub
 
 free -h
+
+systemctl enable dhcpcd
