@@ -2,8 +2,6 @@
 
 run_hook() {
     modprobe -a -q dm-crypt >/dev/null 2>&1
-    #modprobe loop
-    #[ "${quiet}" = "y" ] && CSQUIET=">/dev/null"
 
     echo 'decrypt boot'
     cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
