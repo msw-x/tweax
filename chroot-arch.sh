@@ -18,12 +18,7 @@ passwd $username
 
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --removable
 
-######
-grub-mkconfig -o /boot/grub/grub.cfg
-
 grub-probe -t device /boot/grub
 grub-probe -t fs_uuid /boot/grub
 
 free -h
-
-#pacman -S networkmanager bspwm ...

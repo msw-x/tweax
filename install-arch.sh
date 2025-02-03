@@ -390,6 +390,8 @@ bootPartition=''
 isoPartition=''
 
 function CloseDevices {
+    umount -R /mnt || true
+
     umount "$Target/boot/efi" || true
     umount "$Target/boot" || true
     umount "$Target" || true
@@ -553,6 +555,11 @@ function PostInstall {
 
     ShowMounts
 
+    local bootUUID=$(PartitionUUID $bootPartition)
+    local rootUUID=$(PartitionUUID $rootPartition)
+    local cryptBootUUID=$(PartitionUUID $deviceMapper/$CryptBootFS)
+    local bootUuid=$(echo "$bootUUID" | tr -d "-")
+
     local fstab=$Target/etc/fstab
     genfstab -U $Target >> $fstab
     Cat $fstab
@@ -563,6 +570,14 @@ function PostInstall {
     # Disable discover other OS installed
     sed -i "s|#GRUB_DISABLE_OS_PROBER=false|GRUB_DISABLE_OS_PROBER=true|" $grub
     Cat $grub
+
+    local grubconf=$Target/boot/grub/grub.cfg
+    mkdir -p $Target/boot/grub
+    cp $PwdDir/grub-arch.cfg $grubconf
+    sed -i "s|@BootUUID|$bootUUID|" $grubconf
+    sed -i "s|@bootUuid|$bootUuid|" $grubconf
+    sed -i "s|@CryptBootUUID|$cryptBootUUID|" $grubconf
+    Cat $grubconf
 
     #if ! $Reinstall; then
     #    local user=$(ls -1 ${target}/home | awk '(NR == 1)')
@@ -578,8 +593,6 @@ function PostInstall {
     local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
     cp $PwdDir/crypthook-arch $encryptHookFile
     cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
-    local bootUUID=$(PartitionUUID $bootPartition)
-    local rootUUID=$(PartitionUUID $rootPartition)
     sed -i "s|@BootUUID|$bootUUID|" $encryptHookFile
     sed -i "s|@BootKey|$Secrets/$BootKey|" $encryptHookFile
     sed -i "s|@CryptBootFS|$CryptBootFS|" $encryptHookFile
@@ -619,9 +632,6 @@ function PostInstall {
     #nano $Target/etc/vconsole.conf
     #KEYMAP=ru
     #FONT=cyr-sun16
-
-    #local grubconf=$Target/boot/grub/grub.cfg
-    #Cat grubconf
 
     cp $PwdDir/chroot-arch.sh $Target/root/chroot.sh
     chmod +x $Target/root/chroot.sh
