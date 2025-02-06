@@ -5,6 +5,7 @@ set -eu
 username=$1
 
 locale-gen
+locale -a
 
 hwclock --systohc --utc
 
