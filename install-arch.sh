@@ -433,14 +433,13 @@ function MakePartitions {
         parted --script $bootDev mkpart primary ${bootOffsetMiB}MiB ${isoOffsetMiB}MiB
         parted --script $bootDev mkpart primary ${isoOffsetMiB}MiB 100%
         parted --script $bootDev set 2 boot on
-
         if [[ $rootPartition == "" ]]; then
             echo -e "make ${Purple}$RootLabel${NC} partition table: ${Bold}${Purple}$rootDev${NC}"
             parted --script $rootDev mklabel gpt
             parted --script $rootDev mkpart primary 1MiB 100%
         fi
+        echo
     fi
-    echo
 
     echo -e "${Yellow}$BootLabel${NC} device info: ${Bold}${Yellow}$bootDev${NC}"
     parted $bootDev print
@@ -501,11 +500,17 @@ function MakePartitions {
     local targetRoot="$Target"
     local targetBoot="$Target/boot"
     local targetEfi="$Target/boot/efi"
+    local targetMntExt="$Target/$MntExt"
 
     mount --mkdir "$deviceMapper/${LvmVG}-${LvmRoot}" $targetRoot
-    mount --mkdir "$deviceMapper/${LvmVG}-${LvmExt}" $MntExt
+    mount --mkdir "$deviceMapper/${LvmVG}-${LvmExt}" $targetMntExt
     mount --mkdir "$deviceMapper/${CryptBootFS}" $targetBoot
     mount --mkdir $efiPartition $targetEfi
+
+    if ! $reinstall; then
+        useradd $username
+        chown -R $username:$username $targetMntExt
+    fi
 
     ShowMounts
 }
@@ -578,16 +583,6 @@ function PostInstall {
     sed -i "s|@bootUuid|$bootUuid|" $grubconf
     sed -i "s|@CryptBootUUID|$cryptBootUUID|" $grubconf
     Cat $grubconf
-
-    #if ! $Reinstall; then
-    #    local user=$(ls -1 ${target}/home | awk '(NR == 1)')
-    #    local mnt=${target}/${MntExt}
-    #    echo "user: $user"
-    #    sudo useradd $user
-    #    sudo mkdir $mnt
-    #    sudo mount $deviceMapper/${LvmVG}-${LvmExt} $mnt
-    #    sudo chown -R ${user}:${user} $mnt
-    #fi
 
     local encryptHook='encrypt2'
     local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
