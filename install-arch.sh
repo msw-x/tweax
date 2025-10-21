@@ -576,6 +576,7 @@ function PostInstall {
 
     local bootUUID=$(PartitionUUID $bootPartition)
     local rootUUID=$(PartitionUUID $rootPartition)
+    local isoUUID=$(PartitionUUID $isoPartition)
     local cryptBootUUID=$(PartitionUUID $deviceMapper/$CryptBootFS)
     local bootUuid=$(echo "$bootUUID" | tr -d "-")
 
@@ -596,6 +597,8 @@ function PostInstall {
     sed -i "s|@BootUUID|$bootUUID|" $grubconf
     sed -i "s|@bootUuid|$bootUuid|" $grubconf
     sed -i "s|@CryptBootUUID|$cryptBootUUID|" $grubconf
+    sed -i "s|@RootUUID|$rootUUID|" $grubconf
+    sed -i "s|@IsoUUID|$isoUUID|" $grubconf
     Cat $grubconf
 
     local encryptHook='encrypt2'
