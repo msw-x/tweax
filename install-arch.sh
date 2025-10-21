@@ -321,8 +321,8 @@ function SelectRootPartition {
 reinstall=true
 
 function Startup {
-    mkdir ${TmpDir}
-    cd ${TmpDir}
+    mkdir $TmpDir
+    cd $TmpDir
 
     echo $(uname -rmo)
 }
@@ -413,6 +413,20 @@ function WipeDevice {
         dd bs=1M if=/dev/zero of=$deviceMapper/wipe status=progress || true
         cryptsetup close wipe
     fi
+}
+
+function ExtractKeys {
+    local initramfs='initramfs'
+    cryptsetup luksOpen $bootPartition $CryptBootFS
+    mount --mkdir "$deviceMapper/${CryptBootFS}" $CryptBootFS
+    mkdir $initramfs
+    cd $initramfs
+    lsinitcpio -x "../$CryptBootFS/initramfs-linux.img"
+    cd '..'
+    umount $CryptBootFS || true
+    cryptsetup luksClose $CryptBootFS
+    cp "$initramfs/$Secrets/$RootKey" .
+    cp "$initramfs/$Secrets/$RootHeader" .
 }
 
 function MakePartitions {
