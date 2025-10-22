@@ -254,7 +254,6 @@ AppList='
     extra/lnav
     extra/code
     aur/sublime-text-4
-    aur/arduino
 
     extra/vlc
     extra/gimp
@@ -278,6 +277,7 @@ AppList='
 
     extra/telegram-desktop
 '
+#aur/arduino
 
 function Update {
     if CheckStep; then
