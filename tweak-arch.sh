@@ -636,7 +636,7 @@ function Configure {
     ConfigureGit
     #ConfigureVirtualBox
     #ConfigureSmartgit
-    ConfigureArduino
+    #ConfigureArduino
     ConfigureMC
 }
 
