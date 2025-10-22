@@ -110,7 +110,7 @@ function YayInstall {
     if [[ $title == "" ]]; then
         title=$cmd
     fi
-    Exec 'sudo yay --noconfirm -S '$cmd "install ${title}"
+    Exec 'yay --noconfirm -S '$cmd "install ${title}"
 }
 
 function NextStep {
