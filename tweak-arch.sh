@@ -410,7 +410,7 @@ function ConfigureEnvironment {
         LangToggle="['grp:alt_shift_toggle']"
         Exec 'gsettings set org.gnome.desktop.input-sources xkb-options "'$LangToggle'"'
 
-        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
+        #Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
 
         Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
         Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
