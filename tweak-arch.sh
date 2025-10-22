@@ -582,12 +582,13 @@ function Startup {
 }
 
 function SetPersonal {
-    if ! Email=$(cat $EmailFile); then
+    if [ -f /tmp/foo.txt ]; then
+        Email=$(cat $EmailFile)
+    else
         read -p "Email: " Email
         echo $Email > $EmailFile
     fi
 }
-
 
 function InstallGnome {
     if CheckStep; then
