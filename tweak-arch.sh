@@ -267,7 +267,6 @@ AppList='
 
     aur/postman-bin
     extra/dbeaver
-    aur/teamviewer
 
     aur/opera
     aur/google-chrome
@@ -278,6 +277,7 @@ AppList='
 #aur/arduino
 #extra/pulseaudio
 #extra/easyeffects
+#aur/teamviewer
 
 function Update {
     if CheckStep; then
