@@ -633,8 +633,8 @@ function Configure {
     ConfigureEnvironment
     ConfigureLocale
     ConfigureGit
-    ConfigureVirtualBox
-    ConfigureSmartgit
+    #ConfigureVirtualBox
+    #ConfigureSmartgit
     ConfigureArduino
     ConfigureMC
 }
