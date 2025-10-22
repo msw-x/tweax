@@ -632,7 +632,7 @@ function Configure {
     ConfigureDirs
     ConfigureHomeConfig
     ConfigureEnvironment
-    ConfigureLocale
+    #ConfigureLocale
     ConfigureGit
     #ConfigureVirtualBox
     #ConfigureSmartgit
