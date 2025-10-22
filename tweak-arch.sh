@@ -623,7 +623,7 @@ function Install {
     InstallYay
     InstallApps
     InstallSly
-    InstallStamina
+    #InstallStamina
 }
 
 function Configure {
