@@ -574,7 +574,7 @@ function Startup {
     Exec 'mkdir '${TmpDir}
     Exec 'cd '${TmpDir}
 
-    local sudoers='sudoers'
+    local sudoers='/etc/sudoers'
     if sudo grep -q -v timestamp_timeout $sudoers; then
         Exec 'sudo sed -i "Defaults timestamp_timeout=-1" '$sudoers
     fi
@@ -582,7 +582,7 @@ function Startup {
 }
 
 function SetPersonal {
-    if [ -f /tmp/foo.txt ]; then
+    if [ -f $EmailFile ]; then
         Email=$(cat $EmailFile)
     else
         read -p "Email: " Email
