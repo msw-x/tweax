@@ -259,8 +259,6 @@ AppList='
     extra/gimp
     extra/ffmpeg
     extra/audacity
-    extra/pulseaudio
-    extra/easyeffects
     
     aur/kazam
     extra/vokoscreen
@@ -278,6 +276,8 @@ AppList='
     extra/telegram-desktop
 '
 #aur/arduino
+#extra/pulseaudio
+#extra/easyeffects
 
 function Update {
     if CheckStep; then
