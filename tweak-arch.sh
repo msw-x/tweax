@@ -303,7 +303,7 @@ function InstallSly {
     if CheckStep; then
         PrintTitle "Install Sly"
 
-        Exec "sudo cp -rv ${SrcDir}/sly/ ${LocalBin}/" "install sly"
+        Exec "sudo cp -rv ${SrcDir}/sly/sly ${LocalBin}/" "install sly"
     fi
     NextStep
 }
