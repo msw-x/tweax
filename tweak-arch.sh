@@ -5,7 +5,7 @@ start=$(date +%s)
 TmpDir='/tmp/install-'$(date +%s%N)
 PwdDir=$(pwd)
 
-DistrName=$(cat /etc/*-release | sed -n 's/^PRETTY_NAME=//p')
+DistrName=$(cat /etc/*-release | sed -n 's/^PRETTY_NAME=//p' | tr -d '"')
 DistrArch=$(lscpu | grep Architecture | grep -oP '(?<=:)[^:]*$' | xargs)
 
 CpuCoreCount=$(nproc)
