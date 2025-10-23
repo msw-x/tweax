@@ -3,6 +3,9 @@
 run_hook() {
     modprobe -a -q dm-crypt >/dev/null 2>&1
 
+    echo 'wait disk'
+    udevadm settle --timeout=10
+
     echo 'disk/by-id'
     ls -l /dev/disk/by-id/
     echo 'disk/by-uuid'
@@ -13,9 +16,18 @@ run_hook() {
     echo 'wait 10s'
     sleep 10
 
+    echo 'disk/by-id'
+    ls -l /dev/disk/by-id/
+    echo 'disk/by-uuid'
+    ls -l /dev/disk/by-uuid/
+    echo 'disk/by-label'
+    ls -l /dev/disk/by-label/
+
+    echo 'wait 5s'
+    sleep 5
+
     echo 'decrypt boot'
-    #cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
-    cryptsetup -v luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
+    cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
 
     echo 'decrypt root'
     cryptsetup luksOpen /dev/disk/by-uuid/@RootUUID @CryptRootFS --key-file=@RootKey --header @RootHeader
