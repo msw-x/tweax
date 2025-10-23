@@ -209,6 +209,9 @@ for i in "$@"; do
 done
 
 AppList='
+    extra/networkmanager
+    extra/openssh
+
     extra/dbeaver
     aur/postman-bin
 
@@ -601,6 +604,7 @@ function InstallGnome {
         Exec "sudo systemctl enable gdm.service"
         Exec 'rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos'
         AppInstall 'dconf-editor gnome-tweaks gnome-shell-extensions'
+        Exec "sudo systemctl enable NetworkManager.service"
     fi
     NextStep
 }
