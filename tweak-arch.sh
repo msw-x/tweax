@@ -209,6 +209,9 @@ for i in "$@"; do
 done
 
 AppList='
+    extra/dbeaver
+    aur/postman-bin
+
     extra/git
     extra/git-lfs
     aur/smartgit
@@ -265,9 +268,6 @@ AppList='
     extra/recordmydesktop
     aur/simplescreenrecorder
 
-    aur/postman-bin
-    extra/dbeaver
-
     aur/opera
     aur/google-chrome
     aur/yandex-browser
@@ -303,7 +303,7 @@ function InstallSly {
     if CheckStep; then
         PrintTitle "Install Sly"
 
-        Exec "sudo cp -rv ${SrcDir}/sly ${LocalBin}/" "install sly"
+        Exec "sudo cp -rv ${SrcDir}/sly/ ${LocalBin}/" "install sly"
     fi
     NextStep
 }
@@ -513,6 +513,7 @@ function ConfigureMC {
 
         Exec "mc"
         Config="$Home/.config/mc/ini"
+        Exec "sed -i 's/^skin=.*/skin=yadt256-defbg/' $Config"
         Exec "sed -i 's/^old_esc_mode=.*/old_esc_mode=true/' $Config"
         Exec "sed -i 's/^old_esc_mode_timeout=.*/old_esc_mode_timeout=1000/' $Config"
     fi
