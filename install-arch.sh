@@ -468,6 +468,12 @@ function MakePartitions {
         rootPartition=$(DevicePartition $rootDev 1)
     fi
 
+    echo "!!!!payPartition: $payPartition"
+    echo "!!!!efiPartition: $efiPartition"
+    echo "!!!!bootPartition: $bootPartition"
+    echo "!!!!isoPartition: $isoPartition"
+    echo "!!!!rootPartition: $rootPartition"
+
     if $reinstall; then
         ExtractKeys
     fi
