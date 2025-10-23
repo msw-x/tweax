@@ -415,17 +415,10 @@ function WipeDevice {
     echo
     read -n 1 -p "Wipe $name $dev? y/n: " key && echo
     if [[ $key == 'y' ]]; then
-
-        echo "wiiiiiiiiiiiiiiiipe /dev/$dev"
-        exit 1
-
         cryptsetup -q open --type plain --cipher aes-xts-plain64 --key-size 256 --key-file /dev/urandom /dev/$dev wipe
         dd bs=1M if=/dev/zero of=$deviceMapper/wipe status=progress || true
         cryptsetup close wipe
     fi
-
-    echo "exit........."
-    exit 1
 }
 
 function ExtractKeys {
