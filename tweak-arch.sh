@@ -202,6 +202,10 @@ for i in "$@"; do
             DisabledStepsList=$s
             DisabledStepsList=$(echo "$DisabledStepsList" | sed 's/,/ /g')
         ;;
+        post=*)
+            PostConfigure
+            exit 0
+        ;;
         *)
             Fatal "unknown command: "$i
         ;;
@@ -426,14 +430,14 @@ function ConfigureLocale {
     if CheckStep; then
         PrintTitle "Configure Locale"
 
-        Exec "sudo locale-gen ru_RU.UTF-8"
+        #Exec "sudo locale-gen ru_RU.UTF-8"
         layouts="[('xkb', 'us'), ('xkb', 'ru')]"
         Exec "gsettings set org.gnome.desktop.input-sources sources \"$layouts\""
         #Exec "sudo sed -i 's/ru_RU/en_US/' /etc/default/locale"
 
-        local loc="en_US.UTF-8"
-        Exec "sudo update-locale LANG=${loc} LC_NUMERIC=${loc} LC_TIME=${loc} LC_MONETARY=${loc} LC_PAPER=${loc} LC_NAME=${loc}"
-        Exec "sudo update-locale LC_ADDRESS=${loc} LC_TELEPHONE=${loc} LC_MEASUREMENT=${loc} LC_IDENTIFICATION=${loc}"
+        #local loc="en_US.UTF-8"
+        #Exec "sudo update-locale LANG=${loc} LC_NUMERIC=${loc} LC_TIME=${loc} LC_MONETARY=${loc} LC_PAPER=${loc} LC_NAME=${loc}"
+        #Exec "sudo update-locale LC_ADDRESS=${loc} LC_TELEPHONE=${loc} LC_MEASUREMENT=${loc} LC_IDENTIFICATION=${loc}"
     fi
     NextStep
 }
@@ -634,12 +638,15 @@ function Configure {
     ConfigureDirs
     ConfigureHomeConfig
     ConfigureEnvironment
-    #ConfigureLocale
+    ConfigureLocale
     ConfigureGit
-    #ConfigureVirtualBox
-    #ConfigureSmartgit
-    #ConfigureArduino
     ConfigureMC
+}
+
+function PostConfigure {
+    ConfigureVirtualBox
+    ConfigureSmartgit
+    #ConfigureArduino
 }
 
 function Сompletion {
