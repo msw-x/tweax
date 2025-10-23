@@ -406,13 +406,26 @@ function CloseDevices {
 }
 
 function WipeDevice {
+    local dev=$rootDev
+    local name='device'
+    if [[ $rootPartition != "" ]]; then
+        dev=$rootPartition
+        name='partition'
+    fi
     echo
-    read -n 1 -p "Wipe device $rootDev? y/n: " key && echo
+    read -n 1 -p "Wipe $name $dev? y/n: " key && echo
     if [[ $key == 'y' ]]; then
-        cryptsetup -q open --type plain --cipher aes-xts-plain64 --key-size 256 --key-file /dev/urandom /dev/$rootDev wipe
+
+        echo "wiiiiiiiiiiiiiiiipe /dev/$dev"
+        exit 1
+
+        cryptsetup -q open --type plain --cipher aes-xts-plain64 --key-size 256 --key-file /dev/urandom /dev/$dev wipe
         dd bs=1M if=/dev/zero of=$deviceMapper/wipe status=progress || true
         cryptsetup close wipe
     fi
+
+    echo "exit........."
+    exit 1
 }
 
 function ExtractKeys {
