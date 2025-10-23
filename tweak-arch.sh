@@ -650,7 +650,7 @@ function Сompletion {
         read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
         if [[ $key == 'y' ]]; then
             echo "rebooting..."
-            reboot
+            sudo reboot
         fi
     fi
 }
