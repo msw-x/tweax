@@ -541,7 +541,7 @@ function Install {
     #x86-video-intel — Это для интел
     #xf86-vide-amdgpu xf86-video-ati — Это для AMD
     #xf86-video-nouveau — Это для нвидиа
-    pacstrap $Target base base-devel linux intel-ucode grub lvm2 nano dhcpcd iproute2 networkmanager cryptsetup
+    pacstrap $Target base base-devel linux intel-ucode grub lvm2 nano dhcpcd iproute2 networkmanager cryptsetup git
 }
 
 function Ls {
