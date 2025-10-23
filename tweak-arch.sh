@@ -209,8 +209,8 @@ for i in "$@"; do
 done
 
 AppList='
+    core/openssh
     extra/networkmanager
-    extra/openssh
 
     extra/dbeaver
     aur/postman-bin
