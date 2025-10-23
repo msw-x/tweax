@@ -476,7 +476,9 @@ function MakePartitions {
     if ! $reinstall; then
         mkfs.fat -F32 $payPartition -n $PayFsLabel
         mkfs.ext4 -F $isoPartition -L $IsoFsLabel
+        echo "!!!! $rootPartition"
         mkfs.btrfs -f $rootPartition --label $RootTrapFsLabel
+        echo "~~~~ $rootPartition"
     fi
 
     # You must use luks1 here - Currently, the latest grub does support opening a luks2 partition,
