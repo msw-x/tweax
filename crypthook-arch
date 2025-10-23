@@ -6,6 +6,15 @@ run_hook() {
     echo 'ls'
     ls
 
+    echo 'ls /bin/'
+    ls /bin/
+
+    echo 'ls -la /dev/'
+    ls -la /dev/
+    ls -la /dev/disk/by-id/
+    ls -la /dev/disk/by-uuid/
+    ls -la /dev/disk/by-partlabel/
+
     echo 'dmsetup ls'
     dmsetup ls
 
@@ -15,8 +24,9 @@ run_hook() {
     echo 'cryptsetup luksClose'
     cryptsetup luksClose @CryptBootFS
 
-    echo 'decrypt boot'
+    #echo 'decrypt boot'
     #cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
+    echo 'decrypt boot @BootUUID @CryptBootFS @BootKey'
     cryptsetup -v luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
 
     echo 'decrypt root'
