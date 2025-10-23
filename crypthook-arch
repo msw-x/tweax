@@ -3,6 +3,9 @@
 run_hook() {
     modprobe -a -q dm-crypt >/dev/null 2>&1
 
+    echo 'sleep 10'
+    sleep 10
+
     echo 'ls'
     ls
 
