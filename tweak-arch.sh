@@ -577,7 +577,7 @@ function Startup {
 
     local sudoers='/etc/sudoers'
     if ! sudo grep -q timestamp_timeout $sudoers; then
-        Exec "sudo echo \"Defaults timestamp_timeout=-1\" >> $sudoers"
+        Exec "echo \"Defaults timestamp_timeout=-1\" | sudo tee -a $sudoers"
     fi
     NextStep
 }
