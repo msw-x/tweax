@@ -579,8 +579,8 @@ function Startup {
     Exec 'cd '${TmpDir}
 
     local sudoers='/etc/sudoers'
-    if sudo grep -q -v timestamp_timeout $sudoers; then
-        Exec "sudo sed -i \"10i Defaults timestamp_timeout=-1\" $sudoers"
+    if ! sudo grep -q timestamp_timeout $sudoers; then
+        Exec "sudo echo \"Defaults timestamp_timeout=-1\" >> $sudoers"
     fi
     NextStep
 }
