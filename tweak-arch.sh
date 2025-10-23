@@ -166,6 +166,8 @@ function CheckStep {
     return 1
 }
 
+post=false
+
 for i in "$@"; do
     case $i in
         help)
@@ -203,8 +205,7 @@ for i in "$@"; do
             DisabledStepsList=$(echo "$DisabledStepsList" | sed 's/,/ /g')
         ;;
         post)
-            PostConfigure
-            exit 0
+            post=true
         ;;
         *)
             Fatal "unknown command: "$i
@@ -663,6 +664,10 @@ function Сompletion {
 }
 
 function Run {
+    if [ "$post" = true ]; then
+        PostConfigure
+        exit 0
+    fi
     Launch
     Startup
     SetPersonal
