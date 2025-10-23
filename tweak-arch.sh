@@ -202,7 +202,7 @@ for i in "$@"; do
             DisabledStepsList=$s
             DisabledStepsList=$(echo "$DisabledStepsList" | sed 's/,/ /g')
         ;;
-        post=*)
+        post)
             PostConfigure
             exit 0
         ;;
