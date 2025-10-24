@@ -198,7 +198,7 @@ function UmountFSLocal {
 function MountCryptLocal {
     local name=$1
     local flag=$2
-    local file=$(ls "$LocalPoint/cnt" -1 | egrep -o "^$name.*" -m 1)
+    local file=$(ls "$LocalPoint/cnt" -1 | grep -oE "^$name.*" -m 1)
     echo "mount(luks): $name"
     Exec "sudo cryptsetup luksOpen '$LocalPoint/cnt/$file' '$LocalMountName-$name' $flag"
 }
