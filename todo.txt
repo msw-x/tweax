@@ -14,3 +14,6 @@ opencv cuda:
 angular
 android-studio
 flutter
+
+install
+download iso archlinux and some gui live-cd
