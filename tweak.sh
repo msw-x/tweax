@@ -1032,8 +1032,8 @@ function Install {
     InstallOverApt
     InstallOverSnap
     InstallChrome
-    InstallSmartgit
-    InstallArduino
+    #InstallSmartgit
+    #InstallArduino
     #InstallTeamviewer
     InstallGolang
     InstallTelegram
@@ -1082,7 +1082,7 @@ function Сompletion {
 function Run {
     Launch
     Startup
-    InstallFonts
+    #InstallFonts
     InstallDialog
     Install
     Configure
