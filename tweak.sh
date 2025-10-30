@@ -284,7 +284,6 @@ AptList='
     filezilla
 
     git
-    gitk
     git-lfs
 
     build-essential
@@ -294,24 +293,11 @@ AptList='
     libpcap-dev
     libfmt-dev
     libdlib-dev
-    libboost-all-dev
     libsqlite3-dev
     nlohmann-json3-dev
     catch2
-    crossbuild-essential-arm64
-    crossbuild-essential-armel
-    crossbuild-essential-armhf
-    protobuf-compiler
-    clang
     gcc
     g++
-    nodejs
-    npm
-
-    python3-dev
-    python3-pip
-    python3-venv
-    python-is-python3
 
     virtualbox
     virtualbox-guest-additions-iso
@@ -332,10 +318,7 @@ AptList='
     picocom
     minicom
 
-    hyphen-ru
-    okular
     sublime-text
-    sublime-merge
     code
 
     qalculate-gtk
@@ -344,15 +327,12 @@ AptList='
     gimp
     ffmpeg
     audacity
-    graphviz
     kazam
     vokoscreen-ng
     recordmydesktop
     simplescreenrecorder
     pulseaudio
     pulseeffects
-
-    torbrowser-launcher
 
     gir1.2-appindicator3-0.1
 '
@@ -365,7 +345,6 @@ AptListDialog='
 SnapList='
     postman
     dbeaver-ce
-    skype
     opera
     winbox
 '
