@@ -67,7 +67,7 @@ function Confirm {
 function ShowAllMounts {
     Exec "lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*'"
     echo -e "${Purple}[/dev/mapper]${NC}"
-    Exec "ls -la /dev/mapper | grep '\->' | awk '{print \$9}' | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*'"
+    Exec "ls -la /dev/mapper | grep '\->' | awk '{print \$9}' | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*' | cat"
 }
 
 function FindPartition {
