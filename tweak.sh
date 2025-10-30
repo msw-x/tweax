@@ -334,6 +334,8 @@ AptList='
     pulseeffects
 
     gir1.2-appindicator3-0.1
+
+    cryptsetup
 '
 AptListDialog='
     smartmontools
@@ -723,6 +725,12 @@ function ConfigureDirs {
 
         Exec "ln -s $MntExt $Home/ext" "ext"
         Exec "ln -s $MntExt/tmp $Home/tmp" "tmp"
+
+        ####
+        Exec "mkdir /mnt/ext"
+        Exec "sudo chown -R $User:$User /mnt/ext"
+        Exec "mkdir -p /mnt/ext/ext/tmp"
+        ####
     fi
     NextStep
 }
