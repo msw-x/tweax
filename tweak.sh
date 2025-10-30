@@ -472,7 +472,7 @@ function InstallSmartgit {
 
         ref=$(wget -qO - https://www.syntevo.com/smartgit/download/ | grep -Eo 'href=[^ ]+ ' | grep -Eo "https.*.deb")
         Exec "wget $ref -O smartgit.deb" "download Smartgit"
-        #Exec "sudo dpkg -i smartgit.deb" "install Smartgit"
+        Exec "sudo dpkg -i smartgit.deb" "install Smartgit"
     fi
     NextStep
 }
