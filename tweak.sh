@@ -352,8 +352,6 @@ AptList='
     pulseaudio
     pulseeffects
 
-    keepass2
-
     torbrowser-launcher
 
     gir1.2-appindicator3-0.1
@@ -549,19 +547,6 @@ function InstallTelegram {
 
         Exec "wget https://telegram.org/dl/desktop/linux -O tsetup.tar.xz" "download Telegram"
         Exec "sudo tar -C $OptDir -xvf tsetup.tar.xz" "install Telegram"
-    fi
-    NextStep
-}
-
-function InstallSkype {
-    if CheckStep; then
-        PrintTitle "Install Skype"
-
-        ref="https://go.skype.com/skypeforlinux-64.deb"
-
-        Exec "sudo apt install -y libgdk-pixbuf-xlib-2.0-0 libgdk-pixbuf2.0-0"
-        Exec "wget $ref -O skype.deb" "download Skype"
-        Exec "sudo dpkg -i skype.deb" "install Skype"
     fi
     NextStep
 }
@@ -1068,17 +1053,16 @@ function Install {
     InstallOverApt
     InstallOverSnap
     InstallChrome
-    #InstallSmartgit
+    InstallSmartgit
     InstallArduino
-    InstallTeamviewer
+    #InstallTeamviewer
     InstallGolang
     InstallTelegram
-    #InstallSkype
     InstallEtcher
     InstallSysMon
-    InstallOpencv
-    #InstallWinBox
-    #InstallStamina
+    #InstallOpencv
+    InstallWinBox
+    InstallStamina
     InstallSly
 }
 
@@ -1098,7 +1082,7 @@ function Configure {
     ConfigureVirtualBox
     ConfigureTelegram
     ConfigureEtcher
-    #ConfigureSmartgit
+    ConfigureSmartgit
     ConfigureArduino
     ConfigureMC
 }
