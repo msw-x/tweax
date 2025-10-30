@@ -292,7 +292,6 @@ AptList='
     pkg-config
     libpcap-dev
     libfmt-dev
-    libdlib-dev
     libsqlite3-dev
     nlohmann-json3-dev
     catch2
