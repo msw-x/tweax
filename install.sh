@@ -375,7 +375,7 @@ function Install {
     echo "After installation set: Continue testing, without rebooting"
     read -p "Press enter to continue"
 
-    ubuntu-desktop-installer
+    ubuntu-desktop-bootstrap
 }
 
 function UnmountTarget {
