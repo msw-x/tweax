@@ -1059,7 +1059,7 @@ function Configure {
     ConfigureMC
 }
 
-function Сompletion {
+function Completion {
     Step=-1
     PrintTitle "Configuration successfully completed!"
     PrintTime
@@ -1079,7 +1079,7 @@ function Run {
     InstallDialog
     Install
     Configure
-    Сompletion
+    Completion
 }
 
 Launch
