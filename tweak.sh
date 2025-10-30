@@ -470,15 +470,9 @@ function InstallSmartgit {
     if CheckStep; then
         PrintTitle "Install Smartgit"
 
-        version=$(wget -qO - https://www.syntevo.com/smartgit/download/ | awk '/Version [0-9]/{print $2}')
-        pointcount=$(echo "${version}" | tr -cd . | wc -c)
-        if [[ $pointcount == 1 ]]; then
-            version="${version}.0"
-        fi
-        Echo "version: "$version
-        version=$(echo "${version}" | sed 's/\./_/g')
-        Exec "wget https://www.syntevo.com/downloads/smartgit/smartgit-${version}.deb" "download Smartgit"
-        Exec "sudo dpkg -i smartgit-${version}.deb" "install Smartgit"
+        ref=$(wget -qO - https://www.syntevo.com/smartgit/download/ | grep -Eo 'href=[^ ]+ ' | grep -Eo "https.*.deb")
+        Exec "wget $ref -O smartgit.deb" "download Smartgit"
+        #Exec "sudo dpkg -i smartgit.deb" "install Smartgit"
     fi
     NextStep
 }
@@ -1031,12 +1025,12 @@ function Install {
     InstallOverApt
     InstallOverSnap
     InstallChrome
-    #InstallSmartgit
+    InstallSmartgit
     #InstallArduino
     #InstallTeamviewer
     InstallGolang
     InstallTelegram
-    InstallEtcher
+    #InstallEtcher
     InstallSysMon
     #InstallOpencv
     InstallWinBox
@@ -1088,5 +1082,7 @@ function Run {
     Сompletion
 }
 
-
-Run
+Launch
+Startup
+InstallSmartgit
+#Run
