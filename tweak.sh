@@ -1082,7 +1082,4 @@ function Run {
     Completion
 }
 
-Launch
-Startup
-InstallSmartgit
-#Run
+Run
