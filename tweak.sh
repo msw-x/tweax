@@ -727,7 +727,7 @@ function ConfigureDirs {
         Exec "ln -s $MntExt/tmp $Home/tmp" "tmp"
 
         ####
-        Exec "mkdir /mnt/ext"
+        Exec "sudo mkdir /mnt/ext"
         Exec "sudo chown -R $User:$User /mnt/ext"
         Exec "mkdir -p /mnt/ext/ext/tmp"
         ####
@@ -1041,7 +1041,7 @@ function Install {
     #InstallEtcher
     InstallSysMon
     #InstallOpencv
-    InstallWinBox
+    #InstallWinBox
     InstallStamina
     InstallSly
 }
