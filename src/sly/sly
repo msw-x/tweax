@@ -65,7 +65,7 @@ function Confirm {
 }
 
 function ShowAllMounts {
-    Exec "lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep -v '^loop' | grep -v '\ /snap/.' | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*'"
+    Exec "lsblk -o NAME,FSTYPE,SIZE,FSAVAIL,TYPE,LABEL,MOUNTPOINTS | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*'"
     echo -e "${Purple}[/dev/mapper]${NC}"
     Exec "ls -la /dev/mapper | grep '\->' | awk '{print \$9}' | grep --color -e '\|$' -e $MountName -e '$LocalMountName-\w*' | cat"
 }
@@ -198,7 +198,7 @@ function UmountFSLocal {
 function MountCryptLocal {
     local name=$1
     local flag=$2
-    local file=$(ls "$LocalPoint/cnt" -1 | egrep -o "^$name.*" -m 1)
+    local file=$(ls "$LocalPoint/cnt" -1 | grep -oE "^$name.*" -m 1)
     echo "mount(luks): $name"
     Exec "sudo cryptsetup luksOpen '$LocalPoint/cnt/$file' '$LocalMountName-$name' $flag"
 }

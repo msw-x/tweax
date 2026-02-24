@@ -1,5 +1,0 @@
-[
-	{ "caption": "Build System: abs solution", "command": "set_build_system", "args": {"file": "Packages/abs/abs.solution.sublime-build"}},
-	{ "caption": "Build System: abs debug"   , "command": "set_build_system", "args": {"file": "Packages/abs/abs.debug.sublime-build"}},
-	{ "caption": "Build System: abs release" , "command": "set_build_system", "args": {"file": "Packages/abs/abs.release.sublime-build"}},
-]

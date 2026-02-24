@@ -133,6 +133,9 @@ function DownloadAll {
     DownloadSmartGit
     DownloadWireshark
     DownloadTelegram
+    DownloadChrome
+    DownloadPostman
+    DownloadAmneziaVPN
 }
 
 function Run {

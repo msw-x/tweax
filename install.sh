@@ -375,7 +375,9 @@ function Install {
     echo "After installation set: Continue testing, without rebooting"
     read -p "Press enter to continue"
 
-    ubuntu-desktop-bootstrap
+    #sudo apt install -y ubiquity ubiquity-frontend-gtk
+    #ubiquity --no-bootloader
+    #ubuntu-desktop-installer
 }
 
 function UnmountTarget {
@@ -493,7 +495,7 @@ SelectMode
 СonfirmationDialog
 PreInstall
 Install
-UnmountTarget
-MountTarget
-PostInstall
-Сompletion
+#UnmountTarget
+#MountTarget
+#PostInstall
+#Сompletion
