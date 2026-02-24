@@ -254,7 +254,7 @@ function Startup {
     if sudo grep timestamp_timeout /etc/sudoers >/dev/null; then
         echo "Warning: can't disable sudo timeout"
     else
-        sudo sed -i "10i Defaults        timestamp_timeout=-1" /etc/sudoers
+        sudo sed -i "10i Defaults        timestamp_timeout=10000" /etc/sudoers
     fi
 }
 
