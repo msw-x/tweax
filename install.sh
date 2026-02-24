@@ -405,7 +405,7 @@ function MountTarget {
 }
 
 function PostInstall {
-    local target='/target'
+    local target='/mnt'
     local lksdir='/tmp'
     # to be able to update the kernel and rebuild initrd
     lksdir=$InitramfsSecret
@@ -485,17 +485,17 @@ EOL'
 }
 
 
-Startup
-Launch
-GetDeviceList
-PrintDeviceList
-CheckDeviceList
-SelectDevices
-SelectMode
-СonfirmationDialog
-PreInstall
-Install
+#Startup
+#Launch
+#GetDeviceList
+#PrintDeviceList
+#CheckDeviceList
+#SelectDevices
+#SelectMode
+#СonfirmationDialog
+#PreInstall
+#Install
 #UnmountTarget
 #MountTarget
-#PostInstall
+PostInstall
 #Сompletion
