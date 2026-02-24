@@ -55,6 +55,10 @@ BootPartition=''
 IsoPartition=''
 RootPartition=''
 
+function Chroot() {
+    sudo chroot $TargetDir /bin/bash -c "$*"
+}
+
 function GetDeviceList {
     lsblk -o NAME,TYPE | grep disk | awk '{print $1}' > $DevListFile
     DevListCount=$(wc -l $DevListFile | awk '{print $1}')
@@ -371,9 +375,8 @@ function PreInstall {
 }
 
 function MountTarget {
-    local target=$TargetDir
-    local targetRoot="${target}"
-    local targetBoot="${target}/boot"
+    local targetRoot="$TargetDir"
+    local targetBoot="$TargetDir/boot"
     sudo mkdir -p ${targetRoot}
     sudo mount "/dev/mapper/${LvmVG}-${LvmRoot}" ${targetRoot}
     sudo mkdir -p ${targetBoot}
@@ -394,10 +397,13 @@ function PostInstall {
     # to be able to update the kernel and rebuild initrd
     lksdir=$InitramfsSecret
 
-    sudo mkdir -p ${target}${lksdir}
-    sudo cp ${RootHeader} ${target}${lksdir}
-    sudo cp ${SrcDir}/chroot.sh ${target}/tmp
-    sudo chmod +x ${target}/tmp/chroot.sh
+    for n in proc sys dev etc/resolv.conf; do sudo mount -R /$n $TargetDir/$n; done
+    Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
+
+    #sudo mkdir -p ${target}${lksdir}
+    #sudo cp ${RootHeader} ${target}${lksdir}
+    #sudo cp ${SrcDir}/chroot.sh ${target}/tmp
+    #sudo chmod +x ${target}/tmp/chroot.sh
 
     sudo mkdir -p ${target}${InitramfsSecret}
     sudo cp ${BootKey} ${target}${InitramfsSecret}
@@ -464,8 +470,11 @@ EOL'
         sudo chown -R ${user}:${user} $mnt
     fi
 
-    for n in proc sys dev etc/resolv.conf; do sudo mount --rbind /$n ${target}/$n; done
-    sudo chroot ${target} /tmp/chroot.sh
+    Chroot "update-initramfs -c -k all"
+    Chroot "grub-install --no-nvram"
+    Chroot "update-grub"
+    Chroot "grub-probe -t device /boot/grub"
+    Chroot "grub-probe -t fs_uuid /boot/grub"
 }
 
 
