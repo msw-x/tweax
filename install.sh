@@ -374,16 +374,16 @@ function MountTarget {
     local targetRoot="${target}"
     local targetBoot="${target}/boot"
     sudo mkdir -p ${targetRoot}
-    sudo mkdir -p ${targetBoot}
     sudo mount "/dev/mapper/${LvmVG}-${LvmRoot}" ${targetRoot}
+    sudo mkdir -p ${targetBoot}
     sudo mount "/dev/mapper/${CryptBootFS}" ${targetBoot}
 
     ShowMounts
 }
 
 function Install {
-    #sudo apt install -y debootstrap
-    debootstrap --arch=amd64 resolute /mnt http://archive.ubuntu.com/ubuntu/
+    sudo apt install -y debootstrap
+    debootstrap --arch=amd64 resolute /target http://archive.ubuntu.com/ubuntu/
 }
 
 function PostInstall {
