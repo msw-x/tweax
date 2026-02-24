@@ -369,29 +369,6 @@ function PreInstall {
     ShowMounts
 }
 
-function Install {
-    echo "Set /dev/mapper/${CryptBootFS} as /boot"
-    echo "Set /dev/mapper/${LvmVG}-${LvmRoot} as /"
-    echo "After installation set: Continue testing, without rebooting"
-    read -p "Press enter to continue"
-
-    #sudo apt install -y ubiquity ubiquity-frontend-gtk
-    #ubiquity --no-bootloader
-    #ubuntu-desktop-installer
-}
-
-function UnmountTarget {
-    for ((;;))
-    do
-        echo "wait unmount of target..."
-        sleep 1s
-        if ! lsblk | grep "target"; then
-            break
-        fi
-    done
-    sleep 1s
-}
-
 function MountTarget {
     local target='/target'
     local targetRoot="${target}"
@@ -404,8 +381,13 @@ function MountTarget {
     ShowMounts
 }
 
+function Install {
+    #sudo apt install -y debootstrap
+    debootstrap --arch=amd64 resolute /mnt http://archive.ubuntu.com/ubuntu/
+}
+
 function PostInstall {
-    local target='/mnt'
+    local target='/target'
     local lksdir='/tmp'
     # to be able to update the kernel and rebuild initrd
     lksdir=$InitramfsSecret
@@ -485,17 +467,16 @@ EOL'
 }
 
 
-#Startup
-#Launch
-#GetDeviceList
-#PrintDeviceList
-#CheckDeviceList
-#SelectDevices
-#SelectMode
-#СonfirmationDialog
-#PreInstall
-#Install
-#UnmountTarget
-#MountTarget
+Startup
+Launch
+GetDeviceList
+PrintDeviceList
+CheckDeviceList
+SelectDevices
+SelectMode
+СonfirmationDialog
+PreInstall
+MountTarget
+Install
 PostInstall
-#Сompletion
+Сompletion
