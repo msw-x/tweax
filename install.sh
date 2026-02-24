@@ -411,7 +411,7 @@ function PostInstall {
     echo "KEYFILE_PATTERN=${InitramfsSecret}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
     echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
 
-    local initramfsHookCopy=/target/etc/initramfs-tools/hooks/copy
+    local initramfsHookCopy=${target}/etc/initramfs-tools/hooks/copy
     echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
     echo 'mkdir -p ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
     echo "cp ${lksdir}/${RootHeader}"' ${DESTDIR}'"${InitramfsSecret}" | sudo tee -a ${initramfsHookCopy}
@@ -454,7 +454,7 @@ EOL'
     echo "UUID=$UuidEfi /boot/efi vfat umask=0077 0 1" | sudo tee -a ${target}/etc/fstab
     echo "/dev/mapper/${LvmVG}-${LvmExt} $MntExt ext4 defaults 0 2" | sudo tee -a ${target}/etc/fstab
 
-    ls -1 /etc/grub.d
+    ls -1 ${target}/etc/grub.d
     cat ${menuIsoFile}
     cat ${target}/etc/default/grub
     cat ${target}/etc/fstab
