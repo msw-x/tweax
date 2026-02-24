@@ -41,6 +41,7 @@ RootDev=''
 TmpDir='/tmp/install-'$(date +%s%N)
 PwdDir=$(pwd)
 SrcDir=${PwdDir}'/src/install'
+TargetDir='/mnt'
 
 DistrName=$(cat /etc/*-release | sed -n 's/^ID=//p')
 DistrVersion=$(cat /etc/*-release | sed -n 's/^DISTRIB_RELEASE=//p')
@@ -370,7 +371,7 @@ function PreInstall {
 }
 
 function MountTarget {
-    local target='/target'
+    local target=$TargetDir
     local targetRoot="${target}"
     local targetBoot="${target}/boot"
     sudo mkdir -p ${targetRoot}
@@ -382,12 +383,13 @@ function MountTarget {
 }
 
 function Install {
+    sudo apt update
     sudo apt install -y debootstrap
-    debootstrap --arch=amd64 resolute /target http://archive.ubuntu.com/ubuntu/
+    sudo debootstrap --arch=amd64 ${DistrCodeName} $TargetDir http://archive.ubuntu.com/ubuntu/
 }
 
 function PostInstall {
-    local target='/target'
+    local target=$TargetDir
     local lksdir='/tmp'
     # to be able to update the kernel and rebuild initrd
     lksdir=$InitramfsSecret
