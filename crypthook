@@ -1,0 +1,30 @@
+#!/usr/bin/ash
+
+run_hook() {
+    modprobe -a -q dm-crypt >/dev/null 2>&1
+
+    echo 'wait boot'
+    while [ ! -e "/dev/disk/by-uuid/@BootUUID" ]; do
+        sleep 1
+    done
+
+    echo 'wait root'
+    while [ ! -e "/dev/disk/by-uuid/@RootUUID" ]; do
+        sleep 1
+    done
+
+    echo 'disk/by-id'
+    ls -l /dev/disk/by-id/
+    echo 'disk/by-uuid'
+    ls -l /dev/disk/by-uuid/
+    echo 'disk/by-label'
+    ls -l /dev/disk/by-label/
+
+    echo 'decrypt boot'
+    cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
+
+    echo 'decrypt root'
+    cryptsetup luksOpen /dev/disk/by-uuid/@RootUUID @CryptRootFS --key-file=@RootKey --header @RootHeader
+
+    echo 'decrypted'
+}
