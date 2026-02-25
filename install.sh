@@ -631,6 +631,12 @@ isoUUID=''
 cryptBootUUID=''
 bootUuid=''
 
+MountSystem() {
+    for n in proc sys dev etc/resolv.conf; do
+        mount -R /$n $Target/$n
+    done
+}
+
 GetUUIDs() {
     bootUUID=$(PartitionUUID $bootPartition)
     rootUUID=$(PartitionUUID $rootPartition)
@@ -730,7 +736,7 @@ Setup() {
     echo 
     echo -e "${Bold}${Green}Setup${NC}"
 
-    for n in proc sys dev etc/resolv.conf; do sudo mount -R /$n $Target/$n; done
+    MountSystem
     Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
 
     GetUUIDs
