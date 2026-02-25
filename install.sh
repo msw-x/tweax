@@ -533,11 +533,7 @@ MakePartitions() {
 
     mkfs.fat -F32 $efiPartition -n $EfiFsLabel
     if ! $reinstall; then
-        echo "xxx"
-        echo $payPartition
-        echo $PayFsLabel
         mkfs.fat -F32 $payPartition -n $PayFsLabel
-        echo "OK"
         mkfs.ext4 -F $isoPartition -L $IsoFsLabel
         mkfs.btrfs -f $rootPartition --label $RootTrapFsLabel
     fi
