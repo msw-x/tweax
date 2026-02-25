@@ -382,6 +382,10 @@ DistroCodeName=$(OsReleaseKey 'VERSION_CODENAME')
 reinstall=true
 
 Startup() {
+    if [[ $EUID != 0 ]]; then
+        Fatal "The script should be run from root user"
+    fi
+
     mkdir $TmpDir
     cd $TmpDir
 
