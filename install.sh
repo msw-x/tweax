@@ -13,7 +13,7 @@ EfiMiB=100
 BootMiB=4000
 IsoMiB=8000
 
-LvmRootGiB=120
+LvmRootGiB=160
 
 EfiFsLabel='x-usb-efi'
 IsoFsLabel='x-usb-iso'
@@ -487,6 +487,9 @@ bootPartition=''
 isoPartition=''
 
 MakePartitions() {
+    echo
+    echo -e "${Bold}${Green}Make partitions${NC}"
+
     local sizeMiB=$(DeviceMiB $bootDev)
     local payMiB=$((sizeMiB-EfiMiB-BootMiB-IsoMiB-2))
     local bootOffsetMiB=$((payMiB+EfiMiB))
@@ -495,7 +498,6 @@ MakePartitions() {
     bootDev=$(DevicePath $bootDev)
     rootDev=$(DevicePath $rootDev)
 
-    echo
     if ! $reinstall; then
         echo -e "make ${Yellow}$BootLabel${NC} partition table: ${Bold}${Yellow}$bootDev${NC}"
         parted --script $bootDev mklabel gpt
