@@ -705,14 +705,14 @@ SetInitHookUbuntu() {
     # to be able to update the kernel and rebuild initrd
     lksdir=$Secrets
 
-    local hook=$target/etc/cryptsetup-initramfs/conf-hook
+    local hook=$Target/etc/cryptsetup-initramfs/conf-hook
     echo "KEYFILE_PATTERN=${Secrets}/*.key" | tee -a $hook
     Cat $hook
-    local initramfs=$target/etc/initramfs-tools/initramfs.conf
+    local initramfs=$Target/etc/initramfs-tools/initramfs.conf
     echo "UMASK=0077" | tee -a $initramfs
     Cat $initramfs
 
-    local copy=$target/etc/initramfs-tools/hooks/copy
+    local copy=$Target/etc/initramfs-tools/hooks/copy
     echo '#!/bin/sh' | tee -a $copy
     echo 'mkdir -p ${DESTDIR}'"$Secrets" | tee -a $copy
     echo "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets" | tee -a $copy
@@ -739,6 +739,7 @@ Setup() {
     MountSystem
     Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
 
+    ShowMounts
     GetUUIDs
     CopySecrets
     Genfstab
