@@ -444,8 +444,6 @@ SetPersonal() {
     if [[ $key != 'y' ]]; then
         echo "cancel the installation"
         exit
-    else
-        echo
     fi
 }
 
