@@ -336,19 +336,17 @@ SelectRootPartition() {
 }
 
 CloseDevices() {
-    umount -R /mnt || true
+    umount "$Target/boot/efi" &> /dev/null || :
+    umount "$Target/boot" &> /dev/null || :
+    umount "$Target" &> /dev/null || :
 
-    umount "$Target/boot/efi" || true
-    umount "$Target/boot" || true
-    umount "$Target" || true
+    umount '/dev/'${bootDev}* &> /dev/null || :
+    umount '/dev/'${rootDev}* &> /dev/null || :
 
-    umount '/dev/'${bootDev}* || true
-    umount '/dev/'${rootDev}* || true
+    vgchange -an &> /dev/null || :
 
-    vgchange -an
-
-    cryptsetup luksClose $BootFS || true
-    cryptsetup luksClose $RootFS || true
+    cryptsetup luksClose $BootFS &> /dev/null || :
+    cryptsetup luksClose $RootFS &> /dev/null || :
 }
 
 WipeRoot() {
