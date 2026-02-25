@@ -74,6 +74,10 @@ Cat() {
     echo
 }
 
+Chroot() {
+    chroot $Target /bin/bash -c "$*"
+}
+
 EnableLocale() {
     local name=$1
     sed -i "/#$name/s/^.//" $Target/etc/locale.gen
