@@ -10,8 +10,8 @@ RootHeader=root.lks
 RootOffsetMiB=512
 
 EfiMiB=100
-BootMiB=4000
-IsoMiB=8000
+BootMiB=500
+IsoMiB=2000
 
 LvmRootGiB=120
 
@@ -54,29 +54,10 @@ Purple='\e[35m'
 Cyan='\e[36m'
 NC='\e[0m'
 
-Fatal() {
+function Fatal {
     msg=$*
     echo -e "${Red}$msg${NC}"
     exit 1
-}
-
-Ls() {
-    local dir=$1
-    echo -e "${Bold}${Blue}$dir${NC}"
-    ls -1 $dir
-    echo
-}
-
-Cat() {
-    local file=$1
-    echo -e "${Bold}${Blue}$file${NC}"
-    cat $file
-    echo
-}
-
-EnableLocale() {
-    local name=$1
-    sed -i "/#$name/s/^.//" $Target/etc/locale.gen
 }
 
 username=''
@@ -87,13 +68,13 @@ hostname=''
 devicePrefix="/dev/"
 deviceMapper=$devicePrefix'mapper'
 
-DeviceName() {
+function DeviceName {
     local name=$1
     name=${name#"$devicePrefix"}
     echo "${name}"
 }
 
-DevicePath() {
+function DevicePath {
     local path=$1
     if [[ $path == $devicePrefix* ]]; then
         echo $path
@@ -102,26 +83,26 @@ DevicePath() {
     fi
 }
 
-DeviceMiB() {
+function DeviceMiB {
     local path=$(DevicePath $1)
     local size=$(lsblk $path -o path,SIZE,TYPE --byte | grep disk | awk '{print $2}')
     echo $(($size/1024/1024))
 }
 
-DeviceGiB() {
+function DeviceGiB {
     local path=$(DevicePath $1)
     local size=$(DeviceMiB $path)
     size=$(($size/1024))
     echo $size
 }
 
-DeviceModel() {
+function DeviceModel {
     local path=$(DevicePath $1)
     local model=$(lsblk $path -o path,TYPE,MODEL | grep disk | awk '{$1=$2=""; print $0}' | awk '{$1=$1}1')
     echo $model
 }
 
-DeviceInfo() {
+function DeviceInfo {
     local name=$(DeviceName $1)
     local path=$(DevicePath $1)
     local size=$(DeviceGiB $path)
@@ -129,7 +110,7 @@ DeviceInfo() {
     echo "$name [$size GiB] $model"
 }
 
-DevicePartition() {
+function DevicePartition {
     local device=$1
     local number=$2
     if [[ $device == *"nvme"* ]]; then
@@ -139,7 +120,7 @@ DevicePartition() {
     fi
 }
 
-DevicePartitionsCount() {
+function DevicePartitionsCount {
     local path=$(DevicePath $1)
     local partitions=$(lsblk $path -o NAME,TYPE --list | grep part | awk '{print $1}')
     local n=$(echo $partitions | wc -w)
@@ -148,26 +129,26 @@ DevicePartitionsCount() {
 
 # Partitions
 
-PartitionMiB() {
+function PartitionMiB {
     local path=$(DevicePath $1)
     local size=$(lsblk $path -o NAME,SIZE,TYPE --byte | grep part | awk '{print $2}')
     echo $(($size/1024/1024))
 }
 
-PartitionGiB() {
+function PartitionGiB {
     local size=$(PartitionMiB $1)
     size=$(($size/1024))
     echo $size
 }
 
-PartitionInfo() {
+function PartitionInfo {
     local name=$(DeviceName $1)
     local path=$(DevicePath $1)
     local size=$(PartitionGiB $path)
     echo "$name [$size GiB]"
 }
 
-PartitionUUID() {
+function PartitionUUID {
     local path=$(DevicePath $1)
     local uuid=$(blkid -s UUID -o value $path)
     echo $uuid
@@ -175,7 +156,7 @@ PartitionUUID() {
 
 # Mounts
 
-ShowMounts() {
+function ShowMounts {
     lsblk -o NAME,PTTYPE,FSTYPE,SIZE,FSUSE%,RO,RM,TYPE,LABEL,MOUNTPOINTS,UUID,STATE
     echo -e "${Purple}[$deviceMapper]${NC}"
     ls -la $deviceMapper | grep '\->' | awk '{print $9}'
@@ -185,12 +166,12 @@ ShowMounts() {
 
 devices=''
 
-LoadDevices() {
+function LoadDevices {
     devices=$(lsblk -o NAME,TYPE | grep disk | awk '{print $1}')
 }
 
-ShowDevices() {
-    echo -e ${Bold}${Green}"Devices:"${NC}
+function ShowDevices {
+    echo "Devices:"
     local n=0
     for name in $devices
     do
@@ -199,12 +180,12 @@ ShowDevices() {
     done
 }
 
-DevicesCount() {
+function DevicesCount {
     local n=$(echo $devices | wc -w)
     echo "$n"
 }
 
-CheckDevices() {
+function CheckDevices {
     local n=$(DevicesCount)
     local m=2
     if (( $n < $m )); then
@@ -212,7 +193,7 @@ CheckDevices() {
     fi
 }
 
-CheckBootDeviceSize() {
+function CheckBootDeviceSize {
     local sizeMiB=$(DeviceMiB $bootDev)
     local minMiB=$((EfiMiB+BootMiB+IsoMiB+100))
     if (( sizeMiB < minMiB )); then
@@ -220,7 +201,7 @@ CheckBootDeviceSize() {
     fi
 }
 
-CheckRootDeviceSize() {
+function CheckRootDeviceSize {
     local sizeGiB=$(DeviceGiB $rootDev)
     local minGiB=$((LvmRootGiB+4))
     if (( sizeGiB < minGiB )); then
@@ -228,13 +209,13 @@ CheckRootDeviceSize() {
     fi
 }
 
-GetDevice() {
+function GetDevice {
     local index=$1
     local device=$(echo $devices | awk '{print $'$index'}')
     echo $device
 }
 
-GetEdgeDevice() {
+function GetEdgeDevice {
     local name=$1
     local edge=$2
     local device=$(echo $devices | tr ' ' '\n' | grep $name | $edge -n 1)
@@ -244,7 +225,7 @@ GetEdgeDevice() {
 bootDev=''
 rootDev=''
 
-AutoSelectDevices() {
+function AutoSelectDevices {
     bootDev=$(GetEdgeDevice sd tail)
     rootDev=$(GetEdgeDevice nvme head)
     if [[ $rootDev == "" ]]; then
@@ -255,7 +236,7 @@ AutoSelectDevices() {
     fi
 }
 
-SelectDevice() {
+function SelectDevice {
     local label=$1
     local device=$bootDev
     if [[ $label == $RootLabel ]]; then
@@ -274,7 +255,7 @@ SelectDevice() {
     fi
 }
 
-SelectDevices() {
+function SelectDevices {
     while : ; do
         AutoSelectDevices
         SelectDevice $BootLabel
@@ -297,12 +278,12 @@ SelectDevices() {
 rootPartitions=''
 rootPartition=''
 
-LoadRootPartitions() {
+function LoadRootPartitions {
     local path=$(DevicePath $1)
     rootPartitions=$(lsblk $path -o NAME,TYPE --list | grep part | awk '{print $1}')
 }
 
-ShowRootPartitions() {
+function ShowRootPartitions {
     local n=0
     for name in $rootPartitions
     do
@@ -311,16 +292,16 @@ ShowRootPartitions() {
     done
 }
 
-RootPartitionsCount() {
+function RootPartitionsCount {
     local n=$(echo $rootPartitions | wc -w)
     echo "$n"
 }
 
-SelectRootPartition() {
+function SelectRootPartition {
     echo "[0] $rootDev"
     ShowRootPartitions
     local key=''
-    read -n 1 -p "$(echo -e "$Cyan$RootLabel$NC partition [default=0]: ")" key
+    read -n 1 -p "$(echo -e "$Cyan$RootLabel$NC device [default=0]: ")" key
     local re='^[0-9]+$'
     if [[ $key == "" ]]; then
         return
@@ -335,53 +316,11 @@ SelectRootPartition() {
     rootPartition=$(DevicePartition $rootDev $key)
 }
 
-CloseDevices() {
-    umount -R /mnt || true
-
-    umount "$Target/boot/efi" || true
-    umount "$Target/boot" || true
-    umount "$Target" || true
-
-    umount '/dev/'${bootDev}* || true
-    umount '/dev/'${rootDev}* || true
-
-    vgchange -an
-
-    cryptsetup luksClose $CryptBootFS || true
-    cryptsetup luksClose $CryptRootFS || true
-}
-
-WipeRoot() {
-    local dev=$rootDev
-    local name='device'
-    if [[ $rootPartition != "" ]]; then
-        dev=$rootPartition
-        name='partition'
-    fi
-    echo
-    read -n 1 -p "Wipe $name $dev? y/n: " key && echo
-    if [[ $key == 'y' ]]; then
-        cryptsetup -q open --type plain --cipher aes-xts-plain64 --key-size 256 --key-file /dev/urandom /dev/$dev wipe
-        dd bs=1M if=/dev/zero of=$deviceMapper/wipe status=progress || true
-        cryptsetup close wipe
-    fi
-}
-
-# Distro
-
-OsReleaseKey() {
-    local key=$1
-    grep "^$key=" /etc/os-release | cut -d'=' -f2 | tr -d '"'
-}
-
-DistroID=$(OsReleaseKey 'ID')
-DistroCodeName=$(OsReleaseKey 'VERSION_CODENAME')
-
 # Install
 
 reinstall=true
 
-Startup() {
+function Startup {
     mkdir $TmpDir
     cd $TmpDir
 
@@ -390,28 +329,21 @@ Startup() {
     cat /etc/os-release
     echo
     echo $(uname -rmo)
-    echo
 }
 
-CheckEfi() {
+function CheckArch {
+    if ! uname -r | grep -q arch; then
+        Fatal "Arch not found"
+    fi
+}
+
+function CheckEfi {
     if [ ! -f /sys/firmware/efi/fw_platform_size ]; then
         Fatal "UEFI not found"
     fi
 }
 
-CheckDistro() {
-    case $DistroID in
-        arch)
-            ;;
-        ubuntu)
-            ;;
-        *)
-            Fatal "Unknown distro id: $DistroID"
-            ;;
-    esac
-}
-
-SelectMode() {
+function SelectMode {
     local bootPartitionsCount=$(DevicePartitionsCount $bootDev)
     if [[ $bootPartitionsCount == 4 ]]; then
         local key=''
@@ -431,12 +363,12 @@ SelectMode() {
     echo -e "Mode: $mode"
 }
 
-SetPersonal() {
+function SetPersonal {
     read -p "Username: " username
     read -p "Hostname: " hostname
 }
 
-Сonfirmation() {
+function Сonfirmation {
     local key=''
     read -n 1 -p "$(echo -e "${Red}Attention! Are you sure you want to install system?${NC} y/n: ")" key && echo
     if [[ $key != 'y' ]]; then
@@ -447,7 +379,7 @@ SetPersonal() {
     fi
 }
 
-Finish() {
+function Finish {
     echo -e "${Green}Installation successfully completed!${NC}"
     read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
     if [[ $key == 'y' ]]; then
@@ -456,37 +388,58 @@ Finish() {
     fi
 }
 
-ExtractKeys() {
-    local initramfs='initramfs'
-    cryptsetup luksOpen $bootPartition $CryptBootFS
-    mount --mkdir "$deviceMapper/$CryptBootFS" $CryptBootFS
-    mkdir $initramfs
-
-    case $DistroID in
-        arch)
-            cd $initramfs
-            lsinitcpio -x "../$CryptBootFS/initramfs-linux.img"
-            cd ..
-            cp "$initramfs/$Secrets/$RootKey" .
-            cp "$initramfs/$Secrets/$RootHeader" .
-            ;;
-        ubuntu)
-            unmkinitramfs "$CryptBootFS/initrd.img" $initramfs
-            cp "$initramfs/main/cryptroot/keyfiles/$CryptRootFS.key" $RootKey
-            cp "$initramfs/main$Secrets/$RootHeader" .
-            ;;
-    esac
-
-    umount $CryptBootFS || true
-    cryptsetup luksClose $CryptBootFS
-}
-
 payPartition=''
 efiPartition=''
 bootPartition=''
 isoPartition=''
 
-MakePartitions() {
+function CloseDevices {
+    umount -R /mnt || true
+
+    umount "$Target/boot/efi" || true
+    umount "$Target/boot" || true
+    umount "$Target" || true
+
+    umount '/dev/'${bootDev}* || true
+    umount '/dev/'${rootDev}* || true
+
+    vgchange -an
+
+    cryptsetup luksClose $CryptBootFS || true
+    cryptsetup luksClose $CryptRootFS || true
+}
+
+function WipeDevice {
+    local dev=$rootDev
+    local name='device'
+    if [[ $rootPartition != "" ]]; then
+        dev=$rootPartition
+        name='partition'
+    fi
+    echo
+    read -n 1 -p "Wipe $name $dev? y/n: " key && echo
+    if [[ $key == 'y' ]]; then
+        cryptsetup -q open --type plain --cipher aes-xts-plain64 --key-size 256 --key-file /dev/urandom /dev/$dev wipe
+        dd bs=1M if=/dev/zero of=$deviceMapper/wipe status=progress || true
+        cryptsetup close wipe
+    fi
+}
+
+function ExtractKeys {
+    local initramfs='initramfs'
+    cryptsetup luksOpen $bootPartition $CryptBootFS
+    mount --mkdir "$deviceMapper/${CryptBootFS}" $CryptBootFS
+    mkdir $initramfs
+    cd $initramfs
+    lsinitcpio -x "../$CryptBootFS/initramfs-linux.img"
+    cd '..'
+    umount $CryptBootFS || true
+    cryptsetup luksClose $CryptBootFS
+    cp "$initramfs/$Secrets/$RootKey" .
+    cp "$initramfs/$Secrets/$RootHeader" .
+}
+
+function MakePartitions {
     local sizeMiB=$(DeviceMiB $bootDev)
     local payMiB=$((sizeMiB-EfiMiB-BootMiB-IsoMiB-2))
     local bootOffsetMiB=$((payMiB+EfiMiB))
@@ -588,7 +541,10 @@ MakePartitions() {
     ShowMounts
 }
 
-InstallArch() {
+function Install {
+    echo
+    echo -e "${Bold}${Green}Install${NC}"
+
     # Syncronise the Package Database
     pacman -Syy
 
@@ -600,53 +556,46 @@ InstallArch() {
     pacstrap $Target base base-devel linux intel-ucode grub lvm2 nano dhcpcd iproute2 networkmanager cryptsetup openssh git
 }
 
-InstallUbuntu() {
-    apt update
-    apt install -y debootstrap
-    debootstrap --arch=amd64 $DistroCodeName $TargetDir http://archive.ubuntu.com/ubuntu/
-}
-
-Install() {
+function Ls {
+    local dir=$1
+    echo -e "${Bold}${Blue}$dir${NC}"
+    ls -1 $dir
     echo
-    echo -e "${Bold}${Green}Install${NC}"
-    case $DistroID in
-        arch)
-            InstallArch
-            ;;
-        ubuntu)
-            InstallUbuntu
-            ;;
-    esac
 }
 
-bootUUID=''
-rootUUID=''
-isoUUID=''
-cryptBootUUID=''
-bootUuid=''
-
-GetUUIDs() {
-    bootUUID=$(PartitionUUID $bootPartition)
-    rootUUID=$(PartitionUUID $rootPartition)
-    isoUUID=$(PartitionUUID $isoPartition)
-    cryptBootUUID=$(PartitionUUID $deviceMapper/$CryptBootFS)
-    bootUuid=$(echo "$bootUUID" | tr -d "-")
+function Cat {
+    local file=$1
+    echo -e "${Bold}${Blue}$file${NC}"
+    cat $file
+    echo
 }
 
-CopySecrets() {
+function EnableLocale {
+    local name=$1
+    sed -i "/#$name/s/^.//" $Target/etc/locale.gen
+}
+
+function PostInstall {
+    echo 
+    echo -e "${Bold}${Green}Postinstall${NC}"
+
     mkdir -p $Target/$Secrets
     cp $RootHeader $Target/$Secrets
     cp $BootKey $Target/$Secrets
     cp $RootKey $Target/$Secrets
-}
 
-Genfstab() {
+    ShowMounts
+
+    local bootUUID=$(PartitionUUID $bootPartition)
+    local rootUUID=$(PartitionUUID $rootPartition)
+    local isoUUID=$(PartitionUUID $isoPartition)
+    local cryptBootUUID=$(PartitionUUID $deviceMapper/$CryptBootFS)
+    local bootUuid=$(echo "$bootUUID" | tr -d "-")
+
     local fstab=$Target/etc/fstab
     genfstab -U $Target >> $fstab
     Cat $fstab
-}
 
-SetGrub() {
     local grub=$Target/etc/default/grub
     # Allow booting from /boot on a LUKS encrypted partition
     sed -i "/#GRUB_ENABLE_CRYPTODISK=y/s/^.//" $grub
@@ -656,135 +605,72 @@ SetGrub() {
 
     local grubconf=$Target/boot/grub/grub.cfg
     mkdir -p $Target/boot/grub
-    cp $PwdDir/grub.cfg $grubconf
+    cp $PwdDir/grub-arch.cfg $grubconf
     sed -i "s|@BootUUID|$bootUUID|" $grubconf
     sed -i "s|@bootUuid|$bootUuid|" $grubconf
     sed -i "s|@CryptBootUUID|$cryptBootUUID|" $grubconf
     sed -i "s|@RootUUID|$rootUUID|" $grubconf
     sed -i "s|@IsoUUID|$isoUUID|" $grubconf
     Cat $grubconf
+
+    local encryptHook='encrypt2'
+    local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
+    cp $PwdDir/crypthook-arch $encryptHookFile
+    cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
+    sed -i "s|@BootUUID|$bootUUID|" $encryptHookFile
+    sed -i "s|@BootKey|$Secrets/$BootKey|" $encryptHookFile
+    sed -i "s|@CryptBootFS|$CryptBootFS|" $encryptHookFile
+    sed -i "s|@RootUUID|$rootUUID|" $encryptHookFile
+    sed -i "s|@CryptRootFS|$CryptRootFS|" $encryptHookFile
+    sed -i "s|@RootKey|$Secrets/$RootKey|" $encryptHookFile
+    sed -i "s|@RootHeader|$Secrets/$RootHeader|" $encryptHookFile
+    Cat $encryptHookFile
+
+    local mkinitcpio=$Target/etc/mkinitcpio.conf
+    local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
+    cp $mkinitcpio $mkinitcpio.bk
+    cp $PwdDir/'mkinitcpio-arch.conf' $mkinitcpio
+    sed -i "s|@FILES|$secretFiles|" $mkinitcpio
+    sed -i "s|@ENCRYPT|$encryptHook|" $mkinitcpio
+    Cat $mkinitcpio
+
+    ln -s /usr/share/zoneinfo/$TimeZone $Target/etc/localtime
+
+    for locale in $Locales
+    do
+        EnableLocale "$locale.UTF-8 UTF-8"
+    done
+
+    echo $hostname > $Target/etc/hostname
+
+    #vim $Target/etc/hosts
+    #127.0.0.1 localhost
+    #::1 localhost
+    #127.0.0.1 ARCH.localdomain ARCH
+    #Вместо ARCH можете написать ваше имя компьтера , у меня это ARCH
+
+    local sudoers=$Target/etc/sudoers
+    sed -i "/# %wheel ALL=(ALL:ALL) ALL/s/^..//" $sudoers
+    Cat $sudoers
+
+    #nano $Target/etc/vconsole.conf
+    #KEYMAP=ru
+    #FONT=cyr-sun16
+
+    cp $PwdDir/chroot-arch.sh $Target/root/chroot.sh
+    chmod +x $Target/root/chroot.sh
+
+    arch-chroot $Target /root/chroot.sh $username
+    rm $Target/root/chroot.sh
+
+    umount -R /mnt
 }
 
-SetInitHookArch() {
-}
-
-SetInitHookUbuntu() {
-}
-
-SetInitHook() {
-    case $DistroID in
-        arch)
-            SetInitHookArch
-            ;;
-        ubuntu)
-            SetInitHookUbuntu
-            ;;
-    esac
-}
-
-Setup() {
-    echo 
-    echo -e "${Bold}${Green}Postinstall${NC}"
-
-    GetUUIDs
-    CopySecrets
-    Genfstab
-    SetGrub
-}
-
-
-
-
-function PostInstall {
-    local target=$TargetDir
-    local lksdir='/tmp'
-    # to be able to update the kernel and rebuild initrd
-    lksdir=$Secrets
-
-    for n in proc sys dev etc/resolv.conf; do sudo mount -R /$n $TargetDir/$n; done
-    Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
-
-    #sudo mkdir -p ${target}${lksdir}
-    #sudo cp ${RootHeader} ${target}${lksdir}
-    #sudo cp ${SrcDir}/chroot.sh ${target}/tmp
-    #sudo chmod +x ${target}/tmp/chroot.sh
-
-    sudo mkdir -p ${target}${Secrets}
-    sudo cp ${BootKey} ${target}${Secrets}
-    sudo cp ${RootKey} ${target}${Secrets}
-    echo "KEYFILE_PATTERN=${Secrets}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
-    echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
-
-    local initramfsHookCopy=${target}/etc/initramfs-tools/hooks/copy
-    echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
-    echo 'mkdir -p ${DESTDIR}'"${Secrets}" | sudo tee -a ${initramfsHookCopy}
-    echo "cp ${lksdir}/${RootHeader}"' ${DESTDIR}'"${Secrets}" | sudo tee -a ${initramfsHookCopy}
-    echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
-    sudo chmod +x ${initramfsHookCopy}
-
-    local uuidBoot=$(blkid -s UUID -o value $BootPartition)
-    local uuidRoot=$(blkid -s UUID -o value $RootPartition)
-    echo "$CryptBootFS UUID=${uuidBoot} ${Secrets}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
-    echo "$CryptRootFS UUID=${uuidRoot} ${Secrets}/${RootKey} luks,header=${Secrets}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
-
-    echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a ${target}/etc/default/grub
-    echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
-    echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
-
-    local menuIsoFile=${target}/etc/grub.d/40_custom
-    local uuidIso=$(blkid -s UUID -o value $IsoPartition)
-    sudo bash -c 'cat >> '"$menuIsoFile"' << "EOL"
-menuentry "ISO" {
-   set isofile="/x.iso"
-   insmod part_gpt
-   insmod ext2
-   search --no-floppy --fs-uuid --set $uuidIso
-   loopback loop $isofile
-   linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
-   initrd (loop)/casper/initrd
-}
-EOL'
-    sudo sed -i 's/$uuidIso/'"$uuidIso/g" $menuIsoFile
-
-    sudo chmod -x ${target}/etc/grub.d/10_linux_zfs
-    sudo chmod -x ${target}/etc/grub.d/20_linux_xen
-    #sudo chmod -x ${target}/etc/grub.d/20_memtest86+
-    sudo chmod -x ${target}/etc/grub.d/30_os-prober
-    sudo chmod -x ${target}/etc/grub.d/30_uefi-firmware
-    #sudo chmod -x ${target}/etc/grub.d/35_fwupd
-
-    sudo sed -i '\|boot/efi|d' ${target}/etc/fstab
-    local UuidEfi=$(blkid -s UUID -o value $EfiPartition)
-    echo "UUID=$UuidEfi /boot/efi vfat umask=0077 0 1" | sudo tee -a ${target}/etc/fstab
-    echo "/dev/mapper/${LvmVG}-${LvmExt} $MntExt ext4 defaults 0 2" | sudo tee -a ${target}/etc/fstab
-
-    ls -1 ${target}/etc/grub.d
-    cat ${menuIsoFile}
-    cat ${target}/etc/default/grub
-    cat ${target}/etc/fstab
-    cat ${initramfsHookCopy}
-
-    if ! $Reinstall; then
-        local user=$(ls -1 ${target}/home | awk '(NR == 1)')
-        local mnt=${target}/${MntExt}
-        echo "user: $user"
-        sudo useradd $user
-        sudo mkdir $mnt
-        sudo mount /dev/mapper/${LvmVG}-${LvmExt} $mnt
-        sudo chown -R ${user}:${user} $mnt
-    fi
-
-    Chroot "update-initramfs -c -k all"
-    Chroot "grub-install --no-nvram"
-    Chroot "update-grub"
-    Chroot "grub-probe -t device /boot/grub"
-    Chroot "grub-probe -t fs_uuid /boot/grub"
-}
-
+# Run
 
 Startup
 CheckEfi
-CheckDistro
+CheckArch
 LoadDevices
 ShowDevices
 CheckDevices
@@ -794,9 +680,9 @@ CheckRootDeviceSize
 SelectMode
 SetPersonal
 Сonfirmation
-#CloseDevices
-#WipeRoot
-#MakePartitions
-#Install
-#Setup
-#Finish
+CloseDevices
+WipeDevice
+MakePartitions
+Install
+PostInstall
+Finish
