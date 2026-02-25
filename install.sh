@@ -608,7 +608,7 @@ InstallArch() {
 
 InstallUbuntu() {
     apt update
-    apt install -y debootstrap
+    apt install -y debootstrap arch-install-scripts # arch-install-scripts for genfstab
     debootstrap --arch=amd64 $DistroCodeName $Target http://archive.ubuntu.com/ubuntu/
 }
 
