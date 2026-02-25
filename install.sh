@@ -23,8 +23,8 @@ RootTrapFsLabel='x-data'
 BootLabel='BOOT'
 RootLabel='ROOT'
 
-CryptBootFS='bootfs'
-CryptRootFS='rootfs'
+BootFS='bootfs'
+RootFS='rootfs'
 LvmVG='lvm'
 LvmRoot='root'
 LvmExt='ext'
@@ -347,8 +347,8 @@ CloseDevices() {
 
     vgchange -an
 
-    cryptsetup luksClose $CryptBootFS || true
-    cryptsetup luksClose $CryptRootFS || true
+    cryptsetup luksClose $BootFS || true
+    cryptsetup luksClose $RootFS || true
 }
 
 WipeRoot() {
@@ -458,27 +458,27 @@ Finish() {
 
 ExtractKeys() {
     local initramfs='initramfs'
-    cryptsetup luksOpen $bootPartition $CryptBootFS
-    mount --mkdir "$deviceMapper/$CryptBootFS" $CryptBootFS
+    cryptsetup luksOpen $bootPartition $BootFS
+    mount --mkdir "$deviceMapper/$BootFS" $BootFS
     mkdir $initramfs
 
     case $DistroID in
         arch)
             cd $initramfs
-            lsinitcpio -x "../$CryptBootFS/initramfs-linux.img"
+            lsinitcpio -x "../$BootFS/initramfs-linux.img"
             cd ..
             cp "$initramfs/$Secrets/$RootKey" .
             cp "$initramfs/$Secrets/$RootHeader" .
             ;;
         ubuntu)
-            unmkinitramfs "$CryptBootFS/initrd.img" $initramfs
-            cp "$initramfs/main/cryptroot/keyfiles/$CryptRootFS.key" $RootKey
+            unmkinitramfs "$BootFS/initrd.img" $initramfs
+            cp "$initramfs/main/cryptroot/keyfiles/$RootFS.key" $RootKey
             cp "$initramfs/main$Secrets/$RootHeader" .
             ;;
     esac
 
-    umount $CryptBootFS || true
-    cryptsetup luksClose $CryptBootFS
+    umount $BootFS || true
+    cryptsetup luksClose $BootFS
 }
 
 payPartition=''
@@ -549,7 +549,7 @@ MakePartitions() {
     chmod u=r,go-rwx $BootKey
     cryptsetup -q luksFormat --type=luks1 --cipher=aes-xts-plain64 --hash=sha512 --iter-time=5000 --key-size=512 --key-file=$BootKey $bootPartition
     cryptsetup luksAddKey $bootPartition --key-file=$BootKey
-    cryptsetup luksOpen $bootPartition $CryptBootFS --key-file=$BootKey
+    cryptsetup luksOpen $bootPartition $BootFS --key-file=$BootKey
 
     if ! $reinstall; then
         local luksOffset=$((RootOffsetMiB*1024*2))
@@ -557,13 +557,13 @@ MakePartitions() {
         chmod u=r,go-rwx $RootKey
         cryptsetup -q luksFormat --cipher=aes-xts-plain64 --hash=sha512  --iter-time=5000 --key-size=512 --key-file=$RootKey $rootPartition --header=$RootHeader --offset=$luksOffset --luks2-keyslots-size=262144
     fi
-    cryptsetup luksOpen $rootPartition $CryptRootFS --key-file=$RootKey --header $RootHeader
+    cryptsetup luksOpen $rootPartition $RootFS --key-file=$RootKey --header $RootHeader
 
-    mkfs.ext4 -F $deviceMapper/$CryptBootFS
+    mkfs.ext4 -F $deviceMapper/$BootFS
 
     if ! $reinstall; then
-        pvcreate $deviceMapper/$CryptRootFS
-        vgcreate $LvmVG $deviceMapper/$CryptRootFS
+        pvcreate $deviceMapper/$RootFS
+        vgcreate $LvmVG $deviceMapper/$RootFS
         lvcreate -n $LvmRoot -L ${LvmRootGiB}G $LvmVG
         lvcreate -n $LvmExt -l 100%FREE $LvmVG
         mkfs.ext4 $deviceMapper/${LvmVG}-${LvmExt}
@@ -575,9 +575,9 @@ MakePartitions() {
     local targetEfi="$Target/boot/efi"
     local targetMntExt="$Target/$MntExt"
 
-    mount --mkdir "$deviceMapper/${LvmVG}-${LvmRoot}" $targetRoot
-    mount --mkdir "$deviceMapper/${LvmVG}-${LvmExt}" $targetMntExt
-    mount --mkdir "$deviceMapper/${CryptBootFS}" $targetBoot
+    mount --mkdir "$deviceMapper/$LvmVG-$LvmRoot" $targetRoot
+    mount --mkdir "$deviceMapper/$LvmVG-$LvmExt" $targetMntExt
+    mount --mkdir "$deviceMapper/$BootFS" $targetBoot
     mount --mkdir $efiPartition $targetEfi
 
     if ! $reinstall; then
@@ -603,7 +603,7 @@ InstallArch() {
 InstallUbuntu() {
     apt update
     apt install -y debootstrap
-    debootstrap --arch=amd64 $DistroCodeName $TargetDir http://archive.ubuntu.com/ubuntu/
+    debootstrap --arch=amd64 $DistroCodeName $Target http://archive.ubuntu.com/ubuntu/
 }
 
 Install() {
@@ -629,7 +629,7 @@ GetUUIDs() {
     bootUUID=$(PartitionUUID $bootPartition)
     rootUUID=$(PartitionUUID $rootPartition)
     isoUUID=$(PartitionUUID $isoPartition)
-    cryptBootUUID=$(PartitionUUID $deviceMapper/$CryptBootFS)
+    cryptBootUUID=$(PartitionUUID $deviceMapper/$BootFS)
     bootUuid=$(echo "$bootUUID" | tr -d "-")
 }
 
@@ -666,9 +666,47 @@ SetGrub() {
 }
 
 SetInitHookArch() {
+    local encryptHook='encrypt2'
+    local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
+    cp $PwdDir/crypthook $encryptHookFile
+    cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
+    sed -i "s|@BootUUID|$bootUUID|" $encryptHookFile
+    sed -i "s|@BootKey|$Secrets/$BootKey|" $encryptHookFile
+    sed -i "s|@BootFS|$BootFS|" $encryptHookFile
+    sed -i "s|@RootUUID|$rootUUID|" $encryptHookFile
+    sed -i "s|@RootFS|$RootFS|" $encryptHookFile
+    sed -i "s|@RootKey|$Secrets/$RootKey|" $encryptHookFile
+    sed -i "s|@RootHeader|$Secrets/$RootHeader|" $encryptHookFile
+    Cat $encryptHookFile
+
+    local mkinitcpio=$Target/etc/mkinitcpio.conf
+    local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
+    cp $mkinitcpio $mkinitcpio.bk
+    cp $PwdDir/'mkinitcpio-arch.conf' $mkinitcpio
+    sed -i "s|@FILES|$secretFiles|" $mkinitcpio
+    sed -i "s|@ENCRYPT|$encryptHook|" $mkinitcpio
+    Cat $mkinitcpio
 }
 
 SetInitHookUbuntu() {
+    local lksdir='/tmp'
+    # to be able to update the kernel and rebuild initrd
+    lksdir=$Secrets
+
+    local hook=$target/etc/cryptsetup-initramfs/conf-hook
+    echo "KEYFILE_PATTERN=${Secrets}/*.key" | tee -a $hook
+    Cat $hook
+    local initramfs=$target/etc/initramfs-tools/initramfs.conf
+    echo "UMASK=0077" | tee -a $initramfs
+    Cat $initramfs
+
+    local copy=$target/etc/initramfs-tools/hooks/copy
+    echo '#!/bin/sh' | tee -a $copy
+    echo 'mkdir -p ${DESTDIR}'"$Secrets" | tee -a $copy
+    echo "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets" | tee -a $copy
+    echo 'exit 0' | tee -a $copy
+    chmod +x $copy
+    Cat $copy
 }
 
 SetInitHook() {
@@ -684,95 +722,16 @@ SetInitHook() {
 
 Setup() {
     echo 
-    echo -e "${Bold}${Green}Postinstall${NC}"
+    echo -e "${Bold}${Green}Setup${NC}"
+
+    for n in proc sys dev etc/resolv.conf; do sudo mount -R /$n $Target/$n; done
+    Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
 
     GetUUIDs
     CopySecrets
     Genfstab
     SetGrub
-}
-
-
-
-
-function PostInstall {
-    local target=$TargetDir
-    local lksdir='/tmp'
-    # to be able to update the kernel and rebuild initrd
-    lksdir=$Secrets
-
-    for n in proc sys dev etc/resolv.conf; do sudo mount -R /$n $TargetDir/$n; done
-    Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
-
-    #sudo mkdir -p ${target}${lksdir}
-    #sudo cp ${RootHeader} ${target}${lksdir}
-    #sudo cp ${SrcDir}/chroot.sh ${target}/tmp
-    #sudo chmod +x ${target}/tmp/chroot.sh
-
-    sudo mkdir -p ${target}${Secrets}
-    sudo cp ${BootKey} ${target}${Secrets}
-    sudo cp ${RootKey} ${target}${Secrets}
-    echo "KEYFILE_PATTERN=${Secrets}/*.key" | sudo tee -a ${target}/etc/cryptsetup-initramfs/conf-hook
-    echo "UMASK=0077" | sudo tee -a ${target}/etc/initramfs-tools/initramfs.conf
-
-    local initramfsHookCopy=${target}/etc/initramfs-tools/hooks/copy
-    echo '#!/bin/sh' | sudo tee -a ${initramfsHookCopy}
-    echo 'mkdir -p ${DESTDIR}'"${Secrets}" | sudo tee -a ${initramfsHookCopy}
-    echo "cp ${lksdir}/${RootHeader}"' ${DESTDIR}'"${Secrets}" | sudo tee -a ${initramfsHookCopy}
-    echo 'exit 0' | sudo tee -a ${initramfsHookCopy}
-    sudo chmod +x ${initramfsHookCopy}
-
-    local uuidBoot=$(blkid -s UUID -o value $BootPartition)
-    local uuidRoot=$(blkid -s UUID -o value $RootPartition)
-    echo "$CryptBootFS UUID=${uuidBoot} ${Secrets}/${BootKey} luks" | sudo tee -a ${target}/etc/crypttab
-    echo "$CryptRootFS UUID=${uuidRoot} ${Secrets}/${RootKey} luks,header=${Secrets}/${RootHeader}" | sudo tee -a ${target}/etc/crypttab
-
-    echo "GRUB_DEFAULT=\"ISO\"" | sudo tee -a ${target}/etc/default/grub
-    echo "GRUB_ENABLE_CRYPTODISK=y" | sudo tee -a ${target}/etc/default/grub
-    echo "GRUB_DISABLE_OS_PROBER=true" | sudo tee -a ${target}/etc/default/grub
-
-    local menuIsoFile=${target}/etc/grub.d/40_custom
-    local uuidIso=$(blkid -s UUID -o value $IsoPartition)
-    sudo bash -c 'cat >> '"$menuIsoFile"' << "EOL"
-menuentry "ISO" {
-   set isofile="/x.iso"
-   insmod part_gpt
-   insmod ext2
-   search --no-floppy --fs-uuid --set $uuidIso
-   loopback loop $isofile
-   linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
-   initrd (loop)/casper/initrd
-}
-EOL'
-    sudo sed -i 's/$uuidIso/'"$uuidIso/g" $menuIsoFile
-
-    sudo chmod -x ${target}/etc/grub.d/10_linux_zfs
-    sudo chmod -x ${target}/etc/grub.d/20_linux_xen
-    #sudo chmod -x ${target}/etc/grub.d/20_memtest86+
-    sudo chmod -x ${target}/etc/grub.d/30_os-prober
-    sudo chmod -x ${target}/etc/grub.d/30_uefi-firmware
-    #sudo chmod -x ${target}/etc/grub.d/35_fwupd
-
-    sudo sed -i '\|boot/efi|d' ${target}/etc/fstab
-    local UuidEfi=$(blkid -s UUID -o value $EfiPartition)
-    echo "UUID=$UuidEfi /boot/efi vfat umask=0077 0 1" | sudo tee -a ${target}/etc/fstab
-    echo "/dev/mapper/${LvmVG}-${LvmExt} $MntExt ext4 defaults 0 2" | sudo tee -a ${target}/etc/fstab
-
-    ls -1 ${target}/etc/grub.d
-    cat ${menuIsoFile}
-    cat ${target}/etc/default/grub
-    cat ${target}/etc/fstab
-    cat ${initramfsHookCopy}
-
-    if ! $Reinstall; then
-        local user=$(ls -1 ${target}/home | awk '(NR == 1)')
-        local mnt=${target}/${MntExt}
-        echo "user: $user"
-        sudo useradd $user
-        sudo mkdir $mnt
-        sudo mount /dev/mapper/${LvmVG}-${LvmExt} $mnt
-        sudo chown -R ${user}:${user} $mnt
-    fi
+    SetInitHook
 
     Chroot "update-initramfs -c -k all"
     Chroot "grub-install --no-nvram"
@@ -794,9 +753,9 @@ CheckRootDeviceSize
 SelectMode
 SetPersonal
 Сonfirmation
-#CloseDevices
-#WipeRoot
-#MakePartitions
-#Install
-#Setup
-#Finish
+CloseDevices
+WipeRoot
+MakePartitions
+Install
+Setup
+Finish

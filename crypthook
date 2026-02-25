@@ -21,10 +21,10 @@ run_hook() {
     ls -l /dev/disk/by-label/
 
     echo 'decrypt boot'
-    cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @CryptBootFS --key-file=@BootKey
+    cryptsetup luksOpen /dev/disk/by-uuid/@BootUUID @BootFS --key-file=@BootKey
 
     echo 'decrypt root'
-    cryptsetup luksOpen /dev/disk/by-uuid/@RootUUID @CryptRootFS --key-file=@RootKey --header @RootHeader
+    cryptsetup luksOpen /dev/disk/by-uuid/@RootUUID @RootFS --key-file=@RootKey --header @RootHeader
 
     echo 'decrypted'
 }
