@@ -472,6 +472,7 @@ SetPersonal() {
 }
 
 Finish() {
+    echo
     echo -e "${Green}Installation successfully completed!${NC}"
     read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
     if [[ $key == 'y' ]]; then
@@ -770,7 +771,9 @@ Setup() {
     Chroot "update-initramfs -c -k all"
     Chroot "grub-install --no-nvram"
     Chroot "update-grub"
+    echo "boot device:"
     Chroot "grub-probe -t device /boot/grub"
+    echo "boot fs-uuid:"
     Chroot "grub-probe -t fs_uuid /boot/grub"
 }
 
