@@ -83,6 +83,26 @@ EnableLocale() {
     sed -i "/#$name/s/^.//" $Target/etc/locale.gen
 }
 
+Set() {
+    local file="$1"
+    local name="$2"
+    local value="$3"
+
+    # update
+    sed -i "s/.*$name.*/${name}=${value}/" "$file"
+    # insert
+    grep -q "$name" $file || echo -e "\n$name=$value" | tee -a $file
+}
+
+Replace() {
+    local file="$1"
+    local placeholder="$2"
+    local value="$3"
+    local separator="${4:-|}"
+
+    sed -i "s${separator}@${placeholder}${separator}${value}${separator}g" $file
+}
+
 username=''
 hostname=''
 
@@ -661,19 +681,19 @@ Genfstab() {
 SetGrub() {
     local grub=$Target/etc/default/grub
     # Allow booting from /boot on a LUKS encrypted partition
-    sed -i "/#GRUB_ENABLE_CRYPTODISK=y/s/^.//" $grub
+    Set $grub "GRUB_ENABLE_CRYPTODISK" "y"
     # Disable discover other OS installed
-    sed -i "s|#GRUB_DISABLE_OS_PROBER=false|GRUB_DISABLE_OS_PROBER=true|" $grub
+    Set $grub "GRUB_DISABLE_OS_PROBER" "true"
     Cat $grub
 
     local grubconf=$Target/boot/grub/grub.cfg
     mkdir -p $Target/boot/grub
     cp $PwdDir/grub.cfg $grubconf
-    sed -i "s|@BootUUID|$bootUUID|" $grubconf
-    sed -i "s|@bootUuid|$bootUuid|" $grubconf
-    sed -i "s|@CryptBootUUID|$cryptBootUUID|" $grubconf
-    sed -i "s|@RootUUID|$rootUUID|" $grubconf
-    sed -i "s|@IsoUUID|$isoUUID|" $grubconf
+    Replace $grubconf "BootUUID" $bootUUID
+    Replace $grubconf "bootUuid" $bootUuid
+    Replace $grubconf "CryptBootUUID" $cryptBootUUID
+    Replace $grubconf "RootUUID" $rootUUID
+    Replace $grubconf "IsoUUID" $isoUUID
     Cat $grubconf
 }
 
@@ -682,21 +702,22 @@ SetInitHookArch() {
     local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
     cp $PwdDir/crypthook $encryptHookFile
     cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
-    sed -i "s|@BootUUID|$bootUUID|" $encryptHookFile
-    sed -i "s|@BootKey|$Secrets/$BootKey|" $encryptHookFile
-    sed -i "s|@BootFS|$BootFS|" $encryptHookFile
-    sed -i "s|@RootUUID|$rootUUID|" $encryptHookFile
-    sed -i "s|@RootFS|$RootFS|" $encryptHookFile
-    sed -i "s|@RootKey|$Secrets/$RootKey|" $encryptHookFile
-    sed -i "s|@RootHeader|$Secrets/$RootHeader|" $encryptHookFile
+
+    Replace $encryptHookFile "BootUUID" $bootUUID
+    Replace $encryptHookFile "BootKey" $Secrets/$BootKey
+    Replace $encryptHookFile "BootFS" $BootFS
+    Replace $encryptHookFile "RootUUID" $rootUUID
+    Replace $encryptHookFile "RootFS" $RootFS
+    Replace $encryptHookFile "RootKey" $Secrets/$RootKey
+    Replace $encryptHookFile "RootHeader" $Secrets/$RootHeaders
     Cat $encryptHookFile
 
     local mkinitcpio=$Target/etc/mkinitcpio.conf
     local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
     cp $mkinitcpio $mkinitcpio.bk
     cp $PwdDir/'mkinitcpio-arch.conf' $mkinitcpio
-    sed -i "s|@FILES|$secretFiles|" $mkinitcpio
-    sed -i "s|@ENCRYPT|$encryptHook|" $mkinitcpio
+    Replace $mkinitcpio "FILES" $secretFiles
+    Replace $mkinitcpio "ENCRYPT" $encryptHook
     Cat $mkinitcpio
 }
 
