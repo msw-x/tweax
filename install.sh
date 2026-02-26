@@ -69,7 +69,7 @@ Ls() {
 
 Cat() {
     local file=$1
-    echo -e "${Bold}${Blue}$file${NC}"
+    echo -e "${Bold}${Blue}$file:${NC}"
     cat $file
     echo
 }
@@ -89,9 +89,9 @@ Set() {
     local value="$3"
 
     # update
-    sed -i "s/.*$name.*/${name}=${value}/" "$file"
+    sed -i "s/.*${name}=.*/${name}=${value}/" "$file"
     # insert
-    grep -q "$name" $file || echo -e "\n$name=$value" | tee -a $file
+    grep -q "$name" $file || echo -e "\n$name=$value" | tee -a $file > /dev/null
 }
 
 Replace() {
@@ -200,6 +200,7 @@ PartitionUUID() {
 # Mounts
 
 ShowMounts() {
+    echo -e "${Purple}mounts:${NC}"
     lsblk -o NAME,PTTYPE,FSTYPE,SIZE,FSUSE%,RO,RM,TYPE,LABEL,MOUNTPOINTS,UUID,STATE
     echo -e "${Purple}[$deviceMapper]${NC}"
     ls -la $deviceMapper | grep '\->' | awk '{print $9}'
@@ -737,10 +738,12 @@ SetInitHookUbuntu() {
     lksdir=$Secrets
 
     local hook=$Target/etc/cryptsetup-initramfs/conf-hook
-    echo "KEYFILE_PATTERN=${Secrets}/*.key" | tee -a $hook
+    ###echo "KEYFILE_PATTERN=${Secrets}/*.key" | tee -a $hook
+    Set $hook "KEYFILE_PATTERN" "${Secrets}/*.key"
     Cat $hook
     local initramfs=$Target/etc/initramfs-tools/initramfs.conf
-    echo "UMASK=0077" | tee -a $initramfs
+    ###echo "UMASK=0077" | tee -a $initramfs
+    Set $initramfs "UMASK" "0077"
     Cat $initramfs
 
     local copy=$Target/etc/initramfs-tools/hooks/copy
@@ -782,6 +785,8 @@ Setup() {
     Chroot "update-grub"
     Chroot 'echo "boot device: $(grub-probe -t device /boot/grub)"'
     Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
+
+    Cat $Target/boot/grub/grub.cfg
 }
 
 
