@@ -688,8 +688,6 @@ SetFstab() {
             Cat $fstab
 
             local crypttab=$Target/etc/crypttab
-            #echo "$BootFS UUID=$bootUUID $Secrets/$BootKey luks" | tee -a $crypttab
-            #echo "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader" | tee -a $crypttab
             Add $crypttab "$BootFS UUID=$bootUUID $Secrets/$BootKey luks"
             Add $crypttab "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader"
             Cat $crypttab
@@ -753,10 +751,6 @@ SetInitHookUbuntu() {
     Cat $initramfs
 
     local copy=$Target/etc/initramfs-tools/hooks/copy
-    ###echo '#!/bin/sh' | tee -a $copy
-    ###echo 'mkdir -p ${DESTDIR}'"$Secrets" | tee -a $copy
-    ###echo "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets" | tee -a $copy
-    ###echo 'exit 0' | tee -a $copy
     Add $copy '#!/bin/sh'
     Add $copy 'mkdir -p ${DESTDIR}'"$Secrets"
     Add $copy "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets"
