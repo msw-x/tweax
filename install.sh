@@ -812,7 +812,6 @@ SetupLoader() {
 
 BasicSetup() {
     SubTitle "Basic setup"
-
     # -m - create home dir
     # -g - group
     # -G wheel - sudo group
