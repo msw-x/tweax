@@ -74,6 +74,7 @@ Cat() {
     echo
     echo -e "${Bold}${Blue}$file:${NC}"
     cat $file
+    echo
     echo -e "${Blue}==============================${NC}"
 }
 
@@ -813,10 +814,18 @@ SetupLoader() {
 BasicSetup() {
     SubTitle "Basic setup"
     # -m - create home dir
-    # -g - group
     # -G wheel - sudo group
     # -s - shell
-    Chroot "useradd -m -g $username -G wheel -s /bin/bash $username"
+    local g=''
+    case $DistroID in
+        arch)
+            g='wheel'
+            ;;
+        ubuntu)
+            g='sudo'
+            ;;
+    esac
+    Chroot "useradd -m -G $g -s /bin/bash $username"
     echo -e "Enter ${Bold}${Green}$username${NC} ${Bold}password${NC}"
     Chroot "passwd $username"
 }
