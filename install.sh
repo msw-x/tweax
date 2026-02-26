@@ -56,12 +56,14 @@ NC='\e[0m'
 
 Fatal() {
     msg=$*
+    echo
     echo -e "${Red}$msg${NC}"
     exit 1
 }
 
 Ls() {
     local dir=$1
+    echo
     echo -e "${Bold}${Blue}$dir${NC}"
     ls -1 $dir
     echo
@@ -69,9 +71,10 @@ Ls() {
 
 Cat() {
     local file=$1
+    echo
     echo -e "${Bold}${Blue}$file:${NC}"
     cat $file
-    echo
+    echo -e "${Blue}==============================${NC}"
 }
 
 Chroot() {
@@ -106,6 +109,18 @@ Replace() {
     local value="$3"
     local separator="${4:-|}"
     sed -i "s${separator}@${placeholder}${separator}${value}${separator}g" $file
+}
+
+Title() {
+    local value="$1"
+    echo
+    echo -e "${Bold}${Green}${value}${NC}"
+}
+
+SubTitle() {
+    local value="$1"
+    echo
+    echo -e "${Green}${value}${NC}"
 }
 
 username=''
@@ -220,7 +235,7 @@ LoadDevices() {
 }
 
 ShowDevices() {
-    echo -e ${Bold}${Green}"Devices:"${NC}
+    Title "Devices"
     local n=0
     for name in $devices
     do
@@ -518,8 +533,7 @@ bootPartition=''
 isoPartition=''
 
 MakePartitions() {
-    echo
-    echo -e "${Bold}${Green}Make partitions${NC}"
+    Title "Make partitions"
 
     local sizeMiB=$(DeviceMiB $bootDev)
     local payMiB=$((sizeMiB-EfiMiB-BootMiB-IsoMiB-2))
@@ -642,8 +656,7 @@ InstallUbuntu() {
 }
 
 Install() {
-    echo
-    echo -e "${Bold}${Green}Install${NC}"
+    Title "Install"
     case $DistroID in
         arch)
             InstallArch
@@ -652,6 +665,10 @@ Install() {
             InstallUbuntu
             ;;
     esac
+}
+
+InstallInit() {
+    Chroot "apt install -y linux-generic lvm2 cryptsetup grub-efi-amd64-signed"
 }
 
 bootUUID=''
@@ -673,45 +690,6 @@ CopySecrets() {
     cp $RootHeader $Target/$Secrets
     cp $BootKey $Target/$Secrets
     cp $RootKey $Target/$Secrets
-}
-
-SetFstab() {
-    local fstab=$Target/etc/fstab
-    genfstab -U $Target >> $fstab
-    Cat $fstab
-
-    case $DistroID in
-        ubuntu)
-            sudo sed -i '\|boot/efi|d' $fstab
-            local efiUUID=$(PartitionUUID $efiPartition)
-            echo "UUID=$efiUUID /boot/efi vfat umask=0077 0 1" | tee -a $fstab
-            Cat $fstab
-
-            local crypttab=$Target/etc/crypttab
-            Add $crypttab "$BootFS UUID=$bootUUID $Secrets/$BootKey luks"
-            Add $crypttab "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader"
-            Cat $crypttab
-            ;;
-    esac
-}
-
-SetGrub() {
-    local grub=$Target/etc/default/grub
-    # Allow booting from /boot on a LUKS encrypted partition
-    Set $grub "GRUB_ENABLE_CRYPTODISK" "y"
-    # Disable discover other OS installed
-    Set $grub "GRUB_DISABLE_OS_PROBER" "true"
-    Cat $grub
-
-    local grubconf=$Target/boot/grub/grub.cfg
-    mkdir -p $Target/boot/grub
-    cp $PwdDir/grub.cfg $grubconf
-    Replace $grubconf "BootUUID" $bootUUID
-    Replace $grubconf "bootUuid" $bootUuid
-    Replace $grubconf "BootfsUUID" $bootfsUUID
-    Replace $grubconf "RootUUID" $rootUUID
-    Replace $grubconf "IsoUUID" $isoUUID
-    Cat $grubconf
 }
 
 SetInitHookArch() {
@@ -770,26 +748,93 @@ SetInitHook() {
     esac
 }
 
-Setup() {
-    echo 
-    echo -e "${Bold}${Green}Setup${NC}"
+SetFstab() {
+    local fstab=$Target/etc/fstab
+    genfstab -U $Target >> $fstab
+    Cat $fstab
 
-    Chroot "apt install -y linux-generic lvm2 cryptsetup grub-efi-amd64-signed"
+    case $DistroID in
+        ubuntu)
+            sudo sed -i '\|boot/efi|d' $fstab
+            local efiUUID=$(PartitionUUID $efiPartition)
+            echo "UUID=$efiUUID /boot/efi vfat umask=0077 0 1" | tee -a $fstab
+            Cat $fstab
 
-    ShowMounts
-    GetUUIDs
-    CopySecrets
-    SetFstab
-    SetGrub
-    SetInitHook
+            local crypttab=$Target/etc/crypttab
+            Add $crypttab "$BootFS UUID=$bootUUID $Secrets/$BootKey luks"
+            Add $crypttab "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader"
+            Cat $crypttab
+            ;;
+    esac
+}
 
+SetGrub() {
+    local grub=$Target/etc/default/grub
+    # Allow booting from /boot on a LUKS encrypted partition
+    Set $grub "GRUB_ENABLE_CRYPTODISK" "y"
+    # Disable discover other OS installed
+    Set $grub "GRUB_DISABLE_OS_PROBER" "true"
+    Cat $grub
+
+    local grubconf=$Target/boot/grub/grub.cfg
+    mkdir -p $Target/boot/grub
+    cp $PwdDir/grub.cfg $grubconf
+    Replace $grubconf "BootUUID" $bootUUID
+    Replace $grubconf "bootUuid" $bootUuid
+    Replace $grubconf "BootfsUUID" $bootfsUUID
+    Replace $grubconf "RootUUID" $rootUUID
+    Replace $grubconf "IsoUUID" $isoUUID
+    Cat $grubconf
+}
+
+CreateInitramfs() {
+    SubTitle "Create initramfs"
+    # -c (create)
+    # -k all (for all kernels)
     Chroot "update-initramfs -c -k all"
+}
+
+InstallLoader() {
+    SubTitle "Install loader"
     Chroot "grub-install --no-nvram"
+    Chroot 'echo "boot device: $(grub-probe -t device /boot/grub)"'
+    Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
+}
+
+SetupLoader() {
+    SubTitle "Setup loader"
     Chroot "update-grub"
     Chroot 'echo "boot device: $(grub-probe -t device /boot/grub)"'
     Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
-
+    ###
     Cat $Target/boot/grub/grub.cfg
+}
+
+BasicSetup() {
+    SubTitle "Basic setup"
+
+    # -m - create home dir
+    # -g - group
+    # -G wheel - sudo group
+    # -s - shell
+    Chroot "useradd -m -g $username -G wheel -s /bin/bash $username"
+    echo -e "Enter ${Bold}${Green}$username${NC} ${Bold}password${NC}"
+    Chroot "passwd $username"
+}
+
+Setup() {
+    Title "Setup"
+    InstallInit
+    ShowMounts
+    GetUUIDs
+    CopySecrets
+    SetInitHook
+    SetFstab
+    SetGrub
+    CreateInitramfs
+    InstallLoader
+    SetupLoader
+    BasicSetup
 }
 
 
