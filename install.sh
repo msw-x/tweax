@@ -75,7 +75,7 @@ Cat() {
 }
 
 Chroot() {
-    chroot $Target /bin/bash -c "$*"
+    arch-chroot $Target /bin/bash -c "$*"
 }
 
 EnableLocale() {
@@ -758,7 +758,7 @@ Setup() {
     echo 
     echo -e "${Bold}${Green}Setup${NC}"
 
-    MountSystem
+    #MountSystem
     Chroot "apt install -y linux-generic cryptsetup grub-efi-amd64-signed"
 
     ShowMounts
@@ -771,10 +771,8 @@ Setup() {
     Chroot "update-initramfs -c -k all"
     Chroot "grub-install --no-nvram"
     Chroot "update-grub"
-    echo "boot device:"
-    Chroot "grub-probe -t device /boot/grub"
-    echo "boot fs-uuid:"
-    Chroot "grub-probe -t fs_uuid /boot/grub"
+    Chroot 'echo "boot device: $(grub-probe -t device /boot/grub)"'
+    Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
 }
 
 
