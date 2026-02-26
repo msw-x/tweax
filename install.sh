@@ -83,12 +83,17 @@ EnableLocale() {
     sed -i "/#$name/s/^.//" $Target/etc/locale.gen
 }
 
+Add() {
+    local file="$1"
+    local value="$2"
+    echo $value | tee -a $file > /dev/null
+}
+
 Set() {
     local file="$1"
     local name="$2"
     local value="$3"
     local separator="${4:-|}"
-
     # update
     sed -i "s${separator}.*${name}=.*${separator}${name}=${value}${separator}" "$file"
     # insert
@@ -100,7 +105,6 @@ Replace() {
     local placeholder="$2"
     local value="$3"
     local separator="${4:-|}"
-
     sed -i "s${separator}@${placeholder}${separator}${value}${separator}g" $file
 }
 
@@ -684,8 +688,10 @@ SetFstab() {
             Cat $fstab
 
             local crypttab=$Target/etc/crypttab
-            echo "$BootFS UUID=$bootUUID $Secrets/$BootKey luks" | tee -a $crypttab
-            echo "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader" | tee -a $crypttab
+            #echo "$BootFS UUID=$bootUUID $Secrets/$BootKey luks" | tee -a $crypttab
+            #echo "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader" | tee -a $crypttab
+            Add $crypttab "$BootFS UUID=$bootUUID $Secrets/$BootKey luks"
+            Add $crypttab "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader"
             Cat $crypttab
             ;;
     esac
@@ -747,10 +753,14 @@ SetInitHookUbuntu() {
     Cat $initramfs
 
     local copy=$Target/etc/initramfs-tools/hooks/copy
-    echo '#!/bin/sh' | tee -a $copy
-    echo 'mkdir -p ${DESTDIR}'"$Secrets" | tee -a $copy
-    echo "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets" | tee -a $copy
-    echo 'exit 0' | tee -a $copy
+    ###echo '#!/bin/sh' | tee -a $copy
+    ###echo 'mkdir -p ${DESTDIR}'"$Secrets" | tee -a $copy
+    ###echo "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets" | tee -a $copy
+    ###echo 'exit 0' | tee -a $copy
+    Add $copy '#!/bin/sh'
+    Add $copy 'mkdir -p ${DESTDIR}'"$Secrets"
+    Add $copy "cp $lksdir/$RootHeader"' ${DESTDIR}'"$Secrets"
+    Add $copy 'exit 0'
     chmod +x $copy
     Cat $copy
 }
