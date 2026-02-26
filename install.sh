@@ -774,7 +774,7 @@ Setup() {
     echo 
     echo -e "${Bold}${Green}Setup${NC}"
 
-    Chroot "apt install -y linux-generic cryptsetup grub-efi-amd64-signed"
+    Chroot "apt install -y linux-generic lvm2 cryptsetup grub-efi-amd64-signed"
 
     ShowMounts
     GetUUIDs
