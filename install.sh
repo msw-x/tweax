@@ -87,9 +87,10 @@ Set() {
     local file="$1"
     local name="$2"
     local value="$3"
+    local separator="${4:-|}"
 
     # update
-    sed -i "s/.*${name}=.*/${name}=${value}/" "$file"
+    sed -i "s${separator}.*${name}=.*${separator}${name}=${value}${separator}" "$file"
     # insert
     grep -q "$name" $file || echo -e "\n$name=$value" | tee -a $file > /dev/null
 }
