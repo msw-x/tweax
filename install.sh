@@ -647,10 +647,10 @@ Install() {
 }
 
 bootUUID=''
+bootUuid=''
+bootfsUUID=''
 rootUUID=''
 isoUUID=''
-cryptBootUUID=''
-bootUuid=''
 
 MountSystem() {
     for n in proc sys dev etc/resolv.conf; do
@@ -660,10 +660,10 @@ MountSystem() {
 
 GetUUIDs() {
     bootUUID=$(PartitionUUID $bootPartition)
+    bootUuid=$(echo "$bootUUID" | tr -d "-")
+    bootfsUUID=$(PartitionUUID $deviceMapper/$BootFS)
     rootUUID=$(PartitionUUID $rootPartition)
     isoUUID=$(PartitionUUID $isoPartition)
-    cryptBootUUID=$(PartitionUUID $deviceMapper/$BootFS)
-    bootUuid=$(echo "$bootUUID" | tr -d "-")
 }
 
 CopySecrets() {
@@ -677,6 +677,15 @@ Genfstab() {
     local fstab=$Target/etc/fstab
     genfstab -U $Target >> $fstab
     Cat $fstab
+
+    case $DistroID in
+        ubuntu)
+            sudo sed -i '\|boot/efi|d' $fstab
+            local efiUUID=$(PartitionUUID $efiPartition)
+            echo "UUID=$efiUUID /boot/efi vfat umask=0077 0 1" | tee -a $fstab
+            Cat $fstab
+            ;;
+    esac
 }
 
 SetGrub() {
@@ -692,7 +701,7 @@ SetGrub() {
     cp $PwdDir/grub.cfg $grubconf
     Replace $grubconf "BootUUID" $bootUUID
     Replace $grubconf "bootUuid" $bootUuid
-    Replace $grubconf "CryptBootUUID" $cryptBootUUID
+    Replace $grubconf "BootfsUUID" $bootfsUUID
     Replace $grubconf "RootUUID" $rootUUID
     Replace $grubconf "IsoUUID" $isoUUID
     Cat $grubconf
