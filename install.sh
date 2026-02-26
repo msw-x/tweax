@@ -546,6 +546,8 @@ MakePartitions() {
     echo -e "${Purple}$RootLabel${NC} device info: ${Bold}${Purple}$rootDev${NC}"
     parted $rootDev print
 
+    sync
+
     payPartition=$(DevicePartition $bootDev 1)
     efiPartition=$(DevicePartition $bootDev 2)
     bootPartition=$(DevicePartition $bootDev 3)
