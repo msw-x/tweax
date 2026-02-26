@@ -759,7 +759,7 @@ Setup() {
     echo -e "${Bold}${Green}Setup${NC}"
 
     MountSystem
-    Chroot "apt install -y linux-generic linux-headers-generic cryptsetup grub-efi-amd64-signed"
+    Chroot "apt install -y linux-generic cryptsetup grub-efi-amd64-signed"
 
     ShowMounts
     GetUUIDs
