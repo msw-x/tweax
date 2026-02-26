@@ -656,12 +656,6 @@ bootfsUUID=''
 rootUUID=''
 isoUUID=''
 
-MountSystem() {
-    for n in proc sys dev etc/resolv.conf; do
-        mount -R /$n $Target/$n
-    done
-}
-
 GetUUIDs() {
     bootUUID=$(PartitionUUID $bootPartition)
     bootUuid=$(echo "$bootUUID" | tr -d "-")
@@ -677,7 +671,7 @@ CopySecrets() {
     cp $RootKey $Target/$Secrets
 }
 
-Genfstab() {
+SetFstab() {
     local fstab=$Target/etc/fstab
     genfstab -U $Target >> $fstab
     Cat $fstab
@@ -688,6 +682,11 @@ Genfstab() {
             local efiUUID=$(PartitionUUID $efiPartition)
             echo "UUID=$efiUUID /boot/efi vfat umask=0077 0 1" | tee -a $fstab
             Cat $fstab
+
+            local crypttab=$Target/etc/crypttab
+            echo "$BootFS UUID=$bootUUID $Secrets/$BootKey luks" | tee -a $crypttab
+            echo "$RootFS UUID=$rootUUID $Secrets/$RootKey luks,header=$Secrets/$RootHeader" | tee -a $crypttab
+            Cat $crypttab
             ;;
     esac
 }
@@ -741,11 +740,9 @@ SetInitHookUbuntu() {
     lksdir=$Secrets
 
     local hook=$Target/etc/cryptsetup-initramfs/conf-hook
-    ###echo "KEYFILE_PATTERN=${Secrets}/*.key" | tee -a $hook
     Set $hook "KEYFILE_PATTERN" "${Secrets}/*.key"
     Cat $hook
     local initramfs=$Target/etc/initramfs-tools/initramfs.conf
-    ###echo "UMASK=0077" | tee -a $initramfs
     Set $initramfs "UMASK" "0077"
     Cat $initramfs
 
@@ -773,13 +770,12 @@ Setup() {
     echo 
     echo -e "${Bold}${Green}Setup${NC}"
 
-    #MountSystem
     Chroot "apt install -y linux-generic cryptsetup grub-efi-amd64-signed"
 
     ShowMounts
     GetUUIDs
     CopySecrets
-    Genfstab
+    SetFstab
     SetGrub
     SetInitHook
 
