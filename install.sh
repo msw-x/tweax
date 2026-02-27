@@ -37,7 +37,7 @@ hostname=''
 
 # Devices
 
-devicePrefix="/dev/"
+devicePrefix='/dev/'
 deviceMapper=$devicePrefix'mapper'
 
 DeviceName() {
