@@ -54,8 +54,15 @@ Purple='\e[35m'
 Cyan='\e[36m'
 NC='\e[0m'
 
+Time() {
+    local time="$(date -d @$(($(date +%s)-$start)) +"%Mm %Ss")"
+    echo
+    echo -e "${Bold}${Blue}time: $time${NC}"
+}
+
 Fatal() {
     msg=$*
+    Time
     echo
     echo -e "${Red}$msg${NC}"
     exit 1
@@ -499,6 +506,7 @@ SetPersonal() {
 }
 
 Finish() {
+    Time
     echo
     echo -e "${Green}Installation successfully completed!${NC}"
     read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
