@@ -441,6 +441,11 @@ efiPartition=''
 bootPartition=''
 isoPartition=''
 
+targetRoot="$Target"
+targetBoot="$Target/boot"
+targetEfi="$Target/boot/efi"
+targetMntExt="$Target/$MntExt"
+
 MakePartitions() {
     Title "Make partitions"
 
@@ -527,11 +532,6 @@ MakePartitions() {
         mkfs.ext4 $deviceMapper/${LvmVG}-${LvmExt}
     fi
     mkfs.ext4 -F $deviceMapper/${LvmVG}-${LvmRoot}
-
-    local targetRoot="$Target"
-    local targetBoot="$Target/boot"
-    local targetEfi="$Target/boot/efi"
-    local targetMntExt="$Target/$MntExt"
 
     mount --mkdir "$deviceMapper/$LvmVG-$LvmRoot" $targetRoot
     mount --mkdir "$deviceMapper/$LvmVG-$LvmExt" $targetMntExt
