@@ -837,7 +837,7 @@ BasicSetup() {
     echo -e "Enter ${Bold}${Green}$username${NC} ${Bold}password${NC}"
     Chroot "passwd $username"
 
-    ln -s /usr/share/zoneinfo/$TimeZone $Target/etc/localtime
+    ln -sf /usr/share/zoneinfo/$TimeZone $Target/etc/localtime
 
     for locale in $Locales; do
         EnableLocale "$locale.UTF-8 UTF-8"
