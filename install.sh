@@ -757,10 +757,10 @@ SetFstab() {
 
     case $DistroID in
         ubuntu)
-            sudo sed -i '\|boot/efi|d' $fstab
-            local efiUUID=$(PartitionUUID $efiPartition)
-            echo "UUID=$efiUUID /boot/efi vfat umask=0077 0 1" | tee -a $fstab
-            Cat $fstab
+            #sudo sed -i '\|boot/efi|d' $fstab
+            #local efiUUID=$(PartitionUUID $efiPartition)
+            #echo "UUID=$efiUUID /boot/efi vfat umask=0077 0 1" | tee -a $fstab
+            #Cat $fstab
 
             local crypttab=$Target/etc/crypttab
             Add $crypttab "$BootFS UUID=$bootUUID $Secrets/$BootKey luks"
