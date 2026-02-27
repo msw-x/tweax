@@ -704,7 +704,7 @@ InstallLoader() {
 
 SetupLoader() {
     SubTitle "Setup loader"
-    Chroot "update-grub"
+    #Chroot "update-grub"
     Chroot 'echo "boot device: $(grub-probe -t device /boot/grub)"'
     Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
     ###
