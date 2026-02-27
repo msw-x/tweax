@@ -731,11 +731,14 @@ BasicSetup() {
 
     ln -sf /usr/share/zoneinfo/$TimeZone $Target/etc/localtime
 
+    local localegen=$Target/etc/locale.gen
     for locale in $Locales; do
-        EnableLocale "$locale.UTF-8 UTF-8"
+        local name="$locale.UTF-8"
+        sed -i "/#.*$name/s/^.//" $localegen
     done
-    locale-gen
-    locale -a
+    sed -i 's/^[[:space:]]*//' $localegen
+    Chroot "locale-gen"
+    Chroot "locale -a"
 
     New $Target/etc/hostname $hostname
 
