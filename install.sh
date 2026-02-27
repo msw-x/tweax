@@ -78,13 +78,10 @@ Cat() {
     echo -e "${Blue}==============================${NC}"
 }
 
-Chroot() {
-    arch-chroot $Target /bin/bash -c "$*"
-}
-
-EnableLocale() {
-    local name=$1
-    sed -i "/#$name/s/^.//" $Target/etc/locale.gen
+New() {
+    local file="$1"
+    local value="$2"
+    echo $value | tee $file > /dev/null
 }
 
 Add() {
@@ -104,12 +101,21 @@ Set() {
     grep -q "$name" $file || echo -e "\n$name=$value" | tee -a $file > /dev/null
 }
 
-Replace() {
+Put() {
     local file="$1"
     local placeholder="$2"
     local value="$3"
     local separator="${4:-|}"
     sed -i "s${separator}@${placeholder}${separator}${value}${separator}g" $file
+}
+
+Chroot() {
+    arch-chroot $Target /bin/bash -c "$*"
+}
+
+EnableLocale() {
+    local name=$1
+    sed -i "/#$name/s/^.//" $Target/etc/locale.gen
 }
 
 Title() {
@@ -630,11 +636,6 @@ MakePartitions() {
     mount --mkdir "$deviceMapper/$BootFS" $targetBoot
     mount --mkdir $efiPartition $targetEfi
 
-    if ! $reinstall; then
-        useradd $username
-        chown -R $username:$username $targetMntExt
-    fi
-
     ShowMounts
 }
 
@@ -699,21 +700,21 @@ SetInitHookArch() {
     cp $PwdDir/crypthook $encryptHookFile
     cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
 
-    Replace $encryptHookFile "BootUUID" $bootUUID
-    Replace $encryptHookFile "BootKey" $Secrets/$BootKey
-    Replace $encryptHookFile "BootFS" $BootFS
-    Replace $encryptHookFile "RootUUID" $rootUUID
-    Replace $encryptHookFile "RootFS" $RootFS
-    Replace $encryptHookFile "RootKey" $Secrets/$RootKey
-    Replace $encryptHookFile "RootHeader" $Secrets/$RootHeaders
+    Put $encryptHookFile "BootUUID" $bootUUID
+    Put $encryptHookFile "BootKey" $Secrets/$BootKey
+    Put $encryptHookFile "BootFS" $BootFS
+    Put $encryptHookFile "RootUUID" $rootUUID
+    Put $encryptHookFile "RootFS" $RootFS
+    Put $encryptHookFile "RootKey" $Secrets/$RootKey
+    Put $encryptHookFile "RootHeader" $Secrets/$RootHeaders
     Cat $encryptHookFile
 
     local mkinitcpio=$Target/etc/mkinitcpio.conf
     local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
     cp $mkinitcpio $mkinitcpio.bk
     cp $PwdDir/'mkinitcpio-arch.conf' $mkinitcpio
-    Replace $mkinitcpio "FILES" $secretFiles
-    Replace $mkinitcpio "ENCRYPT" $encryptHook
+    Put $mkinitcpio "FILES" $secretFiles
+    Put $mkinitcpio "ENCRYPT" $encryptHook
     Cat $mkinitcpio
 }
 
@@ -780,11 +781,11 @@ SetGrub() {
     local grubconf=$Target/boot/grub/grub.cfg
     mkdir -p $Target/boot/grub
     cp $PwdDir/grub.cfg $grubconf
-    Replace $grubconf "BootUUID" $bootUUID
-    Replace $grubconf "bootUuid" $bootUuid
-    Replace $grubconf "BootfsUUID" $bootfsUUID
-    Replace $grubconf "RootUUID" $rootUUID
-    Replace $grubconf "IsoUUID" $isoUUID
+    Put $grubconf "BootUUID" $bootUUID
+    Put $grubconf "bootUuid" $bootUuid
+    Put $grubconf "BootfsUUID" $bootfsUUID
+    Put $grubconf "RootUUID" $rootUUID
+    Put $grubconf "IsoUUID" $isoUUID
     Cat $grubconf
 }
 
@@ -814,7 +815,7 @@ SetupLoader() {
 BasicSetup() {
     SubTitle "Basic setup"
     # -m - create home dir
-    # -G wheel - sudo group
+    # -G - sudo group
     # -s - shell
     local g=''
     case $DistroID in
@@ -828,6 +829,21 @@ BasicSetup() {
     Chroot "useradd -m -G $g -s /bin/bash $username"
     echo -e "Enter ${Bold}${Green}$username${NC} ${Bold}password${NC}"
     Chroot "passwd $username"
+
+    ln -s /usr/share/zoneinfo/$TimeZone $Target/etc/localtime
+
+    for locale in $Locales; do
+        EnableLocale "$locale.UTF-8 UTF-8"
+    done
+
+    New $Target/etc/hostname $hostname
+
+    New $Target/etc/hosts "127.0.0.1 localhost"
+    Add $Target/etc/hosts "127.0.0.1 $hostname"
+
+    if ! $reinstall; then
+        Chroot "chown -R $username:$username $targetMntExt"
+    fi
 }
 
 Setup() {
