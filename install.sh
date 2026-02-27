@@ -17,7 +17,9 @@ Chroot() {
 
 EnableLocale() {
     local name=$1
-    sed -i "/#$name/s/^.//" $Target/etc/locale.gen
+    local gen=$Target/etc/locale.gen
+    sed -i "/#.*$name/s/^.//" $gen
+    sed -i 's/^[[:space:]]*//' $gen
 }
 
 Title() {
@@ -732,6 +734,8 @@ BasicSetup() {
     for locale in $Locales; do
         EnableLocale "$locale.UTF-8 UTF-8"
     done
+    locale-gen
+    locale -a
 
     New $Target/etc/hostname $hostname
 
