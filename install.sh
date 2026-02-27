@@ -443,8 +443,7 @@ Startup() {
     echo
     cat /etc/os-release
     echo
-    echo $(uname -rmo)
-    echo
+    echo -e "${Purple}$(uname -rmo){NC}"
 }
 
 CheckEfi() {
