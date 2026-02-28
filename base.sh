@@ -106,7 +106,7 @@ OpenBoot() {
 }
 
 OpenRoot() {
-    cryptsetup luksOpen $rootPartition $RootFS --key-file=$RootKey --header $RootHeader
+    cryptsetup luksOpen $rootPartition $RootFS --key-file=$RootKey --header=$RootHeader
 }
 
 MountBoot() {
