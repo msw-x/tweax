@@ -15,8 +15,11 @@ Open() {
     echo "[4] close all"
     local key=''
     read -n 1 -p "$(echo -e "${Cyan}action:${NC}") " key
+    echo
     case $key in
         1)
+            DefineBoot
+            ShowBoot
             ExtractKeys
             ;;
         2)
@@ -37,7 +40,6 @@ Open() {
             CloseDevices
             ;;
     esac
-    echo
 }
 
 Startup
