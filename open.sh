@@ -35,7 +35,7 @@ Open() {
             DefineRoot
             ShowRoot
             OpenRoot
-            partprobe $rootDev
+            ProbeRoot
             MountLvmRoot
             MountLvmExt
             ;;
