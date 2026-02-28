@@ -24,8 +24,10 @@ LvmRoot='root'
 LvmExt='ext'
 
 Secrets='/etc/secret'
-
 MntExt='/mnt/ext'
+
+TmpDir='/tmp/tweax'
+Target='/mnt'
 
 TimeZone='Europe/Moscow'
 

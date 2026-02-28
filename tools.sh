@@ -1,3 +1,5 @@
+# Tools
+
 timestamp=$(date +%s)
 
 Bold='\033[1m'
@@ -19,8 +21,20 @@ Fatal() {
     msg=$*
     Time
     echo
-    echo -e "${Red}$msg${NC}"
+    echo -e "⛔️ ${Red}$msg${NC}"
     exit 1
+}
+
+Title() {
+    local value="$1"
+    echo
+    echo -e "${Bold}${Green}${value}${NC}"
+}
+
+SubTitle() {
+    local value="$1"
+    echo
+    echo -e "${Green}${value}${NC}"
 }
 
 Ls() {
