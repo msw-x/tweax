@@ -9,7 +9,7 @@ source ./base.sh
 
 Open() {
     Title "Actions"
-    echo "[0] show mounts"
+    echo "[0] exit"
     echo "[1] extract keys"
     echo "[2] open boot"
     echo "[3] open root"
@@ -17,11 +17,7 @@ Open() {
     local key=''
     read -n 1 -p "$(echo -e "${Cyan}action:${NC}") " key
     echo
-    echo
     case $key in
-        0)
-            ShowMounts
-            ;;
         1)
             DefineBoot
             ShowBoot
@@ -48,6 +44,7 @@ Open() {
 }
 
 Startup
+ShowMounts
 LoadDevices
 ShowDevices
 SelectDevices

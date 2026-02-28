@@ -92,7 +92,7 @@ PartitionUUID() {
 # Mounts
 
 ShowMounts() {
-    echo -e "${Purple}mounts:${NC}"
+    Title "Mounts"
     lsblk -o NAME,PTTYPE,FSTYPE,SIZE,FSUSE%,RO,RM,TYPE,LABEL,MOUNTPOINTS,UUID,STATE
     echo -e "${Purple}[$deviceMapper]${NC}"
     ls -la $deviceMapper | grep '\->' | awk '{print $9}'
