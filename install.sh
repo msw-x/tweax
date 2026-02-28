@@ -696,7 +696,7 @@ SetGrub() {
     Put $grubconf "BootfsUUID" $bootfsUUID
     Put $grubconf "RootUUID" $rootUUID
     Put $grubconf "IsoUUID" $isoUUID
-    Put $grubconf "DistroID" $distroID
+    Put $grubconf "DistroID" $DistroID
     Put $grubconf "MapLvmRoot" $mapLvmRoot
     Cat $grubconf
 }
