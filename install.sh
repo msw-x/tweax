@@ -306,6 +306,9 @@ CloseDevices() {
 }
 
 WipeRoot() {
+    if $reinstall; then
+        return
+    fi
     local dev=$rootDev
     local name='device'
     if [[ $rootPartition != "" ]]; then
