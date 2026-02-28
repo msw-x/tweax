@@ -127,18 +127,19 @@ MountLvmExt() {
 
 ExtractKeys() {
     OpenBoot
+    MountBoot
     local initramfs='initramfs'
     mkdir $initramfs
     case $DistroID in
         arch)
             cd $initramfs
-            lsinitcpio -x "../$BootFS/initramfs-linux.img"
+            lsinitcpio -x "$targetBoot/initramfs-linux.img"
             cd ..
             cp "$initramfs/$Secrets/$RootKey" .
             cp "$initramfs/$Secrets/$RootHeader" .
             ;;
         ubuntu)
-            unmkinitramfs "$BootFS/initrd.img" $initramfs
+            unmkinitramfs "$targetBoot/initrd.img" $initramfs
             cp "$initramfs/main/cryptroot/keyfiles/$RootFS.key" $RootKey
             cp "$initramfs/main$Secrets/$RootHeader" .
             ;;

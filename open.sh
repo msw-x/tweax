@@ -16,6 +16,7 @@ Open() {
     local key=''
     read -n 1 -p "$(echo -e "${Cyan}action:${NC}") " key
     echo
+    echo
     case $key in
         1)
             DefineBoot
