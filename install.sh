@@ -531,9 +531,9 @@ MakePartitions() {
         vgcreate $LvmVG $mapRootFS
         lvcreate -n $LvmRoot -L ${LvmRootGiB}G $LvmVG
         lvcreate -n $LvmExt -l 100%FREE $LvmVG
-        mkfs.ext4 $lvmExt
+        mkfs.ext4 $mapLvmExt
     fi
-    mkfs.ext4 -F $lvmRoot
+    mkfs.ext4 -F $mapLvmRoot
 
     local targetRoot="$Target"
     local targetBoot="$Target/boot"
