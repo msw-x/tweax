@@ -144,6 +144,6 @@ ExtractKeys() {
             cp "$initramfs/main$Secrets/$RootHeader" .
             ;;
     esac
-    umount $BootFS || true
+    umount $targetBoot || true
     cryptsetup luksClose $BootFS
 }
