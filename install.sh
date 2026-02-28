@@ -413,10 +413,15 @@ Finish() {
     fi
 }
 
+mapBootFS=$deviceMapper/$BootFS
+mapRootFS=$deviceMapper/$RootFS
+mapLvmRoot=$deviceMapper/$LvmVG-$LvmRoot
+mapLvmExt=$deviceMapper/$LvmVG-$LvmExt
+
 ExtractKeys() {
     local initramfs='initramfs'
     cryptsetup luksOpen $bootPartition $BootFS
-    mount --mkdir "$deviceMapper/$BootFS" $BootFS
+    mount --mkdir $mapBootFS $BootFS
     mkdir $initramfs
 
     case $DistroID in
@@ -519,25 +524,25 @@ MakePartitions() {
     fi
     cryptsetup luksOpen $rootPartition $RootFS --key-file=$RootKey --header $RootHeader
 
-    mkfs.ext4 -F $deviceMapper/$BootFS
+    mkfs.ext4 -F $mapBootFS
 
     if ! $reinstall; then
-        pvcreate $deviceMapper/$RootFS
-        vgcreate $LvmVG $deviceMapper/$RootFS
+        pvcreate $mapRootFS
+        vgcreate $LvmVG $mapRootFS
         lvcreate -n $LvmRoot -L ${LvmRootGiB}G $LvmVG
         lvcreate -n $LvmExt -l 100%FREE $LvmVG
-        mkfs.ext4 $deviceMapper/${LvmVG}-${LvmExt}
+        mkfs.ext4 $lvmExt
     fi
-    mkfs.ext4 -F $deviceMapper/${LvmVG}-${LvmRoot}
+    mkfs.ext4 -F $lvmRoot
 
     local targetRoot="$Target"
     local targetBoot="$Target/boot"
     local targetEfi="$Target/boot/efi"
     local targetMntExt=$Target$MntExt
 
-    mount --mkdir "$deviceMapper/$LvmVG-$LvmRoot" $targetRoot
-    mount --mkdir "$deviceMapper/$LvmVG-$LvmExt" $targetMntExt
-    mount --mkdir "$deviceMapper/$BootFS" $targetBoot
+    mount --mkdir $mapLvmRoot $targetRoot
+    mount --mkdir $mapLvmExt $targetMntExt
+    mount --mkdir $mapBootFS $targetBoot
     mount --mkdir $efiPartition $targetEfi
 
     ShowMounts
@@ -574,7 +579,13 @@ Install() {
 }
 
 InstallInit() {
-    Chroot "apt install -y linux-generic lvm2 cryptsetup grub-efi-amd64-signed"
+    case $DistroID in
+        arch)
+            ;;
+        ubuntu)
+            Chroot "apt install -y linux-generic lvm2 cryptsetup grub-efi-amd64-signed"
+            ;;
+    esac
 }
 
 bootUUID=''
@@ -685,6 +696,8 @@ SetGrub() {
     Put $grubconf "BootfsUUID" $bootfsUUID
     Put $grubconf "RootUUID" $rootUUID
     Put $grubconf "IsoUUID" $isoUUID
+    Put $grubconf "DistroID" $distroID
+    Put $grubconf "MapLvmRoot" $mapLvmRoot
     Cat $grubconf
 }
 
