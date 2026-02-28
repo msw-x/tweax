@@ -587,8 +587,6 @@ InstallInit() {
             ;;
         ubuntu)
             Chroot "apt install -y linux-generic lvm2 cryptsetup grub-efi-amd64-signed"
-            Chroot "apt update"
-            Chroot "apt install -y dhcpcd iproute2 network-manager"
             ;;
     esac
 }
