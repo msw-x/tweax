@@ -253,11 +253,11 @@ SelectRootPartition() {
 }
 
 CloseDevices() {
+    umount "$Target/$MntExt" &> /dev/null || :
     umount "$Target/boot/efi" &> /dev/null || :
     umount "$Target/boot" &> /dev/null || :
     umount "$Target" &> /dev/null || :
 
-    echo "bootDev: $bootDev"
     umount '/dev/'${bootDev}* &> /dev/null || :
     umount '/dev/'${rootDev}* &> /dev/null || :
 
