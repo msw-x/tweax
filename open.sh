@@ -9,6 +9,7 @@ source ./base.sh
 
 Open() {
     Title "Actions"
+    echo "[0] show mounts"
     echo "[1] extract keys"
     echo "[2] open boot"
     echo "[3] open root"
@@ -18,6 +19,9 @@ Open() {
     echo
     echo
     case $key in
+        0)
+            ShowMounts
+            ;;
         1)
             DefineBoot
             ShowBoot
