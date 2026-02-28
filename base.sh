@@ -92,13 +92,11 @@ DefineRoot() {
 ShowBoot() {
     echo -e "${Yellow}$BootLabel${NC} device info: ${Bold}${Yellow}$bootDev${NC}"
     parted $bootDev print
-    partprobe $bootDev
 }
 
 ShowRoot() {
     echo -e "${Purple}$RootLabel${NC} device info: ${Bold}${Purple}$rootDev${NC}"
     parted $rootDev print
-    partprobe $rootDev
 }
 
 OpenBoot() {

@@ -93,6 +93,9 @@ MakePartitions() {
         echo
     fi
 
+    partprobe $bootDev
+    partprobe $rootDev
+
     ShowBoot
     ShowRoot
 
