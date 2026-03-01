@@ -7,7 +7,7 @@ source ./include/tools.sh
 source ./include/devices.sh
 source ./include/base.sh
 
-SrcDir=$PwdDir/install
+SrcDir=$PwdDir/init
 
 EnableLocale() {
     local name=$1
