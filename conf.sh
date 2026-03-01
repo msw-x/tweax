@@ -5,9 +5,9 @@ RootOffsetMiB=512
 
 EfiMiB=100
 BootMiB=4000
-IsoMiB=8000
+IsoMiB=12000
 
-LvmRootGiB=160
+LvmRootGiB=200
 
 EfiFsLabel='x-usb-efi'
 IsoFsLabel='x-usb-iso'
