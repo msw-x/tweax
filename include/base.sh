@@ -39,6 +39,26 @@ Startup() {
     cd $TmpDir
 }
 
+Сonfirmation() {
+    local key=''
+    read -n 1 -p "$(echo -e "🚀 ${Red}Attention! Are you sure you want to install system?${NC} y/n: ")" key && echo
+    if [[ $key != 'y' ]]; then
+        echo "cancel the installation"
+        exit
+    fi
+}
+
+Finish() {
+    Time
+    echo
+    echo -e "✅ ${Green}Installation successfully completed!${NC}"
+    read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
+    if [[ $key == 'y' ]]; then
+        echo "rebooting..."
+        reboot
+    fi
+}
+
 CheckEfi() {
     if [ ! -f /sys/firmware/efi/fw_platform_size ]; then
         Fatal "UEFI not found"

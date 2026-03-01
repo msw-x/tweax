@@ -9,15 +9,6 @@ source ./include/base.sh
 
 SrcDir=$PwdDir/init
 
-EnableLocale() {
-    local name=$1
-    local gen=$Target/etc/locale.gen
-    sed -i "/#.*$name/s/^.//" $gen
-    sed -i 's/^[[:space:]]*//' $gen
-}
-
-# Install
-
 reinstall=true
 
 SelectMode() {
@@ -46,26 +37,6 @@ hostname=''
 SetPersonal() {
     read -p "Username: " username
     read -p "Hostname: " hostname
-}
-
-Сonfirmation() {
-    local key=''
-    read -n 1 -p "$(echo -e "🚀 ${Red}Attention! Are you sure you want to install system?${NC} y/n: ")" key && echo
-    if [[ $key != 'y' ]]; then
-        echo "cancel the installation"
-        exit
-    fi
-}
-
-Finish() {
-    Time
-    echo
-    echo -e "✅ ${Green}Installation successfully completed!${NC}"
-    read -n 1 -p "System reboot is required. Reboot now? y/n: " key && echo
-    if [[ $key == 'y' ]]; then
-        echo "rebooting..."
-        reboot
-    fi
 }
 
 MakePartitions() {
