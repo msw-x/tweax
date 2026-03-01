@@ -3,9 +3,9 @@
 set -eu
 
 source ./conf.sh
-source ./tools.sh
-source ./devices.sh
-source ./base.sh
+source ./include/tools.sh
+source ./include/devices.sh
+source ./include/base.sh
 
 EnableLocale() {
     local name=$1
@@ -229,7 +229,7 @@ SetInitHookArch() {
     local mkinitcpio=$Target/etc/mkinitcpio.conf
     local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
     cp $mkinitcpio $mkinitcpio.bk
-    cp $PwdDir/'mkinitcpio-arch.conf' $mkinitcpio
+    cp $PwdDir/'mkinitcpio.conf' $mkinitcpio
     Put $mkinitcpio "FILES" $secretFiles
     Put $mkinitcpio "ENCRYPT" $encryptHook
     Cat $mkinitcpio
@@ -308,6 +308,8 @@ CreateInitramfs() {
     # -c (create)
     # -k all (for all kernels)
     Chroot "update-initramfs -c -k all"
+
+    ### Chroot "mkinitcpio -P"
 }
 
 InstallLoader() {
@@ -319,11 +321,8 @@ InstallLoader() {
 
 SetupLoader() {
     SubTitle "Setup loader"
-    #Chroot "update-grub"
     Chroot 'echo "boot device: $(grub-probe -t device /boot/grub)"'
     Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
-    ###
-    Cat $Target/boot/grub/grub.cfg
 }
 
 BasicSetup() {
@@ -354,6 +353,8 @@ BasicSetup() {
     sed -i 's/^[[:space:]]*//' $localegen
     Chroot "locale-gen"
     Chroot "locale -a"
+
+    ### Chroot "hwclock --systohc --utc"
 
     New $Target/etc/hostname $hostname
 

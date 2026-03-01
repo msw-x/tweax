@@ -3,9 +3,9 @@
 set -eu
 
 source ./conf.sh
-source ./tools.sh
-source ./devices.sh
-source ./base.sh
+source ./include/tools.sh
+source ./include/devices.sh
+source ./include/base.sh
 
 Open() {
     Title "Actions"
