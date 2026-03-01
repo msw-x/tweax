@@ -7,6 +7,8 @@ source ./include/tools.sh
 source ./include/devices.sh
 source ./include/base.sh
 
+SrcDir=$PwdDir/install
+
 EnableLocale() {
     local name=$1
     local gen=$Target/etc/locale.gen
@@ -214,7 +216,7 @@ CopySecrets() {
 SetInitHookArch() {
     local encryptHook='encrypt2'
     local encryptHookFile=$Target/etc/initcpio/hooks/$encryptHook
-    cp $PwdDir/crypthook $encryptHookFile
+    cp $SrcDir/crypthook $encryptHookFile
     cp $Target/usr/lib/initcpio/install/encrypt $Target/etc/initcpio/install/$encryptHook
 
     Put $encryptHookFile "BootUUID" $bootUUID
@@ -229,7 +231,7 @@ SetInitHookArch() {
     local mkinitcpio=$Target/etc/mkinitcpio.conf
     local secretFiles="$Secrets/$BootKey $Secrets/$RootKey $Secrets/$RootHeader"
     cp $mkinitcpio $mkinitcpio.bk
-    cp $PwdDir/'mkinitcpio.conf' $mkinitcpio
+    cp $SrcDir/mkinitcpio.conf $mkinitcpio
     Put $mkinitcpio "FILES" $secretFiles
     Put $mkinitcpio "ENCRYPT" $encryptHook
     Cat $mkinitcpio
@@ -292,7 +294,7 @@ SetGrub() {
 
     local grubconf=$Target/boot/grub/grub.cfg
     mkdir -p $Target/boot/grub
-    cp $PwdDir/grub.cfg $grubconf
+    cp $SrcDir/grub.cfg $grubconf
     Put $grubconf "BootUUID" $bootUUID
     Put $grubconf "bootUuid" $bootUuid
     Put $grubconf "BootfsUUID" $bootfsUUID
