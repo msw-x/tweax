@@ -122,7 +122,7 @@ user=''
 
 GetUser() {
     local users
-    mapfile -t users < <(GetUsers)
+    mapfile -t users < <(GetUsers $root)
     if [ ${#users[@]} -eq 0 ]; then
         Fatal "user not found"
     else

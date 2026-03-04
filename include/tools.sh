@@ -90,6 +90,7 @@ ToLower() {
 }
 
 GetUsers() {
+    local root="${1:-/}"
     local users=()
     local UID_MIN=$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)
     local UID_MAX=$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)
@@ -97,6 +98,6 @@ GetUsers() {
         if [[ "$uid" =~ ^[0-9]+$ ]] && [ "$uid" -ge "$UID_MIN" ] && [ "$uid" -le "$UID_MAX" ]; then
             users+=("$user")
         fi
-    done < /etc/passwd
+    done < $root/etc/passwd
     printf '%s\n' "${users[@]}"
 }
