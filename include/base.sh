@@ -174,10 +174,10 @@ ExtractKeys() {
     cryptsetup luksClose $BootFS
 }
 
-inetDev='enp0s3'
-inetIp='10.0.2.15'
-inetGw='10.0.2.2'
-inetDns='8.8.8.8'
+inetDev=''
+inetIp=''
+inetGw=''
+inetDns=''
 
 GetInet() {
     inetDev=$(ip route get 8.8.8.8 2>/dev/null | grep -o 'dev [^ ]*' | cut -d' ' -f2)
