@@ -98,7 +98,27 @@ SnapClassicList='
     code
 '
 
-User=''
+root=''
+
+Exec() {
+    if [[ $root == '/' ]]; then
+        eval $1
+    else
+        arch-chroot $root $1
+    fi
+}
+
+GetRoot() {
+    if findmnt $Target >/dev/null; then
+        root=$Target
+    else
+        root='/'
+    fi
+    echo
+    echo -e "root: ${Bold}${Red}$root${NC}"
+}
+
+user=''
 
 GetUser() {
     local users
@@ -106,8 +126,9 @@ GetUser() {
     if [ ${#users[@]} -eq 0 ]; then
         Fatal "user not found"
     else
-        User="${users[0]}"
-        echo -e "user: ${Bold}${Green}$User${NC}"
+        user="${users[0]}"
+        echo -e "user: ${Bold}${Green}$user${NC}"
+        echo
     fi
 }
 
@@ -225,7 +246,7 @@ installStamina() {
     mv Stamina/* $dir
     StaminaExe="$dir/stamina.exe"
     mv $dir/Stamina.exe $StaminaExe
-    chown -R $User:$User $dir
+    chown -R $user:$user $dir
 }
 
 installSysMon() {
@@ -254,12 +275,14 @@ OptInstall() {
 
 Startup
 CheckDistro
+GetRoot
 GetUser
-PreIntall
-InstallDrivers
-AptIntall
-SnapIntall
-SnapClassicIntall
-DpkgInstall
-OptInstall
-Finish
+Сonfirmation
+#PreIntall
+#InstallDrivers
+#AptIntall
+#SnapIntall
+#SnapClassicIntall
+#DpkgInstall
+#OptInstall
+#Finish
