@@ -339,6 +339,12 @@ BasicSetup() {
     fi
 }
 
+PrepareTweak() {
+    SubTitle "Prepare tweak"
+    Chroot 'apt install -y git network-manager'
+    Chroot 'git clone https://github.com/msw-x/tweax'
+}
+
 Setup() {
     Title "Setup"
     InstallInit
@@ -352,6 +358,7 @@ Setup() {
     InstallLoader
     SetupLoader
     BasicSetup
+    PrepareTweak
 }
 
 
