@@ -345,7 +345,7 @@ MakeInet() {
     echo "ip: $inetIp"
     echo "gw: $inetGw"
     echo "dns: $inetDns"
-    local inet="$MntExt/home/$username/inet.sh"
+    local inet="$Target/home/$username/inet.sh"
     cp $SrcDir/init/inet.sh $inet
     Put $inet "Dev" $inetDev
     Put $inet "Ip" $inetIp
