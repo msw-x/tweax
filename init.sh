@@ -351,6 +351,7 @@ MakeInet() {
     Put $inet "Ip" $inetIp
     Put $inet "Gw" $inetGw
     Put $inet "Dns" $inetDns
+    chmod +x $inet
 }
 
 Setup() {

@@ -2,10 +2,10 @@
 
 set -eu
 
-local dev='@Dev'
-local ip='@Ip'
-local gw='@Gw'
-local dns='@Dns'
+dev='@Dev'
+ip='@Ip'
+gw='@Gw'
+dns='@Dns'
 
 ip link set $dev up
 ip addr add $ip dev $dev
