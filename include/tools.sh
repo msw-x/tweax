@@ -84,3 +84,19 @@ Put() {
     local separator="${4:-|}"
     sed -i "s${separator}@${placeholder}${separator}${value}${separator}g" $file
 }
+
+ToLower() {
+    echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+GetUsers() {
+    local users=()
+    local UID_MIN=$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)
+    local UID_MAX=$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)
+    while IFS=: read -r user _ uid _ _ _ _; do
+        if [[ "$uid" =~ ^[0-9]+$ ]] && [ "$uid" -ge "$UID_MIN" ] && [ "$uid" -le "$UID_MAX" ]; then
+            users+=("$user")
+        fi
+    done < /etc/passwd
+    printf '%s\n' "${users[@]}"
+}
