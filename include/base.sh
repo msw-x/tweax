@@ -181,18 +181,12 @@ inetDns=''
 
 GetInet() {
     inetDev=$(ip route get 8.8.8.8 2>/dev/null | grep -o 'dev [^ ]*' | cut -d' ' -f2)
-    if [ -z "$inetDev" ]; then
+    if [[ $inetDev == "" ]]; then
         return
     fi
-    ip -4 addr show $inetDev | grep -o "inet [0-9./]*" | cut -d' ' -f2 | while read ip; do
-        inetIp=$ip
-    done
-    ip route show default | grep $inetDev | grep -o "via [0-9.]*" | cut -d' ' -f2 | while read gw; do
-        inetGw=$gw
-    done
+    inetIp=$(ip -4 addr show $inetDev | grep -o "inet [0-9./]*" | cut -d' ' -f2 | head -1)
+    inetGw=$(ip route show default | grep $inetDev | grep -o "via [0-9.]*" | cut -d' ' -f2 | head -1)
     if command -v resolvectl &> /dev/null; then
-        resolvectl dns $inetDev 2>/dev/null | sed "s/$inetDev://" | xargs | while read dns; do
-            inetDns=$dns
-        done
+        inetDns=$(resolvectl dns $inetDev 2>/dev/null | awk -F': ' '{print $2}' | xargs)
     fi
 }
