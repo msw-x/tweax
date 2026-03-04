@@ -173,3 +173,26 @@ ExtractKeys() {
     umount $targetBoot || true
     cryptsetup luksClose $BootFS
 }
+
+inetDev='enp0s3'
+inetIp='10.0.2.15'
+inetGw='10.0.2.2'
+inetDns='8.8.8.8'
+
+GetInet() {
+    inetDev=$(ip route get 8.8.8.8 2>/dev/null | grep -o 'dev [^ ]*' | cut -d' ' -f2)
+    if [ -z "$interface" ]; then
+        return
+    fi
+    ip -4 addr show $interface | grep -o "inet [0-9./]*" | cut -d' ' -f2 | while read ip; do
+        inetIp=$ip
+    done
+    ip route show default | grep $interface | grep -o "via [0-9.]*" | cut -d' ' -f2 | while read gw; do
+        inetGw=$gw
+    done
+    if command -v resolvectl &> /dev/null; then
+        resolvectl dns $interface 2>/dev/null | sed "s/$interface://" | xargs | while read dns; do
+            inetDns=$dns
+        done
+    fi
+}

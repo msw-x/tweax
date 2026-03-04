@@ -339,10 +339,18 @@ BasicSetup() {
     fi
 }
 
-PrepareTweak() {
-    SubTitle "Prepare tweak"
-    Chroot 'apt install -y git network-manager'
-    Chroot 'git clone https://github.com/msw-x/tweax'
+MakeInet() {
+    SubTitle "Internet"
+    echo "dev: $inetDev"
+    echo "ip: $inetIp"
+    echo "gw: $inetGw"
+    echo "dns: $inetDns"
+    local inet="$MntExt/home/$username/inet.sh"
+    cp $SrcDir/init/inet.sh $inet
+    Put $inet "Dev" $inetDev
+    Put $inet "Ip" $inetIp
+    Put $inet "Gw" $inetGw
+    Put $inet "Dns" $inetDns
 }
 
 Setup() {
@@ -358,7 +366,8 @@ Setup() {
     InstallLoader
     SetupLoader
     BasicSetup
-    PrepareTweak
+    GetInet
+    MakeInet
 }
 
 
