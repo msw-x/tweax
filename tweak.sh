@@ -200,21 +200,6 @@ installTelegram() {
     tar -C $OptDir -xvf $name
 }
 
-installStamina() {
-    SubTitle "Install Stamina"
-    local dir=$OptDir'/stamina'
-    local ref=https://stamina.ru/files/Stamina.zip
-    winetricks mfc42
-    wine reg add "HKCU\Keyboard Layout\Preload" /f /v "2" /t REG_SZ /d "00000419"
-    wget $ref -O stamina.zip
-    unzip stamina.zip
-    mkdir $dir
-    mv Stamina/* $dir
-    StaminaExe="$dir/stamina.exe"
-    mv $dir/Stamina.exe $StaminaExe
-    #chown -R $user:$user $dir
-}
-
 installSysMon() {
     SubTitle "Install SysMon"
     git clone https://github.com/msw-x/sysmon
@@ -231,9 +216,12 @@ installSly() {
 OptInstall() {
     installGolang
     installTelegram
-    installStamina
     installSysMon
     installSly
+}
+
+Clean() {
+    rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos
 }
 
 
@@ -248,4 +236,5 @@ SnapInstall
 SnapClassicInstall
 DpkgInstall
 OptInstall
+Clean
 Finish
