@@ -63,11 +63,10 @@ MakePartitions() {
             parted --script $rootDev mklabel gpt
             parted --script $rootDev mkpart primary 1MiB 100%
         fi
-        echo
     fi
 
     ShowMounts
-
+    echo
     ShowBoot
     ShowRoot
 
