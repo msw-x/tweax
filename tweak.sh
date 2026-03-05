@@ -274,7 +274,7 @@ installOpencv() {
     '
 
     local CudaArch=""
-    if [[ "$GPU" =~ "GeForce RTX" ]]; then
+    if [[ "$Gpu" =~ "GeForce RTX" ]]; then
         CudaArch="8.6"
     fi
 
@@ -294,8 +294,8 @@ installOpencv() {
         options="$cuda $options"
     fi
 
-    cmake $cuda $options
-    make -j$CpuCoreCount
+    cmake $options
+    make -j$CpuN
     make install
     ldconfig
 

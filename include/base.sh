@@ -15,7 +15,7 @@ DistroID=$(OsReleaseKey 'ID')
 DistroCodeName=$(OsReleaseKey 'VERSION_CODENAME')
 
 CpuN=$(nproc)
-GPU=$(lspci | grep -i "3d controller" | grep -o "\[.*\]" | tr -d '[]')
+Gpu=$(lspci | grep -i "3d controller" | grep -o "\[.*\]" | tr -d '[]')
 
 Startup() {
     if [[ $EUID != 0 ]]; then
@@ -25,7 +25,7 @@ Startup() {
     hostnamectl
     echo
     echo "CPU: $CpuN cores"
-    echo "GPU: $GPU"
+    echo "GPU: $Gpu"
     echo
     cat /etc/os-release
     echo
