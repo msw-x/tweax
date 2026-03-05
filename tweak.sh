@@ -133,17 +133,19 @@ packages() {
 
 AptIntall() {
     Title "Install apt"
-    apt install -y $(packages "$AptList")
+    apt install -y $(packages $AptList)
 }
 
 SnapIntall() {
     Title "Install snap"
-    snap install $(packages "$SnapList")
+    snap install $(packages $SnapList)
 }
 
 SnapClassicIntall() {
     Title "Install snap classic"
-    snap install --classic $(packages "$SnapClassicList")
+    for pkg in $(packages $SnapClassicList); do
+        snap install --classic $pkg
+    done
 }
 
 dpkgInstall() {
