@@ -114,7 +114,7 @@ GetUser() {
 
 PreIntall() {
     Title "PreInstall"
-    DEBIAN_FRONTEND=noninteractive
+    export DEBIAN_FRONTEND=noninteractive
     apt update
     apt install -y ubuntu-drivers-common
 }
