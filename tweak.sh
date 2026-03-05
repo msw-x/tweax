@@ -110,7 +110,7 @@ GetUser() {
     fi
 }
 
-PreIntall() {
+PreInstall() {
     Title "PreInstall"
     export DEBIAN_FRONTEND=noninteractive
     apt update
@@ -128,17 +128,17 @@ packages() {
     echo "$packages"
 }
 
-AptIntall() {
+AptInstall() {
     Title "Install apt"
     apt install -y $(packages $AptList)
 }
 
-SnapIntall() {
+SnapInstall() {
     Title "Install snap"
     snap install $(packages $SnapList)
 }
 
-SnapClassicIntall() {
+SnapClassicInstall() {
     Title "Install snap classic"
     for pkg in $(packages $SnapClassicList); do
         snap install --classic $pkg
@@ -237,11 +237,11 @@ Startup
 CheckDistro
 GetUser
 Сonfirmation
-PreIntall
+PreInstall
 InstallDrivers
-AptIntall
-SnapIntall
-SnapClassicIntall
+AptInstall
+SnapInstall
+SnapClassicInstall
 DpkgInstall
 OptInstall
 Finish
