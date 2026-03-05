@@ -113,6 +113,8 @@ GetUser() {
 PreInstall() {
     Title "PreInstall"
     export DEBIAN_FRONTEND=noninteractive
+    # pre-accept the license via debconf for virtualbox-ext-pack
+    echo "virtualbox-ext-pack virtualbox-ext-pack/license select true" | debconf-set-selections
     apt update
     apt install -y ubuntu-drivers-common
 }
