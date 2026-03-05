@@ -48,8 +48,6 @@ MakePartitions() {
     local isoOffsetMiB=$((bootOffsetMiB+BootMiB))
 
     DefineBoot
-    DefineRoot
-
     if ! $reinstall; then
         echo -e "make ${Yellow}$BootLabel${NC} partition table: ${Bold}${Yellow}$bootDev${NC}"
         parted --script $bootDev mklabel gpt
@@ -64,6 +62,7 @@ MakePartitions() {
             parted --script $rootDev mkpart primary 1MiB 100%
         fi
     fi
+    DefineRoot
 
     ShowMounts
     echo
