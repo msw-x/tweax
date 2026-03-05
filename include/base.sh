@@ -14,12 +14,18 @@ OsReleaseKey() {
 DistroID=$(OsReleaseKey 'ID')
 DistroCodeName=$(OsReleaseKey 'VERSION_CODENAME')
 
+CpuN=$(nproc)
+GPU=$(lspci | grep -i "3d controller" | grep -o "\[.*\]" | tr -d '[]')
+
 Startup() {
     if [[ $EUID != 0 ]]; then
         Fatal "The script should be run from root user"
     fi
 
     hostnamectl
+    echo
+    echo "CPU: $CpuN cores"
+    echo "GPU: $GPU"
     echo
     cat /etc/os-release
     echo
@@ -183,3 +189,4 @@ GetInet() {
         inetDns=$(resolvectl dns $inetDev 2>/dev/null | awk -F': ' '{print $2}' | xargs)
     fi
 }
+

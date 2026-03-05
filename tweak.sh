@@ -220,6 +220,92 @@ OptInstall() {
     installSly
 }
 
+opencvDependencies='
+    git
+    cmake
+    pkg-config
+    build-essential
+
+    python3-dev
+    python3-numpy
+
+    openexr
+    gfortran
+
+    libavcodec-dev
+    libavformat-dev
+    libswscale-dev
+    libv4l-dev
+    libxvidcore-dev
+    libx264-dev
+
+    libjpeg-dev
+    libpng-dev
+    libtiff-dev
+
+    libgtk-3-dev
+    libtbb-dev
+    libeigen3-dev
+    libdc1394-dev
+    libopenexr-dev
+    libopenblas-dev
+    libgstreamer1.0-dev
+    libgstreamer-plugins-base1.0-dev
+'
+
+installOpencv() {
+    SubTitle "Install Opencv"
+    
+    apt install -y $(packages "$opencvDependencies")
+    
+    wget -O opencv.zip https://github.com/opencv/opencv/archive/master.zip
+    wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/master.zip
+    unzip opencv.zip
+    unzip opencv_contrib.zip
+    mkdir -p build && cd build
+
+    local options='
+        -D CMAKE_BUILD_TYPE=RELEASE
+        -D CMAKE_INSTALL_PREFIX=/usr/local
+        -D OPENCV_GENERATE_PKGCONFIG=ON
+        -D OPENCV_ENABLE_NONFREE=ON
+        -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib-master/modules
+        ../opencv-master
+    '
+
+    local CudaArch=""
+    if [[ "$GPU" =~ "GeForce RTX" ]]; then
+        CudaArch="8.6"
+    fi
+
+    if [ ! -z "$CudaArch" ]; then
+        apt install -y nvidia-cuda-toolkit nvidia-cudnn
+        local cuda="
+            -D WITH_TBB=ON
+            -D WITH_CUDA=ON
+            -D WITH_CUDNN=ON
+            -D OPENCV_DNN_CUDA=ON
+            -D ENABLE_FAST_MATH=1
+            -D CUDA_FAST_MATH=1
+            -D CUDA_ARCH_BIN=$CudaArch
+            -D WITH_CUBLAS=1
+            -D WITH_OPENGL=ON
+        "
+        options="$cuda $options"
+    fi
+
+    cmake $cuda $options
+    make -j$CpuCoreCount
+    make install
+    ldconfig
+
+    cd ..
+}
+
+SrcInstall() {
+    installOpencv
+}
+
 Clean() {
     rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos
 }
@@ -235,6 +321,7 @@ AptInstall
 SnapInstall
 SnapClassicInstall
 DpkgInstall
+SrcInstall
 OptInstall
 Clean
 Finish
