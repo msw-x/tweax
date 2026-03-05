@@ -354,6 +354,11 @@ MakeInet() {
     chmod +x $inet
 }
 
+CopyTweax() {
+    cp -r $PwdDir $Target/home/$username
+    Chroot "chown -R $username:$username /home/$username/tweax"
+}
+
 Setup() {
     Title "Setup"
     InstallInit
@@ -369,6 +374,7 @@ Setup() {
     BasicSetup
     GetInet
     MakeInet
+    CopyTweax
 }
 
 
