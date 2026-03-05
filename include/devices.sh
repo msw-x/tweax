@@ -89,6 +89,22 @@ PartitionUUID() {
     echo $uuid
 }
 
+WaitPartition() {
+    local part="$1"
+    local timeout="${2:-10}"
+    echo "Waiting for partition $part to be created..."
+    for i in $(seq 1 "$TIMEOUT"); do
+        if [ -b "$part" ]; then
+            echo "✓ Partition $part created successfully (attempt $i)"
+            return 0
+        fi
+        echo "⏳ Waiting for $part... attempt $i/$timeout"
+        sleep 1
+    done
+    echo "✗ Error: partition $part not created within $timeout seconds" >&2
+    return 1
+}
+
 # Mounts
 
 ShowMounts() {

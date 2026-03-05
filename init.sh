@@ -68,6 +68,12 @@ MakePartitions() {
     partprobe $bootDev
     udevadm settle
 
+    WaitPartition $efiPartition
+    WaitPartition $payPartition
+    WaitPartition $isoPartition
+    WaitPartition $bootPartition
+    WaitPartition $rootPartition
+
     ShowMounts
     echo
     ShowBoot
