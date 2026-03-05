@@ -89,13 +89,13 @@ AptList='
 '
 SnapList='
     postman
-    dbeaver-ce
     opera
     winbox
     sublime-text
 '
 SnapClassicList='
     code
+    dbeaver-ce
 '
 
 user=''
