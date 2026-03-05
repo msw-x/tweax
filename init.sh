@@ -57,12 +57,12 @@ MakePartitions() {
         parted --script $bootDev mkpart primary ${isoOffsetMiB}MiB 100%
         parted --script $bootDev set 2 boot on
         if [[ $rootPartition == "" ]]; then
+            DefineRoot
             echo -e "make ${Purple}$RootLabel${NC} partition table: ${Bold}${Purple}$rootDev${NC}"
             parted --script $rootDev mklabel gpt
             parted --script $rootDev mkpart primary 1MiB 100%
         fi
     fi
-    DefineRoot
 
     ShowMounts
     echo
