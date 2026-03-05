@@ -73,10 +73,6 @@ AptList='
     gimp
     ffmpeg
     audacity
-    kazam
-    vokoscreen-ng
-    recordmydesktop
-    simplescreenrecorder
     pulseaudio
     pulseeffects
     ubuntu-restricted-extras
@@ -167,10 +163,18 @@ installSmartgit() {
     dpkgInstall "Smartgit" $(wget -qO - https://www.syntevo.com/smartgit/download/ | grep -Eo 'href=[^ ]+ ' | grep -Eo "https.*.deb")
 }
 
+installEtcher() {
+    local url=https://github.com/balena-io/etcher
+    local ver=$(wget -qO - $url | grep -Eo 'href="[^\"]+"' | grep -Eo 'v[0-9][0-9.]+' | grep -Eo '[0-9][0-9.]+')
+    local ref="$url/releases/download/v$ver/balena-etcher_${ver}_$Arch.deb"
+    dpkgInstall "Etcher" $ref
+}
+
 DpkgInstall() {
     Title "Install dpkg"
     installChrome
     installSmartgit
+    installEtcher
 }
 
 installGolang() {
@@ -190,32 +194,6 @@ installTelegram() {
     echo "ref: $ref"
     wget $ref -O $name
     tar -C $OptDir -xvf $name
-}
-
-installEtcher() {
-    SubTitle "Install Etcher"
-    local url=https://github.com/balena-io/etcher
-    local ver=$(wget -qO - $url | grep -Eo 'href="[^\"]+"' | grep -Eo 'v[0-9][0-9.]+' | grep -Eo '[0-9][0-9.]+')
-    local ref="$url/releases/download/v$ver/balenaEtcher-$ver-x64.AppImage"
-    local name=etcher
-    local dir=$OptDir/$name
-    echo "ver: $ver"
-    echo "ref: $ref"
-    wget $ref -O $name
-    mkdir $dir
-    mv $name $dir/$name
-}
-
-installWinBox() {
-    SubTitle "Install Winbox"
-    local dir=$OptDir'/winbox'
-    local ref='https://mt.lv/winbox'
-    local name='winbox.exe'
-    echo "ref: $ref"
-    wget $ref -O $name
-    mkdir $dir
-    mv $name $dir
-    WinBoxExe=$dir/$name
 }
 
 installStamina() {
@@ -249,8 +227,6 @@ installSly() {
 OptInstall() {
     installGolang
     installTelegram
-    installEtcher
-    installWinBox
     installStamina
     installSysMon
     installSly
