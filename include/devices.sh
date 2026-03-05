@@ -93,7 +93,7 @@ WaitPartition() {
     local part="$1"
     local timeout="${2:-10}"
     echo "Waiting for partition $part to be created..."
-    for i in $(seq 1 "$TIMEOUT"); do
+    for i in $(seq 1 "$timeout"); do
         if [ -b "$part" ]; then
             echo "✓ Partition $part created successfully (attempt $i)"
             return 0
