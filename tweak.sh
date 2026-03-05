@@ -130,18 +130,17 @@ packages() {
 
 AptInstall() {
     Title "Install apt"
-    echo "packages: $(packages $AptList)"
-    apt install -y $(packages $AptList)
+    apt install -y $(packages "$AptList")
 }
 
 SnapInstall() {
     Title "Install snap"
-    snap install $(packages $SnapList)
+    snap install $(packages "$SnapList")
 }
 
 SnapClassicInstall() {
     Title "Install snap classic"
-    for pkg in $(packages $SnapClassicList); do
+    for pkg in $(packages "$SnapClassicList"); do
         snap install --classic $pkg
     done
 }
