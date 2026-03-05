@@ -51,7 +51,7 @@ AptList='
     wine
     winetricks
     docker.io
-    docker-compose-V2
+    docker-compose-v2
 
     p7zip-full
     unrar
