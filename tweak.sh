@@ -92,11 +92,11 @@ SnapList='
     postman
     opera
     winbox
-    sublime-text
 '
 SnapClassicList='
     code
     dbeaver-ce
+    sublime-text
 '
 
 user=''
