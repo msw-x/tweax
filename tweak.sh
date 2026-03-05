@@ -154,7 +154,9 @@ dpkgInstall() {
     name=$(ToLower $name).deb
     echo "ref: $ref"
     wget $ref -O $name
-    dpkg -i $name
+    # dpkk -i $name
+    # for auto install dependencies:
+    apt install -y ./$name
 }
 
 installChrome() {
