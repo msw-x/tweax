@@ -296,6 +296,21 @@ SetupLoader() {
     Chroot 'echo "boot fs-uuid: $(grub-probe -t fs_uuid /boot/grub)"'
 }
 
+setRestoreGrub() {
+    local name=restore-grub
+    local file=$Target/etc/kernel/postinst.d/zzz-$name
+    cp $SrcDir/$name $file
+    chmod +x $file
+}
+
+disableUpdateGrub() {
+    local name=update-grub
+    local file=$Target/usr/sbin/$name
+    cp $file ${file}.bk
+    cp $SrcDir/$name $file
+    chmod +x $file
+}
+
 BasicSetup() {
     SubTitle "Basic setup"
     # -m - create home dir
@@ -325,8 +340,6 @@ BasicSetup() {
     Chroot "locale-gen"
     Chroot "locale -a"
 
-    ### Chroot "hwclock --systohc --utc"
-
     New $Target/etc/hostname $hostname
 
     New $Target/etc/hosts "127.0.0.1 localhost"
@@ -338,10 +351,9 @@ BasicSetup() {
 
     case $DistroID in
         ubuntu)
-            local name=restore-grub
-            local file=$Target/etc/kernel/postinst.d/zzz-$name
-            cp $SrcDir/${name}.sh $file
-            chmod +x $file
+            # setRestoreGrub
+            # it only works when updating the kernel, but update-grub can also be called when installing some packages
+            disableUpdateGrub
             ;;
     esac
 }
