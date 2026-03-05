@@ -175,8 +175,8 @@ DpkgInstall() {
 
 installGolang() {
     SubTitle "Install Golang"
-    local url=https://golang.org
-    local ref=$url$(wget -qO- $url/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-$DistrArch.tar.gz" -m 1)
+    local url=https://go.dev
+    local ref=$url$(wget -qO- $url/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-$Arch.tar.gz" -m 1)
     local name=golang.tar.gz
     echo "ref: $ref"
     wget $ref -O $name
@@ -230,7 +230,7 @@ installStamina() {
     mv Stamina/* $dir
     StaminaExe="$dir/stamina.exe"
     mv $dir/Stamina.exe $StaminaExe
-    chown -R $user:$user $dir
+    #chown -R $user:$user $dir
 }
 
 installSysMon() {
