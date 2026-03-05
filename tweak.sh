@@ -12,6 +12,7 @@ SrcDir=$PwdDir/tweax
 Arch=$(dpkg --print-architecture)
 
 AptList='
+    nano
     htop
     btop
     iftop
