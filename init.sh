@@ -64,6 +64,10 @@ MakePartitions() {
         fi
     fi
 
+    partprobe $rootDev
+    partprobe $bootDev
+    udevadm settle
+
     ShowMounts
     echo
     ShowBoot
