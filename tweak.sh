@@ -8,6 +8,7 @@ source ./include/devices.sh
 source ./include/base.sh
 
 SrcDir=$PwdDir/tweax
+OptDir=/opt
 
 Arch=$(dpkg --print-architecture)
 
