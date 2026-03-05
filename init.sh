@@ -274,6 +274,7 @@ SetGrub() {
     Put $grubconf "DistroID" $DistroID
     Put $grubconf "MapLvmRoot" $mapLvmRoot
     Cat $grubconf
+    cp $grubconf $grubconf.up
 }
 
 CreateInitramfs() {
@@ -337,6 +338,15 @@ BasicSetup() {
     if ! $reinstall; then
         Chroot "chown -R $username:$username $MntExt"
     fi
+
+    case $DistroID in
+        ubuntu)
+            local name=restore-grub.sh
+            local file=$Target/etc/kernel/postinst.d/zzz-$name
+            cp $SrcDir/$name $file
+            chmod +x $file
+            ;;
+    esac
 }
 
 MakeInet() {
