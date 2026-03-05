@@ -339,9 +339,9 @@ BasicSetup() {
 
     case $DistroID in
         ubuntu)
-            local name=restore-grub.sh
+            local name=restore-grub
             local file=$Target/etc/kernel/postinst.d/zzz-$name
-            cp $SrcDir/$name $file
+            cp $SrcDir/${name}.sh $file
             chmod +x $file
             ;;
     esac
