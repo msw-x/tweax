@@ -130,6 +130,7 @@ packages() {
 
 AptInstall() {
     Title "Install apt"
+    echo "packages: $(packages $AptList)"
     apt install -y $(packages $AptList)
 }
 
