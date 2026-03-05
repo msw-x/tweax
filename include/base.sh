@@ -40,6 +40,7 @@ Startup() {
 }
 
 Сonfirmation() {
+    echo
     local key=''
     read -n 1 -p "$(echo -e "🚀 ${Red}Attention! Are you sure you want to install system?${NC} y/n: ")" key && echo
     if [[ $key != 'y' ]]; then

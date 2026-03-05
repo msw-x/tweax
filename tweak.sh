@@ -98,37 +98,17 @@ SnapClassicList='
     code
 '
 
-root=''
-
-Exec() {
-    if [[ $root == '/' ]]; then
-        eval $1
-    else
-        arch-chroot $root $1
-    fi
-}
-
-GetRoot() {
-    if findmnt $Target >/dev/null; then
-        root=$Target
-    else
-        root='/'
-    fi
-    echo
-    echo -e "root: ${Bold}${Red}$root${NC}"
-}
-
 user=''
 
 GetUser() {
     local users
-    mapfile -t users < <(GetUsers $root)
+    mapfile -t users < <(GetUsers)
     if [ ${#users[@]} -eq 0 ]; then
         Fatal "user not found"
     else
         user="${users[0]}"
-        echo -e "user: ${Bold}${Green}$user${NC}"
         echo
+        echo -e "user: ${Bold}${Green}$user${NC}"
     fi
 }
 
@@ -192,7 +172,7 @@ DpkgInstall() {
 installGolang() {
     SubTitle "Install Golang"
     local url=https://golang.org
-    local ref=$url$(wget -qO- $url/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-${DistrArch}.tar.gz" -m 1)
+    local ref=$url$(wget -qO- $url/dl/ | grep -Eo 'href="[^\"]+"' | grep -Eo "/dl/go.*linux-$DistrArch.tar.gz" -m 1)
     local name=golang.tar.gz
     echo "ref: $ref"
     wget $ref -O $name
@@ -275,7 +255,6 @@ OptInstall() {
 
 Startup
 CheckDistro
-GetRoot
 GetUser
 Сonfirmation
 #PreIntall
