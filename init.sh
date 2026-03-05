@@ -66,8 +66,7 @@ MakePartitions() {
         echo
     fi
 
-    ProbeBoot
-    ProbeRoot
+    ShowMounts
 
     ShowBoot
     ShowRoot

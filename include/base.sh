@@ -128,14 +128,6 @@ OpenRoot() {
     cryptsetup luksOpen $rootPartition $RootFS --key-file=$RootKey --header=$RootHeader
 }
 
-ProbeBoot() {
-    partprobe $bootDev
-}
-
-ProbeRoot() {
-    partprobe $rootDev
-}
-
 MountBoot() {
     mount --mkdir $mapBootFS $targetBoot
 }
