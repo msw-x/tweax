@@ -11,9 +11,6 @@ SrcDir=$PwdDir/tweax
 OptDir=/opt
 VmDir=$MntExt/ext/vm
 
-Home=/home/$user
-Media=/media/$user
-
 Hole='msw'
 
 Arch=$(dpkg --print-architecture)
@@ -103,8 +100,6 @@ SnapClassicList='
     sublime-text
 '
 
-user=''
-
 GetUser() {
     local users
     mapfile -t users < <(GetUsers)
@@ -115,6 +110,8 @@ GetUser() {
         echo
         echo -e "user: ${Bold}${Green}$user${NC}"
     fi
+    Home=/home/$user
+    Media=/media/$user
 }
 
 AddAliase() {
