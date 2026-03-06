@@ -101,3 +101,8 @@ GetUsers() {
     done < $root/etc/passwd
     printf '%s\n' "${users[@]}"
 }
+
+Nohup() {
+    local app=$1
+    nohup $app </dev/null >/dev/null 2>&1 &
+}

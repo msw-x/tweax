@@ -9,6 +9,10 @@ source ./include/base.sh
 
 SrcDir=$PwdDir/tweax
 OptDir=/opt
+VmDir=$MntExt/ext/vm
+
+Home=/home/$user
+Media=/media/$user
 
 Arch=$(dpkg --print-architecture)
 
@@ -21,6 +25,7 @@ AptList='
     gpustat
     lnav
     gparted
+    alacritty
     smartmontools
 
     mc
@@ -107,6 +112,22 @@ GetUser() {
         user="${users[0]}"
         echo
         echo -e "user: ${Bold}${Green}$user${NC}"
+    fi
+}
+
+AddAliase() {
+    local alias=$1
+    local file=$Home/.bashrc
+    if ! grep $alias $file; then
+        Add $file "alias "$alias
+    fi
+}
+
+AddPath() {
+    local path=$1
+    local file=$Home/.profile
+    if ! grep $path $file; then
+        Add $file 'export PATH=$PATH:'$path
     fi
 }
 
@@ -235,9 +256,12 @@ opencvDependencies='
     libavcodec-dev
     libavformat-dev
     libswscale-dev
+    libavdevice-dev
     libv4l-dev
     libxvidcore-dev
     libx264-dev
+    libva-dev
+    libdrm-dev
 
     libjpeg-dev
     libpng-dev
@@ -245,6 +269,7 @@ opencvDependencies='
 
     libgtk-3-dev
     libtbb-dev
+    liblapack-dev
     libeigen3-dev
     libdc1394-dev
     libopenexr-dev
@@ -306,6 +331,253 @@ SrcInstall() {
     installOpencv
 }
 
+configurePath() {
+    SubTitle "Configure Path"
+    AddPath "$OptDir/sly"
+    AddPath "$OptDir/go/bin"
+    AddPath "$Home/go/bin"
+    AddPath "$Home/$Hole/bin/bin/vit"
+}
+
+configureAliase() {
+    SubTitle "Configure Aliase"
+    AddAliase "pw='poweroff'"
+    AddAliase "hs='history | grep'"
+}
+
+configureDirs() {
+    SubTitle "Configure Dirs"
+
+    ln -sf $Media $Home/usb
+
+    mkdir $Home/$Hole
+    mkln() {
+        local disk=$1
+        local name=$2
+        ln -sf /mnt/local/$disk/$name $Home/$Hole/$name
+    }
+    mkln "d" "dnn"
+    mkln "u" "src"
+    mkln "n" "bin"
+    mkln "s" "signal"
+    mkln "r" "archive"
+    mkln "j" "job"
+    mkln "o" "msw"
+    mkln "m" "music"
+    mkln "p" "projects"
+    mkln "w" "media"
+    mkln "x" "x"
+
+    local ext=$MntExt/ext
+    local tmp=$ext/tmp
+    ln -sf $ext $Home/ext
+    ln -sf $tmp $Home/tmp
+
+    mkdir -p $ext
+    mkdir -p $tmp
+
+    chown $user:$user $ext
+    chown $user:$user $tmp
+}
+
+configureHomeConfig() {
+    SubTitle "Configure Home config"
+    cp -rv $Src/home/.config $Home/
+}
+
+function ConfigureTerminal {
+    if CheckStep; then
+        PrintTitle "Configure Terminal"
+
+        Exec "dconf load /org/gnome/terminal/ < ${SrcDconfDir}/terminal"
+    fi
+    NextStep
+}
+
+function ConfigureEnvironment {
+    if CheckStep; then
+        PrintTitle "Configure Environment"
+
+        Echo "Hint: for debug gsettings use 'dconf-editor' or 'dconf dump /'"
+
+        Exec "gsettings set org.gnome.desktop.privacy report-technical-problems false"
+
+        Exec "gsettings set org.gnome.desktop.interface clock-show-seconds true"
+        Exec "gsettings set org.gnome.desktop.interface clock-show-weekday true"
+        Exec "gsettings set org.gnome.desktop.interface clock-show-date true"
+        Exec "gsettings set org.gnome.desktop.interface clock-format '24h'"
+
+        Exec "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'"
+        Exec "gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-purple-dark'"
+        Exec "gsettings set org.gnome.desktop.interface icon-theme 'Yaru-purple'"
+        Exec "gsettings set org.gnome.shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\""
+
+        Exec "gsettings set org.gnome.TextEditor show-line-numbers true"
+        Exec "gsettings set org.gnome.TextEditor spellcheck false"
+        Exec "gsettings set org.gnome.TextEditor highlight-current-line true"
+
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock autohide true"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false"
+
+        LangToggle="['grp:alt_shift_toggle']"
+        Exec 'gsettings set org.gnome.desktop.input-sources xkb-options "'$LangToggle'"'
+
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys terminal \"['<Alt>t']\""
+
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up \"['<Alt>Page_Up']\""
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute \"['<Alt>Pause']\""
+        Exec "gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down \"['<Alt>Page_Down']\""
+
+        Exec "gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-up \"['<Super>Page_Up']\""
+        Exec "gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down \"['<Super>Page_Down']\""
+
+        FavoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
+        Exec "gsettings set org.gnome.shell favorite-apps \"${FavoriteApps}\""
+
+        WallpaperPath=$Home/.$Wallpaper
+        Exec "cp ${SrcDir}/${Wallpaper} ${WallpaperPath}"
+        Exec "gsettings set org.gnome.desktop.background picture-uri-dark file://$WallpaperPath"
+
+        Exec "gsettings set org.gnome.desktop.background show-desktop-icons false"
+        Exec "gsettings set org.gnome.shell.extensions.ding show-home false"
+        Exec "gsettings set org.gnome.shell.extensions.ding show-trash false"
+        Exec "gsettings set org.gnome.shell.extensions.ding show-volumes false"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false"
+        Exec "gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false"
+
+        key="org.gnome.settings-daemon.plugins.media-keys"
+        custom0="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+        custom1="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+        custom2="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+        Exec "gsettings set $key custom-keybindings \"['$custom0', '$custom1', '$custom2']\""
+        Exec "gsettings set $key.custom-keybinding:$custom0 name 'Rhythmbox play-pause'"
+        Exec "gsettings set $key.custom-keybinding:$custom0 command 'rhythmbox-client --play-pause'"
+        Exec "gsettings set $key.custom-keybinding:$custom0 binding '<Alt>Insert'"
+        Exec "gsettings set $key.custom-keybinding:$custom1 name 'Rhythmbox previous'"
+        Exec "gsettings set $key.custom-keybinding:$custom1 command 'rhythmbox-client --previous'"
+        Exec "gsettings set $key.custom-keybinding:$custom1 binding '<Alt>Delete'"
+        Exec "gsettings set $key.custom-keybinding:$custom2 name 'Rhythmbox next'"
+        Exec "gsettings set $key.custom-keybinding:$custom2 command 'rhythmbox-client --next'"
+        Exec "gsettings set $key.custom-keybinding:$custom2 binding '<Alt>End'"
+    fi
+    NextStep
+}
+
+function ConfigureLocale {
+    if CheckStep; then
+        PrintTitle "Configure Locale"
+
+        Exec "sudo locale-gen ru_RU.UTF-8"
+        layouts="[('xkb', 'us'), ('xkb', 'ru')]"
+        Exec "gsettings set org.gnome.desktop.input-sources sources \"$layouts\""
+        #Exec "sudo sed -i 's/ru_RU/en_US/' /etc/default/locale"
+
+        local loc="en_US.UTF-8"
+        Exec "sudo update-locale LANG=${loc} LC_NUMERIC=${loc} LC_TIME=${loc} LC_MONETARY=${loc} LC_PAPER=${loc} LC_NAME=${loc}"
+        Exec "sudo update-locale LC_ADDRESS=${loc} LC_TELEPHONE=${loc} LC_MEASUREMENT=${loc} LC_IDENTIFICATION=${loc}"
+    fi
+    NextStep
+}
+
+function ConfigureDocker {
+    if CheckStep; then
+        PrintTitle "Configure Docker"
+
+        Echo "configure for resolve conflict Docker with VPN networks"
+        Echo "for use VPN: sudo systemctl stop docker"
+        Exec "sudo cp ${SrcDir}/docker/daemon.json /etc/docker" "docker daemon.json"
+        usermod -aG docker $user
+    fi
+    NextStep
+}
+
+function ConfigureGit {
+    if CheckStep; then
+        PrintTitle "Configure Git"
+
+        Exec 'git config --global user.name '$GitUser
+        Exec 'git config --global user.email '$GitEmail
+
+        Exec 'git config --global gc.autoDetach false'
+        Exec 'git config --global pull.rebase false'
+
+        Exec 'git lfs install'
+    fi
+    NextStep
+}
+
+configureVirtualBox() {
+    SubTitle "Configure VirtualBox"
+    # enable devices (including usb)
+    usermod -a -G vboxusers $user
+    Nohup virtualbox
+    local key='n'
+    until [ $key == 'y' ]; do
+        read -n 1 -p "Please close VirtualBox. Continue configure? y/n: " key && echo
+    done
+    local conf="$Home/.config/VirtualBox/VirtualBox.xml"
+    local exp='(defaultMachineFolder=)"[^\"]+"'
+    local path="\"$VmDir\""
+    sed -i -E 's|$exp|\1$path|' $conf
+}
+
+configureTelegram() {
+    SubTitle "Configure Telegram"
+    Nohup $OptDir/Telegram/Telegram
+}
+
+configureSmartgit() {
+    SubTitle "Configure Smartgit"
+    Nohup /usr/share/smartgit/bin/smartgit.sh
+    echo "select 'Non-commercial use only'"
+    local key='n'
+    until [ $key == 'y' ]; do
+        read -n 1 -p "Smartgit ready for configure? y/n: " key && echo
+    done
+    local conf="preferences.yml"
+    local dir="$Home/.config/smartgit"
+    local ver=$(ls -1 $dir | awk '/[0-9]/{print $1; exit}')
+    conf="$dir/$ver/$conf"
+    echo "ver: $ver"
+    echo "conf: $conf"
+    local dateFormat="dateFormat: {datePattern: dd.MM.yyyy, timePattern: 'HH:mm', showTimeForLastDays: false}"
+    sed -i 's/^dateFormat:.*/$dateFormat/' $conf
+}
+
+configureArduino() {
+    SubTitle "Configure Arduino"
+    usermod -a -G dialout $user
+}
+
+configureMC() {
+    SubTitle "Configure mc"
+    local conf="$Home/.config/mc/ini"
+    Set $conf "old_esc_mode" "true"
+    Set $conf "old_esc_mode_timeout" "1000"
+    Set $conf "skin" "yadt256-defbg"
+}
+
+
+Configure() {
+    configurePath
+    configureAliase
+
+    configureDirs
+    configureHomeConfig
+    configureTerminal
+    configureEnvironment
+    configureLocale
+
+    configureDocker
+    configureGit
+    configureVirtualBox
+    configureTelegram
+    configureSmartgit
+    configureArduino
+    configureMC
+}
+
 Clean() {
     rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos
 }
@@ -323,5 +595,6 @@ SnapClassicInstall
 DpkgInstall
 SrcInstall
 OptInstall
+Configure
 Clean
 Finish
