@@ -384,7 +384,7 @@ configureDirs() {
 
 configureHomeConfig() {
     SubTitle "Configure Home config"
-    cp -rv $Src/home/.config $Home/
+    cp -rv $SrcDir/home/.config $Home/
 }
 
 configureGnome() {
