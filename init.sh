@@ -356,7 +356,7 @@ BasicSetup() {
     Add $Target/etc/hosts "127.0.0.1 $hostname"
 
     if ! $reinstall; then
-        Chroot "chown -R $username:$username $MntExt"
+        Chroot "chown $username:$username $MntExt"
     fi
 
     case $DistroID in
