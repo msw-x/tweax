@@ -117,8 +117,8 @@ GetUser() {
 AddAlias() {
     local alias=$*
     local file=$Home/.bashrc
-    if ! grep $alias $file; then
-        Add $file "alias "$alias
+    if ! grep "$alias" $file; then
+        Add $file "alias $alias"
     fi
 }
 
