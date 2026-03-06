@@ -7,7 +7,7 @@ source ./include/tools.sh
 source ./include/devices.sh
 source ./include/base.sh
 
-SrcDir=$PwdDir/tweax
+SrcDir=$PwdDir/tweak
 OptDir=/opt
 VmDir=$MntExt/ext/vm
 
