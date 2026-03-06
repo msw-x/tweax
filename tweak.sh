@@ -525,7 +525,6 @@ Configure() {
 
     configureDirs
     configureHomeConfig
-    configureTerminal
     configureGnome
     configureLocale
 
