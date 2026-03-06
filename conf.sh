@@ -32,5 +32,3 @@ Target='/mnt'
 TimeZone='Europe/Moscow'
 
 Locales='en_US ru_RU'
-
-Hole='msw'
