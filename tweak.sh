@@ -387,6 +387,47 @@ configureHomeConfig() {
     cp -rv $SrcDir/home/.config $Home/
 }
 
+configureDocker() {
+    SubTitle "Configure Docker"
+    # configure for resolve conflict Docker with VPN networks
+    cp $SrcDir/docker/daemon.json /etc/docker
+    usermod -aG docker $user
+}
+
+configureArduino() {
+    SubTitle "Configure Arduino"
+    usermod -a -G dialout $user
+}
+
+configureGit() {
+    SubTitle "Configure Git"
+
+    local email=''
+    echo "git user: $user"
+    echo -n "git email: "
+    read email
+
+    git config --global user.name $user
+    git config --global user.email $email
+
+    git config --global gc.autoDetach false
+    git config --global pull.rebase false
+
+    git lfs install
+}
+
+Configure() {
+    configurePath
+    configureAliase
+
+    configureDirs
+    configureHomeConfig
+
+    configureDocker
+    configureArduino
+    configureGit
+}
+
 configureGnome() {
     SubTitle "Configure Gnome"
 
@@ -443,28 +484,9 @@ configureLocale() {
     update-locale LC_ADDRESS=$loc LC_TELEPHONE=$loc LC_MEASUREMENT=$loc LC_IDENTIFICATION=$loc
 }
 
-configureDocker() {
-    SubTitle "Configure Docker"
-    # configure for resolve conflict Docker with VPN networks
-    cp $SrcDir/docker/daemon.json /etc/docker
-    usermod -aG docker $user
-}
-
-configureGit() {
-    SubTitle "Configure Git"
-
-    local email=''
-    echo "git user: $user"
-    echo "git email: "
-    read email
-
-    git config --global user.name $user
-    git config --global user.email $email
-
-    git config --global gc.autoDetach false
-    git config --global pull.rebase false
-
-    git lfs install
+configureTelegram() {
+    SubTitle "Configure Telegram"
+    Nohup $OptDir/Telegram/Telegram
 }
 
 configureVirtualBox() {
@@ -480,11 +502,6 @@ configureVirtualBox() {
     local exp='(defaultMachineFolder=)"[^\"]+"'
     local path="\"$VmDir\""
     sed -i -E 's|$exp|\1$path|' $conf
-}
-
-configureTelegram() {
-    SubTitle "Configure Telegram"
-    Nohup $OptDir/Telegram/Telegram
 }
 
 configureSmartgit() {
@@ -505,11 +522,6 @@ configureSmartgit() {
     sed -i 's/^dateFormat:.*/$dateFormat/' $conf
 }
 
-configureArduino() {
-    SubTitle "Configure Arduino"
-    usermod -a -G dialout $user
-}
-
 configureMC() {
     SubTitle "Configure mc"
     local conf="$Home/.config/mc/ini"
@@ -518,27 +530,18 @@ configureMC() {
     Set $conf "skin" "yadt256-defbg"
 }
 
-
-Configure() {
-    configurePath
-    configureAliase
-
-    configureDirs
-    configureHomeConfig
-    configureGnome
-    configureLocale
-
-    configureDocker
-    configureGit
-    configureVirtualBox
-    configureTelegram
-    configureSmartgit
-    configureArduino
-    configureMC
+clean() {
+    rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos
 }
 
-Clean() {
-    rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos
+ConfigureShell() {
+    configureGnome
+    configureLocale
+    configureTelegram
+    configureVirtualBox
+    configureSmartgit
+    configureMC
+    clean
 }
 
 
@@ -552,8 +555,8 @@ AptInstall
 SnapInstall
 SnapClassicInstall
 DpkgInstall
-SrcInstall
 OptInstall
+SrcInstall
 Configure
-Clean
+ConfigureShell
 Finish
