@@ -297,8 +297,11 @@ installOpencv() {
         ../opencv-master
     '
 
+    local gpu=$(lspci | grep -i "3d controller" | grep -o "\[.*\]" | tr -d '[]')
+    echo "GPU: $gpu"
+
     local CudaArch=""
-    if [[ "$Gpu" =~ "GeForce RTX" ]]; then
+    if [[ "$gpu" =~ "GeForce RTX" ]]; then
         CudaArch="8.6"
     fi
 
