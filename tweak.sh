@@ -114,8 +114,8 @@ GetUser() {
     Media=/media/$user
 }
 
-AddAliase() {
-    local alias=$1
+AddAlias() {
+    local alias=$*
     local file=$Home/.bashrc
     if ! grep $alias $file; then
         Add $file "alias "$alias
@@ -343,8 +343,8 @@ configurePath() {
 
 configureAliase() {
     SubTitle "Configure Aliase"
-    AddAliase "pw='poweroff'"
-    AddAliase "hs='history | grep'"
+    AddAlias "pw='poweroff'"
+    AddAlias "hs='history | grep'"
 }
 
 configureDirs() {
