@@ -560,6 +560,8 @@ Tweak() {
     local desktopIsRunning=1
     pgrep -u "$user" -f "X|Xorg|gnome-shell|xfce4-session" >/dev/null 2>&1
     desktopIsRunning=$? # exit code
+    echo $desktopIsRunning
+    exit 0
     if [ $desktopIsRunning ]; then
         local key=''
         echo
