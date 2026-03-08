@@ -535,9 +535,6 @@ clean() {
 }
 
 ConfigureDesktop() {
-    if [ -z "$DESKTOP_SESSION" ]; then
-        return
-    fi
     configureGnome
     configureLocale
     configureTelegram
@@ -548,7 +545,11 @@ ConfigureDesktop() {
 }
 
 Tweak() {
-    if [ "$DESKTOP_SESSION" ]; then
+    local desktopIsRunning=0
+    if pgrep -u "$user" -f "X|Xorg|gnome-shell|xfce4-session" >/dev/null 2>&1; then
+        desktopIsRunning=1
+    fi
+    if [ $desktopIsRunning ]; then
         local key=''
         echo
         read -n 1 -p "Configure only desktop environment? y/n: " key && echo
@@ -557,6 +558,7 @@ Tweak() {
             return
         fi
     fi
+    Сonfirmation
     PreInstall
     InstallDrivers
     AptInstall
@@ -566,13 +568,14 @@ Tweak() {
     OptInstall
     SrcInstall
     Configure
-    ConfigureDesktop
+    if [ $desktopIsRunning ]; then
+        ConfigureDesktop
+    fi
 }
 
 
 Startup
 CheckDistro
 GetUser
-Сonfirmation
 Tweak
 Finish
