@@ -534,7 +534,10 @@ clean() {
     rm -rf ~/Documents ~/Music ~/Pictures ~/Public ~/Templates ~/Videos
 }
 
-ConfigureShell() {
+ConfigureDesktop() {
+    if [ -z "$DESKTOP_SESSION" ]; then
+        return
+    fi
     configureGnome
     configureLocale
     configureTelegram
@@ -544,19 +547,32 @@ ConfigureShell() {
     clean
 }
 
+Tweak() {
+    if [ "$DESKTOP_SESSION" ]; then
+        local key=''
+        echo
+        read -n 1 -p "Configure only desktop environment? y/n: " key && echo
+        if [[ $key == 'y' ]]; then
+            ConfigureDesktop
+            return
+        fi
+    fi
+    PreInstall
+    InstallDrivers
+    AptInstall
+    SnapInstall
+    SnapClassicInstall
+    DpkgInstall
+    OptInstall
+    SrcInstall
+    Configure
+    ConfigureDesktop
+}
+
 
 Startup
 CheckDistro
 GetUser
 Сonfirmation
-PreInstall
-InstallDrivers
-AptInstall
-SnapInstall
-SnapClassicInstall
-DpkgInstall
-OptInstall
-SrcInstall
-Configure
-ConfigureShell
+Tweak
 Finish
