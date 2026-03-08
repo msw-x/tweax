@@ -384,7 +384,8 @@ configureDirs() {
 
 configureHomeConfig() {
     SubTitle "Configure Home config"
-    cp -rv $SrcDir/home/.config $Home/
+    cp -r $SrcDir/home/.config $Home/
+    chown $user:$user $Home/.config
 }
 
 configureDocker() {
