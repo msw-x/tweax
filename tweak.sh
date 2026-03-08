@@ -557,12 +557,11 @@ ConfigureDesktop() {
 }
 
 Tweak() {
-    local desktopIsRunning=1
-    pgrep -u "$user" -f "X|Xorg|gnome-shell|xfce4-session" >/dev/null 2>&1
-    desktopIsRunning=$? # exit code
-    echo $desktopIsRunning
-    exit 0
-    if [ $desktopIsRunning ]; then
+    local desktopIsRunning=0
+    if pgrep -u "$user" -f "X|Xorg|gnome-shell|xfce4-session" >/dev/null 2>&1; then
+        desktopIsRunning=1
+    fi
+    if (( $desktopIsRunning )); then
         local key=''
         echo
         read -n 1 -p "Configure only desktop environment? y/n: " key && echo
@@ -581,7 +580,7 @@ Tweak() {
     OptInstall
     SrcInstall
     Configure
-    if [ $desktopIsRunning ]; then
+    if (( $desktopIsRunning )); then
         ConfigureDesktop
     fi
 }
