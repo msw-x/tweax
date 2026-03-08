@@ -557,10 +557,9 @@ ConfigureDesktop() {
 }
 
 Tweak() {
-    local desktopIsRunning=0
-    if pgrep -u "$user" -f "X|Xorg|gnome-shell|xfce4-session" >/dev/null 2>&1; then
-        desktopIsRunning=1
-    fi
+    local desktopIsRunning=1
+    pgrep -u "$user" -f "X|Xorg|gnome-shell|xfce4-session" >/dev/null 2>&1
+    desktopIsRunning=$? # exit code
     if [ $desktopIsRunning ]; then
         local key=''
         echo
