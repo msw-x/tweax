@@ -433,47 +433,58 @@ configureGnome() {
 
     echo "Hint: for debug gsettings use 'dconf-editor' or 'dconf dump /'"
 
-    echo gsettings set org.gnome.desktop.privacy report-technical-problems false
+    setGnome() {
+        local path=$1
+        local name=$2
+        local val=$3
+        echo "path: $path"
+        echo "name: $name"
+        echo "val: $val"
+        sudo -u $user gsettings set "org.gnome.$path" "$name" "$val"
+        echo
+    }
 
-    gsettings set org.gnome.desktop.interface clock-show-seconds true
-    gsettings set org.gnome.desktop.interface clock-show-weekday true
-    gsettings set org.gnome.desktop.interface clock-show-date true
-    gsettings set org.gnome.desktop.interface clock-format '24h'
+    setGnome desktop.privacy report-technical-problems false
 
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-    gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
-    gsettings set org.gnome.desktop.interface icon-theme 'Yaru-dark'
+    setGnome desktop.interface clock-show-seconds true
+    setGnome desktop.interface clock-show-weekday true
+    setGnome desktop.interface clock-show-date true
+    setGnome desktop.interface clock-format '24h'
 
-    gsettings set org.gnome.TextEditor show-line-numbers true
-    gsettings set org.gnome.TextEditor spellcheck false
-    gsettings set org.gnome.TextEditor highlight-current-line true
+    setGnome desktop.interface color-scheme 'prefer-dark'
+    setGnome desktop.interface gtk-theme 'Yaru-dark'
+    setGnome desktop.interface icon-theme 'Yaru-dark'
 
-    #gsettings set org.gnome.shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\"
-    gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
-    gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-    gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
+    setGnome TextEditor show-line-numbers true
+    setGnome TextEditor spellcheck false
+    setGnome TextEditor highlight-current-line true
 
-    gsettings set org.gnome.desktop.input-sources xkb-options "['grp:alt_shift_toggle']"
+    #setGnome shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\"
+    setGnome shell.extensions.dash-to-dock autohide true
+    setGnome shell.extensions.dash-to-dock dock-fixed false
+    setGnome shell.extensions.dash-to-dock extend-height false
 
-    gsettings set org.gnome.settings-daemon.plugins.media-keys terminal "['<Alt>t']"
+    setGnome desktop.input-sources xkb-options "['grp:alt_shift_toggle']"
 
-    gsettings set org.gnome.settings-daemon.plugins.media-keys volume-up "['<Alt>Page_Up']"
-    gsettings set org.gnome.settings-daemon.plugins.media-keys volume-mute "['<Alt>Pause']"
-    gsettings set org.gnome.settings-daemon.plugins.media-keys volume-down "['<Alt>Page_Down']"
+    setGnome settings-daemon.plugins.media-keys terminal "['<Alt>t']"
+
+    setGnome settings-daemon.plugins.media-keys volume-up "['<Alt>Page_Up']"
+    setGnome settings-daemon.plugins.media-keys volume-mute "['<Alt>Pause']"
+    setGnome settings-daemon.plugins.media-keys volume-down "['<Alt>Page_Down']"
 
     local favoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
-    gsettings set org.gnome.shell favorite-apps "$favoriteApps"
+    setGnome shell favorite-apps "$favoriteApps"
 
     local wallpaper='wallpaper.jpg'
     cp $SrcDir/$wallpaper $Home/.$wallpaper
-    gsettings set org.gnome.desktop.background picture-uri-dark file://$Home/.$wallpaper
-    gsettings set org.gnome.desktop.background show-desktop-icons false
+    setGnome desktop.background picture-uri-dark file://$Home/.$wallpaper
+    setGnome desktop.background show-desktop-icons false
 
-    gsettings set org.gnome.shell.extensions.ding show-home false
-    gsettings set org.gnome.shell.extensions.ding show-trash false
-    gsettings set org.gnome.shell.extensions.ding show-volumes false
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
+    setGnome shell.extensions.ding show-home false
+    setGnome shell.extensions.ding show-trash false
+    setGnome shell.extensions.ding show-volumes false
+    setGnome shell.extensions.dash-to-dock show-mounts false
+    setGnome shell.extensions.dash-to-dock show-trash false
 }
 
 configureLocale() {
@@ -501,7 +512,7 @@ configureVirtualBox() {
     local conf="$Home/.config/VirtualBox/VirtualBox.xml"
     local exp='(defaultMachineFolder=)"[^\"]+"'
     local path="\"$VmDir\""
-    sed -i -E 's|$exp|\1$path|' $conf
+    sed -i -E "s|$exp|\1$path|" $conf
 }
 
 configureSmartgit() {
