@@ -229,6 +229,7 @@ configureSmartgit() {
 
 configureMC() {
     SubTitle "Configure mc"
+    mc
     local conf="$Home/.config/mc/ini"
     Set $conf "old_esc_mode" "true"
     Set $conf "old_esc_mode_timeout" "1000"
