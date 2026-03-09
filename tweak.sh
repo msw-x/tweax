@@ -43,8 +43,6 @@ configureAliase() {
 configureDirs() {
     SubTitle "Configure Dirs"
 
-    echo "Media: $Media"
-    echo "usb: $Home/usb"
     ln -sf $Media $Home/usb
 
     mkdir $Home/$Hole
@@ -67,11 +65,10 @@ configureDirs() {
 
     local ext=$MntExt/ext
     local tmp=$ext/tmp
-    ln -sf $ext $Home/ext
-    ln -sf $tmp $Home/tmp
-
     mkdir -p $ext
     mkdir -p $tmp
+    ln -sf $ext $Home/ext
+    ln -sf $tmp $Home/tmp
 }
 
 configureHomeConfig() {
