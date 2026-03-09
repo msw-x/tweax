@@ -429,71 +429,67 @@ Configure() {
     configureGit
 }
 
+setGnomeVal() {
+    local path=$1
+    local name=$2
+    local val=$3
+    local uid=$(id -u $user)
+    local bus="unix:path=/run/user/$uid/bus"
+    sudo -u $user DBUS_SESSION_BUS_ADDRESS="$bus" gsettings set "org.gnome.$path" "$name" "$val"
+    echo
+}
+
 configureGnome() {
     SubTitle "Configure Gnome"
 
     echo "Hint: for debug gsettings use 'dconf-editor' or 'dconf dump /'"
 
-    setGnome() {
-        local path=$1
-        local name=$2
-        local val=$3
-        echo "path: $path"
-        echo "name: $name"
-        echo "val: $val"
-        local uid=$(id -u $user)
-        local bus="unix:path=/run/user/$uid/bus"
-        # -E (preserve-env)
-        sudo -u $user DBUS_SESSION_BUS_ADDRESS="$bus" gsettings set "org.gnome.$path" "$name" "$val"
-        echo
-    }
+    setGnomeVal desktop.privacy report-technical-problems false
 
-    setGnome desktop.privacy report-technical-problems false
+    setGnomeVal desktop.interface clock-show-seconds true
+    setGnomeVal desktop.interface clock-show-weekday true
+    setGnomeVal desktop.interface clock-show-date true
+    setGnomeVal desktop.interface clock-format '24h'
 
-    setGnome desktop.interface clock-show-seconds true
-    setGnome desktop.interface clock-show-weekday true
-    setGnome desktop.interface clock-show-date true
-    setGnome desktop.interface clock-format '24h'
+    setGnomeVal desktop.interface color-scheme 'prefer-dark'
+    setGnomeVal desktop.interface gtk-theme 'Yaru-dark'
+    setGnomeVal desktop.interface icon-theme 'Yaru-dark'
 
-    setGnome desktop.interface color-scheme 'prefer-dark'
-    setGnome desktop.interface gtk-theme 'Yaru-dark'
-    setGnome desktop.interface icon-theme 'Yaru-dark'
+    setGnomeVal TextEditor show-line-numbers true
+    setGnomeVal TextEditor spellcheck false
+    setGnomeVal TextEditor highlight-current-line true
 
-    setGnome TextEditor show-line-numbers true
-    setGnome TextEditor spellcheck false
-    setGnome TextEditor highlight-current-line true
+    #setGnomeVal shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\"
+    setGnomeVal shell.extensions.dash-to-dock autohide true
+    setGnomeVal shell.extensions.dash-to-dock dock-fixed false
+    setGnomeVal shell.extensions.dash-to-dock extend-height false
 
-    #setGnome shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\"
-    setGnome shell.extensions.dash-to-dock autohide true
-    setGnome shell.extensions.dash-to-dock dock-fixed false
-    setGnome shell.extensions.dash-to-dock extend-height false
+    setGnomeVal desktop.input-sources xkb-options "['grp:alt_shift_toggle']"
 
-    setGnome desktop.input-sources xkb-options "['grp:alt_shift_toggle']"
+    setGnomeVal settings-daemon.plugins.media-keys terminal "['<Alt>t']"
 
-    setGnome settings-daemon.plugins.media-keys terminal "['<Alt>t']"
-
-    setGnome settings-daemon.plugins.media-keys volume-up "['<Alt>Page_Up']"
-    setGnome settings-daemon.plugins.media-keys volume-mute "['<Alt>Pause']"
-    setGnome settings-daemon.plugins.media-keys volume-down "['<Alt>Page_Down']"
+    setGnomeVal settings-daemon.plugins.media-keys volume-up "['<Alt>Page_Up']"
+    setGnomeVal settings-daemon.plugins.media-keys volume-mute "['<Alt>Pause']"
+    setGnomeVal settings-daemon.plugins.media-keys volume-down "['<Alt>Page_Down']"
 
     local favoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
-    setGnome shell favorite-apps "$favoriteApps"
+    setGnomeVal shell favorite-apps "$favoriteApps"
 
     local wallpaper='wallpaper.jpg'
     cp $SrcDir/$wallpaper $Home/.$wallpaper
-    setGnome desktop.background picture-uri-dark file://$Home/.$wallpaper
-    setGnome desktop.background show-desktop-icons false
+    setGnomeVal desktop.background picture-uri-dark file://$Home/.$wallpaper
+    setGnomeVal desktop.background show-desktop-icons false
 
-    setGnome shell.extensions.ding show-home false
-    setGnome shell.extensions.ding show-trash false
-    setGnome shell.extensions.ding show-volumes false
-    setGnome shell.extensions.dash-to-dock show-mounts false
-    setGnome shell.extensions.dash-to-dock show-trash false
+    setGnomeVal shell.extensions.ding show-home false
+    setGnomeVal shell.extensions.ding show-trash false
+    setGnomeVal shell.extensions.ding show-volumes false
+    setGnomeVal shell.extensions.dash-to-dock show-mounts false
+    setGnomeVal shell.extensions.dash-to-dock show-trash false
 }
 
 configureLocale() {
     SubTitle "Configure Locale"
-    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]"
+    setGnomeVal desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]"
     local loc="en_US.UTF-8"
     update-locale LANG=$loc LC_NUMERIC=$loc LC_TIME=$loc LC_MONETARY=$loc LC_PAPER=$loc LC_NAME=$loc
     update-locale LC_ADDRESS=$loc LC_TELEPHONE=$loc LC_MEASUREMENT=$loc LC_IDENTIFICATION=$loc
