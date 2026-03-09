@@ -124,6 +124,14 @@ setGnomeVal() {
     gsettings set "org.gnome.$path" "$name" "$val"
 }
 
+installSysMon() {
+    SubTitle "Install SysMon"
+    git clone https://github.com/msw-x/sysmon
+    cd sysmon
+    ./install.sh
+    cd ..
+}
+
 configureGnome() {
     SubTitle "Configure Gnome"
 
@@ -231,6 +239,7 @@ clean() {
 }
 
 ConfigureDesktop() {
+    installSysMon
     configureGnome
     configureLocale
     configureTelegram

@@ -184,14 +184,6 @@ installTelegram() {
     tar -C $OptDir -xvf $name
 }
 
-installSysMon() {
-    SubTitle "Install SysMon"
-    git clone https://github.com/msw-x/sysmon
-    cd sysmon
-    ./install.sh
-    cd ..
-}
-
 installSly() {
     SubTitle "Install Sly"
     cp -r $PwdDir/sly $OptDir/
@@ -200,7 +192,6 @@ installSly() {
 OptInstall() {
     installGolang
     installTelegram
-    installSysMon
     installSly
 }
 
