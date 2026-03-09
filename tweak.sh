@@ -441,8 +441,10 @@ configureGnome() {
         echo "path: $path"
         echo "name: $name"
         echo "val: $val"
+        local uid=$(id -u $user)
+        local bus="unix:path=/run/user/$uid/bus"
         # -E (preserve-env)
-        sudo -E -u $user gsettings set "org.gnome.$path" "$name" "$val"
+        sudo -u $user DBUS_SESSION_BUS_ADDRESS="$bus" gsettings set "org.gnome.$path" "$name" "$val"
         echo
     }
 
