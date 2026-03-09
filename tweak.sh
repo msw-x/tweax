@@ -255,6 +255,7 @@ Run() {
     GetUser
     Configure
     ConfigureDesktop
+    Finish
 }
 
 Run
