@@ -149,6 +149,10 @@ installChrome() {
     dpkgInstall "Chrome" "https://dl.google.com/linux/direct/google-chrome-stable_current_$Arch.deb"
 }
 
+installYandex() {
+    dpkgInstall "Yandex" "https://browser.yandex.ru/download/?banerid=6302000000\&zih=1\&beta=1\&os=linux\&x64=1\&package=deb\&full=1"
+}
+
 installSmartgit() {
     dpkgInstall "Smartgit" $(wget -qO - https://www.syntevo.com/smartgit/download/ | grep -Eo 'href=[^ ]+ ' | grep -Eo "https.*.deb")
 }
@@ -163,6 +167,7 @@ installEtcher() {
 DpkgInstall() {
     Title "Install dpkg"
     installChrome
+    installYandex
     installSmartgit
     installEtcher
 }
