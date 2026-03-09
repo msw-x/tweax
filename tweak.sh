@@ -441,7 +441,8 @@ configureGnome() {
         echo "path: $path"
         echo "name: $name"
         echo "val: $val"
-        sudo -u $user gsettings set "org.gnome.$path" "$name" "$val"
+        # -E (preserve-env)
+        sudo -E -u $user gsettings set "org.gnome.$path" "$name" "$val"
         echo
     }
 
