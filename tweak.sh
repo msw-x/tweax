@@ -43,6 +43,8 @@ configureAliase() {
 configureDirs() {
     SubTitle "Configure Dirs"
 
+    echo "Media: $Media"
+    echo "usb: $Home/usb"
     ln -sf $Media $Home/usb
 
     mkdir $Home/$Hole
