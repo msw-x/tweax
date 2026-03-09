@@ -194,7 +194,7 @@ installSysMon() {
 
 installSly() {
     SubTitle "Install Sly"
-    cp -r sly $OptDir/
+    cp -r $PwdDir/sly $OptDir/
 }
 
 OptInstall() {
