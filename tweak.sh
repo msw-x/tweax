@@ -124,13 +124,17 @@ setGnomeVal() {
     gsettings set "org.gnome.$path" "$name" "$val"
 }
 
-installSysMon() {
-    SubTitle "Install SysMon"
-    git clone https://github.com/msw-x/sysmon
-    cd sysmon
-    ./install.sh
-    cd ..
-}
+favoriteApps="[
+    'opera_opera.desktop',
+    'alacritty_alacritty.desktop',
+    'sublime_text.desktop',
+    'syntevo-smartgit.desktop',
+    'virtualbox.desktop',
+    'dbeaver-ce_dbeaver-ce.desktop',
+    'qalculate-gtk.desktop'
+]"
+
+favoriteApps=$(echo "$favoriteApps" | tr -d '[:space:]')
 
 configureGnome() {
     SubTitle "Configure Gnome"
@@ -152,7 +156,6 @@ configureGnome() {
     setGnomeVal TextEditor spellcheck false
     setGnomeVal TextEditor highlight-current-line true
 
-    #setGnomeVal shell enabled-extensions \"['user-theme@gnome-shell-extensions.gcampax.github.com']\"
     setGnomeVal shell.extensions.dash-to-dock autohide true
     setGnomeVal shell.extensions.dash-to-dock dock-fixed false
     setGnomeVal shell.extensions.dash-to-dock extend-height false
@@ -166,7 +169,6 @@ configureGnome() {
     setGnomeVal settings-daemon.plugins.media-keys volume-mute "['<Alt>Pause']"
     setGnomeVal settings-daemon.plugins.media-keys volume-down "['<Alt>Page_Down']"
 
-    local favoriteApps="['google-chrome.desktop', 'org.gnome.Terminal.desktop', 'virtualbox.desktop', 'qalculate-gtk.desktop', 'syntevo-smartgit.desktop']"
     setGnomeVal shell favorite-apps "$favoriteApps"
 
     local wallpaper='wallpaper.jpg'
@@ -241,7 +243,6 @@ clean() {
 }
 
 ConfigureDesktop() {
-    installSysMon
     configureGnome
     configureLocale
     configureTelegram

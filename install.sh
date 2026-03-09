@@ -179,11 +179,27 @@ installGolang() {
 
 installTelegram() {
     SubTitle "Install Telegram"
-    local ref=https://telegram.org/dl/desktop/linux
+    local url=https://github.com/amnezia-vpn/amnezia-client/releases
+    local ver=$(wget -qO - $url | grep -Eo 'href="[^\"]+"' | grep -oP 'href="/amnezia-vpn/amnezia-client/tree/\K[0-9.]+' | sort -V | tail -n1)
+    local ref=$url/download/AmneziaVPN_${ver}_linux_x64.tar
     local name=tsetup.tar.xz
+    echo "ver: $ver"
     echo "ref: $ref"
     wget $ref -O $name
     tar -C $OptDir -xvf $name
+}
+
+installAmneziaVPN() {
+    SubTitle "Install AmneziaVPN"
+    local url=https://github.com/amnezia-vpn/amnezia-client/releases
+    local ver=$(wget -qO - $url | grep -Eo 'href="[^\"]+"' | grep -oP 'href="/amnezia-vpn/amnezia-client/tree/\K[0-9.]+' | sort -V | tail -n1)
+    local ref=$url/download/${ver}/AmneziaVPN_${ver}_linux_x64.tar
+    local name="amnezia"
+    echo "ver: $ver"
+    echo "ref: $ref"
+    wget $ref -O ${name}.tar
+    tar -xvf ${name}.tar
+    ./AmneziaVPN_Linux_Installer.bin
 }
 
 installSly() {
@@ -194,6 +210,7 @@ installSly() {
 OptInstall() {
     installGolang
     installTelegram
+    installAmneziaVPN
     installSly
 }
 
