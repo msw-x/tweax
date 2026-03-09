@@ -1,7 +1,5 @@
 # Basic
 
-PwdDir=$(pwd)
-
 Chroot() {
     arch-chroot $Target /bin/bash -c "$*"
 }

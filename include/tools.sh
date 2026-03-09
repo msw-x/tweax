@@ -11,6 +11,8 @@ Purple='\e[35m'
 Cyan='\e[36m'
 NC='\e[0m'
 
+PwdDir=$(pwd)
+
 Time() {
     local time="$(date -d @$(($(date +%s)-$timestamp)) +"%Mm %Ss")"
     echo
