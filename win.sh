@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TmpDir='/tmp/wdl'
+TmpDir='/tmp/win'
 
-function Exist {
+Exist() {
     if [ -f "$TmpDir/$1" ]; then
         return 0
     else
@@ -10,7 +10,7 @@ function Exist {
     fi
 }
 
-function Download {
+Download() {
     local url=$1
     local name=$(basename $url)
     url=$(dirname $url)
@@ -32,19 +32,19 @@ function Download {
     fi
 }
 
-function FinalUrl {
+FinalUrl() {
     local url=$1
     url=$(curl -LIs -o /dev/null -w %{url_effective} $url)
     echo $url
 }
 
-function RootUrl {
+RootUrl() {
     local url=$1
     url=$(echo $url | grep -P -o '.*\.\w+(?=/)')
     echo $url
 }
 
-function GetUrl {
+GetUrl() {
     local url=$1
     local exp=$2
     local ret=$(wget --timeout=20 -qO - $url | grep -P -o '(?<=href=").*?(?=")' | grep $exp | head -n 1)
@@ -74,7 +74,7 @@ function GetUrl {
     echo $ret
 }
 
-function DownloadSysinternals {
+DownloadSysinternals() {
     local url='download.sysinternals.com/files/'
     Download $url'Autoruns.zip'
     Download $url'ProcessExplorer.zip'
@@ -83,47 +83,47 @@ function DownloadSysinternals {
     Download $url'RAMMap.zip'
 }
 
-function Download7z {
+Download7z() {
     local url=$(GetUrl '7-zip.org' 'x64')
     Download $url
 }
 
-function DownloadGit {
+DownloadGit() {
     local url=$(GetUrl 'git-scm.com/download/win' '64')
     Download $url
 }
 
-function DownloadFar {
+DownloadFar() {
     local url=$(GetUrl 'farmanager.com/download.php' 'x64.*msi')
     Download $url
 }
 
-function DownloadVlc {
+DownloadVlc() {
     local url=$(GetUrl 'videolan.org' 'win64')
     Download $url
 }
 
-function DownloadSublime {
+DownloadSublime() {
     local url=$(GetUrl 'sublimetext.com/download_thanks?target=win-x64' 'x64.*exe')
     Download $url
 }
 
-function DownloadSmartGit {
+DownloadSmartGit() {
     local url=$(GetUrl 'syntevo.com/smartgit/download' 'win')
     Download $url
 }
 
-function DownloadWireshark {
+DownloadWireshark() {
     local url=$(GetUrl 'wireshark.org/download/win64' 'win')
     Download $url
 }
 
-function DownloadTelegram {
+DownloadTelegram() {
     local url=$(GetUrl 'desktop.telegram.org' 'win64')
     Download $url
 }
 
-function DownloadAll {
+DownloadAll() {
     DownloadSysinternals
     Download7z
     DownloadGit
@@ -138,7 +138,7 @@ function DownloadAll {
     DownloadAmneziaVPN
 }
 
-function Run {
+Run() {
     mkdir -p $TmpDir
     cd $TmpDir
     DownloadAll
