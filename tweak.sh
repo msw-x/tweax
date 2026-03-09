@@ -79,7 +79,7 @@ configureHomeConfig() {
 configureDocker() {
     SubTitle "Configure Docker"
     # configure for resolve conflict Docker with VPN networks
-    cp $SrcDir/docker/daemon.json /etc/docker
+    sudo cp $SrcDir/docker/daemon.json /etc/docker
     sudo usermod -aG docker $user
 }
 
