@@ -67,8 +67,8 @@ configureLocale() {
     SubTitle "Configure Locale"
     setGnomeVal desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ru')]"
     local loc="en_US.UTF-8"
-    update-locale LANG=$loc LC_NUMERIC=$loc LC_TIME=$loc LC_MONETARY=$loc LC_PAPER=$loc LC_NAME=$loc
-    update-locale LC_ADDRESS=$loc LC_TELEPHONE=$loc LC_MEASUREMENT=$loc LC_IDENTIFICATION=$loc
+    sudo update-locale LANG=$loc LC_NUMERIC=$loc LC_TIME=$loc LC_MONETARY=$loc LC_PAPER=$loc LC_NAME=$loc
+    sudo update-locale LC_ADDRESS=$loc LC_TELEPHONE=$loc LC_MEASUREMENT=$loc LC_IDENTIFICATION=$loc
 }
 
 configureTelegram() {
