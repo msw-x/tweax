@@ -18,7 +18,6 @@ AptList='
     gpustat
     lnav
     gparted
-    alacritty
     smartmontools
 
     mc
@@ -90,8 +89,11 @@ SnapList='
 '
 SnapClassicList='
     code
+    flutter
+    alacritty
     dbeaver-ce
     sublime-text
+    android-studio
 '
 
 PreInstall() {

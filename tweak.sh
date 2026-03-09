@@ -159,6 +159,7 @@ configureGnome() {
 
     setGnomeVal desktop.input-sources xkb-options "['grp:alt_shift_toggle']"
 
+    setGnomeVal desktop.default-applications.terminal exec alacritty
     setGnomeVal settings-daemon.plugins.media-keys terminal "['<Alt>t']"
 
     setGnomeVal settings-daemon.plugins.media-keys volume-up "['<Alt>Page_Up']"
