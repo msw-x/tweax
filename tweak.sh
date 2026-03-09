@@ -98,20 +98,6 @@ SnapClassicList='
     sublime-text
 '
 
-GetUser() {
-    local users
-    mapfile -t users < <(GetUsers)
-    if [ ${#users[@]} -eq 0 ]; then
-        Fatal "user not found"
-    else
-        user="${users[0]}"
-        echo
-        echo -e "user: ${Bold}${Green}$user${NC}"
-    fi
-    Home=/home/$user
-    Media=/media/$user
-}
-
 AddAlias() {
     local alias=$*
     local file=$Home/.bashrc

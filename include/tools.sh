@@ -89,6 +89,11 @@ ToLower() {
     echo "$1" | tr '[:upper:]' '[:lower:]'
 }
 
+Nohup() {
+    local app=$1
+    nohup $app </dev/null >/dev/null 2>&1 &
+}
+
 GetUsers() {
     local root="${1:-/}"
     local users=()
@@ -102,7 +107,16 @@ GetUsers() {
     printf '%s\n' "${users[@]}"
 }
 
-Nohup() {
-    local app=$1
-    nohup $app </dev/null >/dev/null 2>&1 &
+GetUser() {
+    local users
+    mapfile -t users < <(GetUsers)
+    if [ ${#users[@]} -eq 0 ]; then
+        Fatal "user not found"
+    else
+        user="${users[0]}"
+        echo
+        echo -e "user: ${Bold}${Green}$user${NC}"
+    fi
+    Home=/home/$user
+    Media=/media/$user
 }
