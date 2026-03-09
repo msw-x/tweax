@@ -79,7 +79,7 @@ configureTelegram() {
 configureVirtualBox() {
     SubTitle "Configure VirtualBox"
     # enable devices (including usb)
-    usermod -a -G vboxusers $user
+    sudo usermod -a -G vboxusers $user
     Nohup virtualbox
     local key='n'
     until [ $key == 'y' ]; do
