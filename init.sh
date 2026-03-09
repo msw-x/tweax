@@ -406,22 +406,25 @@ Setup() {
     CopyTweax
 }
 
+Run() {
+    Startup
+    CheckEfi
+    CheckDistro
+    LoadDevices
+    ShowDevices
+    CheckDevices
+    SelectDevices
+    CheckBootDeviceSize
+    CheckRootDeviceSize
+    SelectMode
+    SetPersonal
+    Сonfirmation
+    CloseDevices
+    WipeRoot
+    MakePartitions
+    Install
+    Setup
+    Finish
+}
 
-Startup
-CheckEfi
-CheckDistro
-LoadDevices
-ShowDevices
-CheckDevices
-SelectDevices
-CheckBootDeviceSize
-CheckRootDeviceSize
-SelectMode
-SetPersonal
-Сonfirmation
-CloseDevices
-WipeRoot
-MakePartitions
-Install
-Setup
-Finish
+Run
