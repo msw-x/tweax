@@ -27,6 +27,7 @@ Secrets='/etc/secret'
 MntExt='/mnt/ext'
 
 TmpDir='/tmp/tweax'
+OptDir='/opt'
 Target='/mnt'
 
 TimeZone='Europe/Moscow'
