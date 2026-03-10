@@ -149,10 +149,6 @@ installChrome() {
     dpkgInstall "Chrome" "https://dl.google.com/linux/direct/google-chrome-stable_current_$Arch.deb"
 }
 
-installYandex() {
-    dpkgInstall "Yandex" "https://browser.yandex.ru/download/?banerid=6302000000&zih=1&beta=1&os=linux&x64=1&package=deb&full=1"
-}
-
 installSmartgit() {
     dpkgInstall "Smartgit" $(wget -qO - https://www.syntevo.com/smartgit/download/ | grep -Eo 'href=[^ ]+ ' | grep -Eo "https.*.deb")
 }
@@ -167,7 +163,6 @@ installEtcher() {
 DpkgInstall() {
     Title "Install dpkg"
     installChrome
-    installYandex
     installSmartgit
     installEtcher
 }
@@ -217,6 +212,21 @@ OptInstall() {
     installTelegram
     installAmneziaVPN
     installSly
+}
+
+RepoInstall() {
+    # yandex
+    add-apt-repository "deb https://repo.yandex.ru/yandex-browser/deb stable main"
+    curl https://repo.yandex.ru/yandex-browser/YANDEX-BROWSER-KEY.GPG --output YANDEX-BROWSER-KEY.GPG
+    apt-key add YANDEX-BROWSER-KEY.GPG
+
+    #max
+    mkdir -p /etc/apt/keyrings
+    curl -fsSL https://download.max.ru/linux/deb/public.asc | gpg --dearmor -o /etc/apt/keyrings/max.gpg >/dev/null
+    echo "deb [signed-by=/etc/apt/keyrings/max.gpg] https://download.max.ru/linux/deb stable main" | tee /etc/apt/sources.list.d/max.list
+
+    apt update
+    apt install -y yandex-browser-stable max
 }
 
 opencvDependencies='
@@ -321,6 +331,7 @@ Tweak() {
     SnapClassicInstall
     DpkgInstall
     OptInstall
+    RepoInstall
     SrcInstall
 }
 
