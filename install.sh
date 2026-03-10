@@ -216,9 +216,9 @@ OptInstall() {
 
 RepoInstall() {
     # yandex
-    add-apt-repository "deb https://repo.yandex.ru/yandex-browser/deb stable main"
+    add-apt-repository -y "deb https://repo.yandex.ru/yandex-browser/deb stable main"
     curl https://repo.yandex.ru/yandex-browser/YANDEX-BROWSER-KEY.GPG --output YANDEX-BROWSER-KEY.GPG
-    apt-key add YANDEX-BROWSER-KEY.GPG -y
+    apt-key add YANDEX-BROWSER-KEY.GPG
 
     #max
     mkdir -p /etc/apt/keyrings
