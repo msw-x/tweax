@@ -150,7 +150,7 @@ installChrome() {
 }
 
 installYandex() {
-    dpkgInstall "Yandex" "https://browser.yandex.ru/download/?banerid=6302000000\&zih=1\&beta=1\&os=linux\&x64=1\&package=deb\&full=1"
+    dpkgInstall "Yandex" "https://browser.yandex.ru/download/?banerid=6302000000&zih=1&beta=1&os=linux&x64=1&package=deb&full=1"
 }
 
 installSmartgit() {
